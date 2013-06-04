@@ -1,0 +1,6 @@
+.ruby-gemset
+.ruby-version
+build
+.repl_history
+.DS_Store
+Pods
