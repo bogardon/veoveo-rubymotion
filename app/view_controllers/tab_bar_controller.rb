@@ -1,0 +1,3 @@
+class TabBarController < UITabBarController
+
+end
