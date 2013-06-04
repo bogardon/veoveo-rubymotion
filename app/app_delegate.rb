@@ -1,22 +1,9 @@
-class AppDelegate
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
+class AppDelegate < PM::Delegate
 
-    # Cache
-    cache = NSURLCache.alloc.initWithMemoryCapacity 4*1024*1024,
-      diskCapacity: 20*1024*1024,
-      diskPath: nil
-    NSURLCache.setSharedURLCache(cache)
-
-    @tab_bar_controller = TabBarController.alloc.init
-    vc = UIViewController.alloc.init
-    vc.view.backgroundColor = UIColor.blueColor
-    @tab_bar_controller.viewControllers = [vc]
-
-    @window = UIWindow.alloc.initWithFrame UIScreen.mainScreen.bounds
-    @window.rootViewController = @tab_bar_controller
-    @window.makeKeyAndVisible
-
-    true
+  def on_load(application, launch_options)
+    setup_appearance_proxies
+    setup_http_cache
+    setup_main_screen
   end
 
   def application(application, openURL:url, sourceApplication:sourceApplication, annotation:annotation)
@@ -29,5 +16,19 @@ class AppDelegate
 
   def applicationWillTerminate(application)
     FBSession.activeSession.close
+  end
+
+  def setup_http_cache
+    cache = NSURLCache.alloc.initWithMemoryCapacity 4*1024*1024,
+      diskCapacity: 20*1024*1024,
+      diskPath: nil
+    NSURLCache.setSharedURLCache(cache)
+  end
+
+  def setup_appearance_proxies
+  end
+
+  def setup_main_screen
+    open LandingScreen.new(nav_bar: true)
   end
 end
