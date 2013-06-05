@@ -6,6 +6,7 @@ class SignUpScreen < PM::Screen
 
   def on_load
     self.title = nil
+    self.navigationItem.titleView = UIImageView.alloc.initWithImage "logo.png".uiimage;
   end
 
   def will_appear
