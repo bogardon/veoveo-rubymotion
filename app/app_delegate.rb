@@ -26,6 +26,8 @@ class AppDelegate < PM::Delegate
   end
 
   def setup_appearance_proxies
+
+    Teacup::Appearance.apply
   end
 
   def setup_main_screen
