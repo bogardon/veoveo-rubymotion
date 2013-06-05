@@ -15,6 +15,10 @@ Motion::Project::App.setup do |app|
     pod 'PonyDebugger'
   end
 
+  # icons
+  app.icons = ["App_Icon.png", "App_Icon@2x.png"]
+  app.prerendered_icon = true
+
   # need to figure out how to switch config
   config = YAML.load_file("config/development.yml")
   facebook_app_id = config['facebook']['appId']
