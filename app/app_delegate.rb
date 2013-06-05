@@ -4,6 +4,7 @@ class AppDelegate < PM::Delegate
     setup_appearance_proxies
     setup_http_cache
     setup_main_screen
+    fade_launch_image
   end
 
   def application(application, openURL:url, sourceApplication:sourceApplication, annotation:annotation)
@@ -26,11 +27,23 @@ class AppDelegate < PM::Delegate
   end
 
   def setup_appearance_proxies
-
     Teacup::Appearance.apply
   end
 
   def setup_main_screen
     open LandingScreen.new(nav_bar: true)
+  end
+
+  def fade_launch_image
+    @launchImage = UIImageView.alloc.initWithImage "Default-568h.png".uiimage
+    self.window.addSubview @launchImage
+    UIView.animateWithDuration(0.5, delay:0.5, options:UIViewAnimationOptionCurveEaseInOut, animations:
+    lambda do
+     @launchImage.alpha = 0
+    end, completion:
+    lambda do |completed|
+     @launchImage.removeFromSuperview
+     @launchImage = nil
+    end)
   end
 end
