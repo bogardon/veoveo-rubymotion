@@ -6,6 +6,7 @@ class SignUpScreen < PM::Screen
       subview(UIImageView, :signup_form_container) do
         subview(UILabel, :prompt, text: "1. Pick a Username & Password")
         @username_field = subview(FormTextField, :username, y: 55, delegate: self)
+        @username_field.becomeFirstResponder
         subview(UIImageView, :separator, y: 85)
         @password_field = subview(FormTextField, :password, y: 91, delegate: self)
         subview(UIImageView, :separator, y: 121)
@@ -55,6 +56,9 @@ class SignUpScreen < PM::Screen
   def onNext
     return unless formValid
     # call backend and create user i guess?
+    VeoVeoAPI.post("users", {:username => @username_field.text, :password => @password_field.text, :email => @email_field.text}) do |response, data|
+      # go somewhere
+    end
   end
 
   def formValid
