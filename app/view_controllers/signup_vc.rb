@@ -25,7 +25,7 @@ class SignUpVC < UIViewController
       @button.when(UIControlEventTouchUpInside) do
         onNext
       end
-    end
+    end.alwaysBounceVertical = true
   end
 
   def viewDidLoad
@@ -58,12 +58,10 @@ class SignUpVC < UIViewController
   def onNext
     return unless formValid
     # call backend and create user i guess?
-    VeoVeoAPI.post "users/sign_up", {username: @username_field.text, password: @password_field.text, email: @email_field.text} do |response, data|
-      if response.ok?
-
-      else
-      end
+    User.sign_up username: @username_field.text, password: @password_field.text, email: @email_field.text do |success|
+      dismissViewControllerAnimated(true, completion:nil) if success
     end
+
   end
 
   def formValid

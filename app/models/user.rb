@@ -28,6 +28,26 @@ class User
       File.join App.documents_path, "current_user"
     end
 
+    def sign_up(info, &block)
+      VeoVeoAPI.post "users/sign_up", info do |response, json|
+        if response.ok?
+          user = self.merge_or_create json['user']
+          User.current = user
+        end
+        block.call(response.ok?) if block
+      end
+    end
+
+    def sign_in(info, &block)
+      VeoVeoAPI.post "users/sign_in", info do |response, json|
+        if response.ok?
+          user = self.merge_or_create json['user']
+          User.current = user
+        end
+        block.call(response.ok?)
+      end
+    end
+
   end # class << self
 
 end

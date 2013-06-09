@@ -67,6 +67,14 @@ Teacup::Stylesheet.new :signup_screen do
 
 end
 
+Teacup::Stylesheet.new :signin_screen do
+  import :form_screen
+
+  style :signin_form_container, extends: :container,
+    frame: [[7,14], ["100% - 14", 71]],
+
+end
+
 Teacup.handler FormTextField, :labelText, :text do |target, text|
   target.label.text = text
 end

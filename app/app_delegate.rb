@@ -38,7 +38,7 @@ class AppDelegate
     @window.rootViewController = @tab_bar
     @window.makeKeyAndVisible
 
-    if false && User.current.nil?
+    if User.current.nil?
       # show landing
       landing = LandingVC.alloc.init
       nav = UINavigationController.alloc.initWithRootViewController(landing)

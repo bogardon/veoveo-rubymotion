@@ -1,13 +1,18 @@
 module VeoVeoAPI
   class << self
 
+    USERNAME = "veoveo"
+    PASSWORD = "lolumad"
+
     def protocol
       config = NSBundle.mainBundle.objectForInfoDictionaryKey('AppConfig', Hash)
       config["api"]["protocol"]
     end
 
     def default_headers
-      {"Accept" => 'application/json'}
+      auth_header = ["#{USERNAME}:#{PASSWORD}"].pack('m0')
+      {"Accept" => 'application/json',
+       "Authorization" => "Basic #{auth_header}"}
     end
 
     def host
@@ -22,8 +27,8 @@ module VeoVeoAPI
           headers: default_headers,
           format: :json,
         }) do |response|
-        data = BW::JSON.parse(response.body.to_s) if response.body
-        block.call(response, data) if block
+        json = BW::JSON.parse(response.body.to_s) if response.body
+        block.call(response, json) if block
       end
     end
 
