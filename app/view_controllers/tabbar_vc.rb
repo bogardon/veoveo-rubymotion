@@ -12,7 +12,7 @@ class TabBarVC < UITabBarController
 
     map_nav_vc = UINavigationController.alloc.initWithRootViewController(MapVC.alloc.init)
     map_nav_vc.tabBarItem.setFinishedSelectedImage("finds_selected.png".uiimage, withFinishedUnselectedImage:"finds.png".uiimage)
-    #map_nav_vc.tabBarItem.imageInsets = [-4,0,4,0]
+    map_nav_vc.tabBarItem.imageInsets = [-4,0,4,0]
 
     profile_nav_vc = UINavigationController.alloc.initWithRootViewController(ProfileVC.alloc.init)
     profile_nav_vc.tabBarItem.setFinishedSelectedImage("profile_selected.png".uiimage, withFinishedUnselectedImage:"profile.png".uiimage)
@@ -26,8 +26,11 @@ class TabBarVC < UITabBarController
   def viewDidLoad
     super
     self.tabBar.backgroundImage = "footer.png".uiimage
-    self.tabBar.frame = [[0, self.tabBar.superview.frame.size.height - 41], [self.tabBar.frame.size.width, 41]]
-    self.tabBar.superview[0].frame = [[0,0], [self.tabBar.superview.frame.size.width, self.tabBar.superview.frame.size.height - 41]]
+    self.tabBar.frame = [[0, self.tabBar.superview.frame.size.height - 40], [self.tabBar.frame.size.width, 40]]
+    self.tabBar.superview[0].frame = [[0,0], [self.tabBar.superview.frame.size.width, self.tabBar.superview.frame.size.height - 40]]
+
+    # setting nil actually uses some system default.
+    self.tabBar.selectionIndicatorImage = UIImage.alloc.init
   end
 
 end
