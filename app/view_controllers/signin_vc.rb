@@ -1,4 +1,5 @@
 class SignInVC < UIViewController
+  include NavigationHelpers
   stylesheet :signin_screen
   layout do
     subview(UIImageView, :background)
@@ -27,8 +28,7 @@ class SignInVC < UIViewController
 
   def viewDidLoad
     super
-    self.title = nil
-    self.navigationItem.titleView = UIImageView.alloc.initWithImage "logo.png".uiimage;
+    add_logo_to_nav_bar
   end
 
   def viewWillAppear(animated)
@@ -38,7 +38,9 @@ class SignInVC < UIViewController
 
   def on_sign_in
     return unless form_valid?
+    SVProgressHUD.show
     User.sign_in username: @username_field.text, password: @password_field.text do |success|
+      SVProgressHUD.dismiss
       dismissViewControllerAnimated(true, completion:nil) if success
     end
   end

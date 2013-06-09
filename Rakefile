@@ -10,14 +10,21 @@ Motion::Project::App.setup do |app|
   app.identifier = 'com.tfm.veoveo'
   app.interface_orientations = [:portrait]
 
+  app.frameworks += %w[
+    CoreLocation
+    MapKit
+  ]
+
   app.pods do
     pod 'Facebook-iOS-SDK'
     pod 'PonyDebugger'
+    pod 'SVProgressHUD'
   end
 
   # icons
   app.icons = ["App_Icon.png", "App_Icon@2x.png"]
   app.prerendered_icon = true
+  app.info_plist['UIStatusBarStyle'] = 'UIStatusBarStyleBlackOpaque'
 
   # need to figure out how to switch config
   config = YAML.load_file("config/development.yml")

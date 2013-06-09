@@ -1,4 +1,5 @@
 class SignUpVC < UIViewController
+  include NavigationHelpers
   stylesheet :signup_screen
   layout do
     subview(UIImageView, :background)
@@ -30,8 +31,7 @@ class SignUpVC < UIViewController
 
   def viewDidLoad
     super
-    self.title = nil
-    self.navigationItem.titleView = UIImageView.alloc.initWithImage "logo.png".uiimage;
+    add_logo_to_nav_bar
   end
 
   def viewWillAppear(animated)
@@ -57,8 +57,10 @@ class SignUpVC < UIViewController
 
   def onNext
     return unless formValid
+    SVProgressHUD.show
     # call backend and create user i guess?
     User.sign_up username: @username_field.text, password: @password_field.text, email: @email_field.text do |success|
+      SVProgressHUD.dismiss
       dismissViewControllerAnimated(true, completion:nil) if success
     end
 
