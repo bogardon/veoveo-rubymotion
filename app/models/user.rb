@@ -1,15 +1,33 @@
 class User
   include MotionModel::Model
+  include MotionModel::ArrayModelAdapter
+  include VeoVeo::IdentityMap
+
   columns :id => :integer,
-          :first_name => :string,
-          :last_name => :string
+          :username => :string,
+          :email => :string
 
-  def self.current
-    @current
-  end
+  class << self
 
-  def self.login(user)
-    @current = user
-    @current
-  end
+    attr_accessor :current
+
+    def current=(current)
+      if current
+        NSKeyedArchiver.archiveRootObject(current, toFile:store_path)
+      else
+        File.delete store_path
+      end
+      @current = current
+    end
+
+    def current
+      @current ||= NSKeyedUnarchiver.unarchiveObjectWithFile store_path
+    end
+
+    def store_path
+      File.join App.documents_path, "current_user"
+    end
+
+  end # class << self
+
 end
