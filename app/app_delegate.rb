@@ -1,10 +1,11 @@
-class AppDelegate < PM::Delegate
+class AppDelegate
 
-  def on_load(application, launch_options)
+  def application(application,didFinishLaunchingWithOptions: launchOptions)
     setup_appearance_proxies
     setup_http_cache
     setup_main_screen
     fade_launch_image
+    true
   end
 
   def application(application, openURL:url, sourceApplication:sourceApplication, annotation:annotation)
@@ -31,12 +32,23 @@ class AppDelegate < PM::Delegate
   end
 
   def setup_main_screen
-    open LandingScreen.new(nav_bar: true)
+    @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
+    @window.backgroundColor = UIColor.blackColor
+    @tab_bar = TabBarVC.alloc.init
+    @window.rootViewController = @tab_bar
+    @window.makeKeyAndVisible
+
+    if false && User.current.nil?
+      # show landing
+      landing = LandingVC.alloc.init
+      nav = UINavigationController.alloc.initWithRootViewController(landing)
+      @tab_bar.presentViewController(nav, animated:false, completion:nil)
+    end
   end
 
   def fade_launch_image
     @launchImage = UIImageView.alloc.initWithImage "Default-568h.png".uiimage
-    self.window.addSubview @launchImage
+    @window.addSubview @launchImage
     UIView.animateWithDuration(0.5, delay:0.5, options:UIViewAnimationOptionCurveEaseInOut, animations:
     lambda do
      @launchImage.alpha = 0

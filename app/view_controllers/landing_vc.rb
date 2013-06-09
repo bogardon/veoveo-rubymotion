@@ -1,4 +1,4 @@
-class LandingScreen < PM::Screen
+class LandingVC < UIViewController
   stylesheet :landing_screen
   layout do
     subview(UIImageView, :background)
@@ -10,12 +10,14 @@ class LandingScreen < PM::Screen
       # go sign in
     end
   end
-  def on_load
+  def viewDidLoad
+    super
     self.title = nil
     navigationController.navigationBar.hidden = true
   end
 
-  def will_appear
+  def viewWillAppear(animated)
+    super
     navigationController.setNavigationBarHidden(true, animated:true)
   end
 

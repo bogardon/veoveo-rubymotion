@@ -1,7 +1,14 @@
+GIT
+  remote: git@github.com:sxross/MotionModel.git
+  revision: 936b1825c96639f8d63fe6dff0cc5bd0d1b6ad4a
+  specs:
+    motion_model (0.4.4)
+      bubble-wrap (= 1.3.0)
+      motion-support (>= 0.1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
-    ProMotion (0.7.2)
     activesupport (3.2.13)
       i18n (= 0.6.1)
       multi_json (~> 1.0)
@@ -36,8 +43,10 @@ GEM
     json (1.8.0)
     motion-cocoapods (1.3.2)
       cocoapods (>= 0.17.0)
-    motion_model (0.2.6)
-    multi_json (1.7.5)
+    motion-require (0.0.6)
+    motion-support (0.2.4)
+      motion-require (>= 0.0.6)
+    multi_json (1.7.6)
     multipart-post (1.2.0)
     netrc (0.7.7)
     octokit (1.24.0)
@@ -63,10 +72,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  ProMotion
   bubble-wrap
   motion-cocoapods
-  motion_model
+  motion_model!
   rake
   sugarcube
   sweettea

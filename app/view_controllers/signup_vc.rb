@@ -1,4 +1,4 @@
-class SignUpScreen < PM::Screen
+class SignUpVC < UIViewController
   stylesheet :signup_screen
   layout do
     subview(UIImageView, :background)
@@ -28,12 +28,14 @@ class SignUpScreen < PM::Screen
     end
   end
 
-  def on_load
+  def viewDidLoad
+    super
     self.title = nil
     self.navigationItem.titleView = UIImageView.alloc.initWithImage "logo.png".uiimage;
   end
 
-  def will_appear
+  def viewWillAppear(animated)
+    super
     navigationController.setNavigationBarHidden(false, animated:true)
   end
 
@@ -56,8 +58,11 @@ class SignUpScreen < PM::Screen
   def onNext
     return unless formValid
     # call backend and create user i guess?
-    VeoVeoAPI.post("users", {:username => @username_field.text, :password => @password_field.text, :email => @email_field.text}) do |response, data|
-      # go somewhere
+    VeoVeoAPI.post "users/sign_up", {username: @username_field.text, password: @password_field.text, email: @email_field.text} do |response, data|
+      if response.ok?
+
+      else
+      end
     end
   end
 
