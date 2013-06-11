@@ -3,11 +3,11 @@ Teacup.handler UINavigationBar, :background { |image|
 }
 
 Teacup.handler UIBarButtonItem, :bg_image_up { |image|
-  setBackgroundImage(image.uiimage.stretchable([16,16,15,16]), forState:UIControlStateNormal, barMetrics:UIBarMetricsDefault)
+  setBackgroundImage(image.uiimage.stretchable([16,5,15,5]), forState:UIControlStateNormal, barMetrics:UIBarMetricsDefault)
 }
 
 Teacup.handler UIBarButtonItem, :bg_image_down { |image|
-  setBackgroundImage(image.uiimage.stretchable([16,16,15,16]), forState:UIControlStateNormal, barMetrics:UIBarMetricsDefault)
+  setBackgroundImage(image.uiimage.stretchable([16,5,15,5]), forState:UIControlStateNormal, barMetrics:UIBarMetricsDefault)
 }
 
 Teacup.handler UIBarButtonItem, :back_bg_image_up { |image|
