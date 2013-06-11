@@ -40,9 +40,7 @@ class AppDelegate
 
     if User.current.nil?
       # show landing
-      landing = LandingVC.alloc.init
-      nav = UINavigationController.alloc.initWithRootViewController(landing)
-      @tab_bar.presentViewController(nav, animated:false, completion:nil)
+      @tab_bar.show_landing(false)
     end
   end
 

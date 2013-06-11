@@ -19,8 +19,21 @@ class TabBarVC < UITabBarController
     profile_nav_vc.tabBarItem.imageInsets = [6,0,-6,0]
 
     self.viewControllers = [feed_nav_vc, map_nav_vc, profile_nav_vc]
-    self.selectedIndex = MAP_INDEX
+
+    @login_observer = App.notification_center.observe CurrentUserDidLoginNotification do |notification|
+      self.selectedIndex = MAP_INDEX
+    end
+
+    @logout_observer = App.notification_center.observe CurrentUserDidLogoutNotification do |notification|
+      show_landing(true)
+    end
+
     self
+  end
+
+  def dealloc
+    App.notification_center.unobserve @login_observer
+    App.notification_center.unobserve @logout_observer
   end
 
   def viewDidLoad
@@ -31,6 +44,12 @@ class TabBarVC < UITabBarController
 
     # setting nil actually uses some system default.
     self.tabBar.selectionIndicatorImage = UIImage.alloc.init
+  end
+
+  def show_landing(animated)
+    landing = LandingVC.alloc.init
+    nav = UINavigationController.alloc.initWithRootViewController(landing)
+    self.presentViewController(nav, animated:animated, completion:nil)
   end
 
 end
