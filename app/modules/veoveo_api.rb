@@ -39,5 +39,9 @@ module VeoVeoAPI
       perform('post', path, BW::JSON.generate(params), &block)
     end
 
+    def get(path, params={}, &block)
+      perform('get', path, params, &block)
+    end
+
   end
 end
