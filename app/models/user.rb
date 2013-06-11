@@ -1,3 +1,5 @@
+CurrentUserDidLoginNotification = "CurrentUserDidLoginNotification"
+CurrentUserDidLogoutNotification = "CurrentUserDidLogoutNotification"
 class User
   include MotionModel::Model
   include MotionModel::ArrayModelAdapter
@@ -5,19 +7,24 @@ class User
 
   columns :id => :integer,
           :username => :string,
-          :email => :string
+          :email => :string,
+          :api_token => :string,
+          :avatar_url_thumb => :string,
+          :avatar_url_full => :string
 
   class << self
 
     attr_accessor :current
 
     def current=(current)
-      if current
-        NSKeyedArchiver.archiveRootObject(current, toFile:store_path)
+      @current = current
+      if @current
+        NSKeyedArchiver.archiveRootObject(@current, toFile:store_path)
+        NSNotificationCenter.defaultCenter.postNotificationName(CurrentUserDidLoginNotification, object:nil)
       else
         File.delete store_path
+        NSNotificationCenter.defaultCenter.postNotificationName(CurrentUserDidLogoutNotification, object:nil)
       end
-      @current = current
     end
 
     def current
