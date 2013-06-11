@@ -11,6 +11,13 @@ class LandingVC < UIViewController
       navigationController.pushViewController(SignInVC.alloc.init, animated:true)
     end
   end
+
+  def init
+    super
+    self.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal
+    self
+  end
+
   def viewDidLoad
     super
     self.title = nil
