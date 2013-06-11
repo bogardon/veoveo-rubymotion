@@ -8,6 +8,7 @@ class MapVC < UIViewController
     @map_view.delegate = self
     @map_view.showsUserLocation = true
     @map_view.userTrackingMode = MKUserTrackingModeFollow
+    @map_view.addAnnotations(@spots)
   end
 
   def init
@@ -20,6 +21,9 @@ class MapVC < UIViewController
     @login_observer = App.notification_center.observe CurrentUserDidLoginNotification do |notification|
 
     end
+
+    reload
+
     self
   end
 
@@ -37,6 +41,33 @@ class MapVC < UIViewController
 
   def logout
     User.current = nil
+  end
+
+  def mapView(mapView, didUpdateUserLocation:userLocation)
+    return unless userLocation.location
+    p userLocation.location.coordinate.latitude
+    p userLocation.location.coordinate.longitude
+  end
+
+  SPOT_ANNOTATION_IDENTIFIER = "SPOT_ANNOTATION_IDENTIFIER"
+
+  def mapView(mapView, viewForAnnotation:annotation)
+    return nil unless annotation.isKindOfClass(Spot)
+    annotation = mapView.dequeueReusableAnnotationViewWithIdentifier(SPOT_ANNOTATION_IDENTIFIER) || SpotAnnotation.alloc.initWithAnnotation(annotation, reuseIdentifier:SPOT_ANNOTATION_IDENTIFIER)
+    annotation
+  end
+
+  def mapView(mapView, annotationView:annotation, calloutAccessoryTapped:control)
+
+  end
+
+  def reload
+    VeoVeoAPI.get 'spots' do |response, data|
+      @spots = data.valueForKeyPath("spot").map do |json|
+        WeakRef.new(Spot.merge_or_create json)
+      end
+      @map_view.addAnnotations(@spots) if @map_view
+    end
   end
 
 end
