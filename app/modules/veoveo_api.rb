@@ -10,9 +10,11 @@ module VeoVeoAPI
     end
 
     def default_headers
+      headers = {"Accept" => 'application/json'}
       auth_header = ["#{USERNAME}:#{PASSWORD}"].pack('m0')
-      {"Accept" => 'application/json',
-       "Authorization" => "Basic #{auth_header}"}
+      headers["Authorization"] = "Basic #{auth_header}"
+      headers["x-veoveo-api-token"] = User.current.api_token if User.current
+      headers
     end
 
     def host
