@@ -19,7 +19,7 @@ class MapVC < UIViewController
     @background_observer = App.notification_center.observe UIApplicationDidEnterBackgroundNotification do |notification|
     end
     @login_observer = App.notification_center.observe CurrentUserDidLoginNotification do |notification|
-
+      reload
     end
 
     reload
@@ -52,7 +52,7 @@ class MapVC < UIViewController
   SPOT_ANNOTATION_IDENTIFIER = "SPOT_ANNOTATION_IDENTIFIER"
 
   def mapView(mapView, viewForAnnotation:annotation)
-    return nil unless annotation.isKindOfClass(Spot)
+    return nil unless annotation.isKindOfClass(SpotProxy)
     annotation = mapView.dequeueReusableAnnotationViewWithIdentifier(SPOT_ANNOTATION_IDENTIFIER) || SpotAnnotation.alloc.initWithAnnotation(annotation, reuseIdentifier:SPOT_ANNOTATION_IDENTIFIER)
     annotation
   end
@@ -62,11 +62,17 @@ class MapVC < UIViewController
   end
 
   def reload
+    return unless User.current
     VeoVeoAPI.get 'spots' do |response, data|
-      @spots = data.valueForKeyPath("spot").map do |json|
-        WeakRef.new(Spot.merge_or_create json)
+      if response.ok?
+        @spots = data.valueForKeyPath("spot").map do |json|
+          spot = Spot.merge_or_create json
+          spot_proxy = SpotProxy.alloc.init
+          spot_proxy.spot = spot
+          spot_proxy
+        end
+        @map_view.addAnnotations(@spots) if @map_view
       end
-      @map_view.addAnnotations(@spots) if @map_view
     end
   end
 

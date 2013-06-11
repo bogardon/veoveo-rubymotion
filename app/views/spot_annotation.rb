@@ -5,7 +5,7 @@ class SpotAnnotation < MKAnnotationView
 
     self.centerOffset = [0, -18]
     self.image = "unfound_pin.png".uiimage
-
+    self.canShowCallout = true
     self
   end
 
