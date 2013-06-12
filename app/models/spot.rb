@@ -6,7 +6,7 @@ class Spot
   columns :id => :integer,
           :latitude => :float,
           :longitude => :float,
-          :name => :string
+          :hint => :string
 
   belongs_to :user
 

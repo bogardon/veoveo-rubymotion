@@ -6,7 +6,7 @@ class SpotProxy
   end
 
   def title
-    self.spot.name
+    self.spot.hint
   end
 
 end
