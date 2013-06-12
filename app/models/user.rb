@@ -37,7 +37,7 @@ class User
 
     def sign_up(info, &block)
       options = {payload: BW::JSON.generate(info), format: :json}
-      VeoVeoAPI.post "users/sign_up", options do |response, json|
+      VeoVeoAPI.post "users/signup", options do |response, json|
         if response.ok?
           user = self.merge_or_create json['user']
           User.current = user
@@ -48,7 +48,7 @@ class User
 
     def sign_in(info, &block)
       options = {payload: BW::JSON.generate(info), format: :json}
-      VeoVeoAPI.post "users/sign_in", options do |response, json|
+      VeoVeoAPI.post "users/signin", options do |response, json|
         if response.ok?
           user = self.merge_or_create json['user']
           User.current = user
