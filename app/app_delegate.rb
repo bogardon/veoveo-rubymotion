@@ -41,6 +41,8 @@ class AppDelegate
     if User.current.nil?
       # show landing
       @tab_bar.show_landing(false)
+    else
+      @tab_bar.selectedIndex = TabBarVC::MAP_INDEX
     end
   end
 
