@@ -9,6 +9,7 @@ Motion::Project::App.setup do |app|
   app.name = 'VeoVeo'
   app.identifier = 'com.tfm.veoveo'
   app.interface_orientations = [:portrait]
+  app.deployment_target = '6.0'
 
   app.frameworks += %w[
     CoreLocation
