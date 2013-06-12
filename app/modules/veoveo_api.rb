@@ -22,25 +22,22 @@ module VeoVeoAPI
       config["api"]["host"]
     end
 
-    def perform(method, path, params={}, &block)
+    def perform(method, path, options={}, &block)
       url = "#{protocol}://#{host}/#{path}"
-      BW::HTTP.send(method, url, {
-          payload: params,
-          headers: default_headers,
-          format: :json,
-        }) do |response|
+      options[:headers] ||= default_headers
+      BW::HTTP.send(method, url, options) do |response|
         json = BW::JSON.parse(response.body.to_s) if response.body
         p json
         block.call(response, json) if block
       end
     end
 
-    def post(path, params={}, &block)
-      perform('post', path, BW::JSON.generate(params), &block)
+    def post(path, options={}, &block)
+      perform('post', path, options, &block)
     end
 
-    def get(path, params={}, &block)
-      perform('get', path, params, &block)
+    def get(path, options={}, &block)
+      perform('get', path, options, &block)
     end
 
   end
