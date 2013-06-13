@@ -20,5 +20,15 @@ module VeoVeo
         end
       end
     end
+
+    def isEqual(other)
+      return false unless other.isKindOfClass(self.class)
+      return self.id == other.id
+    end
+
+    def hash
+      return self.id.hash
+    end
+
   end
 end
