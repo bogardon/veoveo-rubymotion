@@ -9,4 +9,13 @@ class SpotProxy
     self.spot.hint
   end
 
+  def isEqual(other)
+    return false unless other.isKindOfClass(self.class)
+    return self.spot == other.spot
+  end
+
+  def hash
+    return self.spot.hash
+  end
+
 end
