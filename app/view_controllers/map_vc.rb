@@ -63,8 +63,10 @@ class MapVC < UIViewController
     annotation
   end
 
-  def mapView(mapView, annotationView:annotation, calloutAccessoryControlTapped:control)
-    p 'tapped'
+  def mapView(mapView, annotationView:view, calloutAccessoryControlTapped:control)
+    spot = view.annotation.spot
+    spot_vc = SpotVC.alloc.initWithSpot spot
+    navigationController.pushViewController(spot_vc, animated:true)
   end
 
   def mapView(mapView, regionDidChangeAnimated:animated)
@@ -74,28 +76,11 @@ class MapVC < UIViewController
   def reload
     return unless User.current && @map_view && @map_view.isUserLocationVisible
 
-    options = {
-      format: :json,
-      payload: {
-        region: {
-          latitude: @map_view.region.center.latitude,
-          longitude: @map_view.region.center.longitude,
-          latitude_delta: @map_view.region.span.latitudeDelta,
-          longitude_delta: @map_view.region.span.longitudeDelta
-        }
-      }
-    }
-    VeoVeoAPI.get 'spots', options do |response, spots|
-      if response.ok? && spots.present?
-        spot_proxies = spots.valueForKeyPath("spot").map do |spot|
-          proxy = SpotProxy.alloc.init
-          proxy.spot = Spot.merge_or_create spot
-          proxy
-        end
-        new_spots = spot_proxies - @map_view.annotations
-        @map_view.addAnnotations(new_spots)
-      end
+    Spot.in_region @map_view.region do |response, spot_proxies|
+      new_spots = spot_proxies - @map_view.annotations
+      @map_view.addAnnotations(new_spots)
     end
+
   end
 
 end
