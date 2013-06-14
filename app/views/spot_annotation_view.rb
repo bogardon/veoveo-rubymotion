@@ -12,13 +12,12 @@ class SpotAnnotationView < MKAnnotationView
   def setSelected(selected, animated:animated)
     super
     update_image
-
   end
 
   def update_image
     spot = self.annotation.spot
     state = spot.unlocked ? "found_pin" : "unfound_pin"
-    selected = self.isSelected ? "_selected.png" : ""
+    selected = self.isSelected ? "_selected.png" : ".png"
     self.image = (state+selected).uiimage
   end
 
