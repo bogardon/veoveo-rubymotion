@@ -3,13 +3,17 @@ class SpotVC < UIViewController
 
   MAP_CELL_IDENTIFIER = "MAP_CELL_IDENTIFIER"
   SPOT_ANNOTATION_IDENTIFIER = "SPOT_ANNOTATION_IDENTIFIER"
+  ANSWER_CELL_IDENTIFIER = "ANSWER_CELL_IDENTIFIER"
 
   stylesheet :spot_vc
 
   layout do
     subview(UIImageView, :background)
-    @collection_view = subview(UICollectionView.alloc.initWithFrame(CGRectZero, collectionViewLayout:UICollectionViewFlowLayout.alloc.init), :collection_view, delegate:self, dataSource:self)
+    flow = UICollectionViewFlowLayout.alloc.init
+    flow.minimumInteritemSpacing = 0
+    @collection_view = subview(UICollectionView.alloc.initWithFrame(CGRectZero, collectionViewLayout:flow), :collection_view, delegate:self, dataSource:self)
     @collection_view.registerClass(MapCell, forCellWithReuseIdentifier:MAP_CELL_IDENTIFIER)
+    @collection_view.registerClass(AnswerCell, forCellWithReuseIdentifier:ANSWER_CELL_IDENTIFIER)
   end
 
   attr_accessor :spot
@@ -35,35 +39,44 @@ class SpotVC < UIViewController
   end
 
   def numberOfSectionsInCollectionView(collectionView)
-    1
+    2
   end
 
   def collectionView(collectionView, layout:collectionViewLayout, insetForSectionAtIndex:section)
-    [10,0,0,0]
+    section > 0 ? [5,7,0,7] : [10,0,0,0]
   end
 
   def collectionView(collectionView, numberOfItemsInSection:section)
-    1
+    section > 0 ? (self.spot.answers ? self.spot.answers.count : 0) : 1
   end
 
   def collectionView(collectionView, layout:collectionViewLayout, sizeForItemAtIndexPath:indexPath)
-    [306,175]
+    indexPath.section > 0 ? [150,200] : [306,175]
   end
 
   def collectionView(collectionView, cellForItemAtIndexPath:indexPath)
-    cell = collectionView.dequeueReusableCellWithReuseIdentifier(MAP_CELL_IDENTIFIER, forIndexPath:indexPath)
+    case indexPath.section
+    when 0
+      cell = collectionView.dequeueReusableCellWithReuseIdentifier(MAP_CELL_IDENTIFIER, forIndexPath:indexPath)
 
-    spot_proxy = SpotProxy.alloc.init
-    spot_proxy.spot = @spot
+      spot_proxy = SpotProxy.alloc.init
+      spot_proxy.spot = @spot
 
-    cell.label.text = "\u201c#{spot_proxy.title}\u201d"
-    cell.map_view.region = MKCoordinateRegionMakeWithDistance(spot_proxy.coordinate, 100, 100)
-    cell.map_view.delegate = self
-    cell.map_view.setUserInteractionEnabled(false)
+      cell.label.text = "\u201c#{spot_proxy.title}\u201d"
+      cell.map_view.region = MKCoordinateRegionMakeWithDistance(spot_proxy.coordinate, 200, 200)
+      cell.map_view.delegate = self
+      cell.map_view.setUserInteractionEnabled(false)
 
-    # don't re add annotations
-    cell.map_view.addAnnotation(spot_proxy) unless cell.map_view.annotations.count > 0
-    cell
+      # don't re add annotations
+      cell.map_view.addAnnotation(spot_proxy) unless cell.map_view.annotations.count > 0
+      cell
+    when 1
+      cell = collectionView.dequeueReusableCellWithReuseIdentifier(ANSWER_CELL_IDENTIFIER, forIndexPath:indexPath)
+      cell.answer = @spot.answers.first if @spot.answers
+      cell
+    else
+      nil
+    end
   end
 
   def mapView(mapView, viewForAnnotation:annotation)

@@ -12,7 +12,7 @@ class AnswerImageView < ImageView
     CGContextClip(context)
     image.drawInRect rect
     processed_image = UIGraphicsGetImageFromCurrentImageContext()
-    UIGraphicsEndImageContext();
+    UIGraphicsEndImageContext()
     processed_image
   end
 end
