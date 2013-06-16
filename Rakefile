@@ -2,6 +2,7 @@
 $:.unshift("/Library/RubyMotion/lib")
 require 'motion/project/template/ios'
 require 'bundler'
+require 'sugarcube-attributedstring'
 Bundler.require
 
 Motion::Project::App.setup do |app|
