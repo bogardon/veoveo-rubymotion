@@ -31,7 +31,7 @@ class AnswerCell < UICollectionViewCell
 
     @user_image_view.set_image_from_url @answer.user.avatar_url_thumb
 
-    @label.attributedText = (@answer.user.username.bold(11) + " found this shit")
+    @label.attributedText = (@answer.user.username.bold(11) + " found this on #{@answer.created_at.to_s}")
     @label.sizeToFit
   end
 end
