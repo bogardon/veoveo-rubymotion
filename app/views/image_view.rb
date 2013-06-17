@@ -4,9 +4,10 @@ class ImageView < UIImageView
     image
   end
 
-  def setImageFromURLString(url)
+
+  def set_image_from_url(url)
     @query.connection.cancel if @query
-    @query = BW::HTTP.get url do |response|
+    @query = BW::HTTP.get url.to_s do |response|
       @response = response
       bg_queue = Dispatch::Queue.concurrent(priority=:default)
       bg_queue.async do

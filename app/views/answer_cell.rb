@@ -27,9 +27,9 @@ class AnswerCell < UICollectionViewCell
   def answer=(answer)
     @answer = answer
 
-    @answer_image_view.setImageFromURLString @answer.image_url_large
+    @answer_image_view.set_image_from_url @answer.image_url_large
 
-    @user_image_view.setImageFromURLString @answer.user.avatar_url_thumb
+    @user_image_view.set_image_from_url @answer.user.avatar_url_thumb
 
     @label.attributedText = (@answer.user.username.bold(11) + " found this shit")
     @label.sizeToFit
