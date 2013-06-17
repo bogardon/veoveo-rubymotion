@@ -46,11 +46,24 @@ class SpotVC < UIViewController
       unless result[:error]
         edited_image = result[:edited_image]
         # upload this thing.
+        SVProgressHUD.show
+        Answer.submit(self.spot, edited_image) do |response, json|
+          SVProgressHUD.dismiss
+          if response.ok?
+            answer = Answer.merge_or_insert(json)
+            self.spot.answers << answer
+            self.spot.unlocked = true
+            self.navigationItem.rightBarButtonItem = nil
+            @collection_view.reloadData if @collection_view
+          else
+          end
+        end
       end
     end if source
   end
 
   def update_find_it_button(location)
+    return unless self.navigationItem.rightBarButtonItem
     distance = location.distanceFromLocation(CLLocation.alloc.initWithLatitude(self.spot.latitude, longitude:self.spot.longitude))
     self.navigationItem.rightBarButtonItem.enabled = distance < 50
   end
@@ -86,7 +99,7 @@ class SpotVC < UIViewController
     when ANSWER_CELL_SECTION
       self.spot.answers ? self.spot.answers.count : 0
     when SOCIAL_CELL_SECTION
-      1
+      self.spot.unlocked ? 0 : 1
     else
       0
     end

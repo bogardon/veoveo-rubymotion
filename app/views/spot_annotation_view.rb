@@ -1,4 +1,5 @@
 class SpotAnnotationView < MKAnnotationView
+  include BW::KVO
   attr_accessor :spot
   def initWithAnnotation(annotation, reuseIdentifier:reuseIdentifier)
     super
@@ -6,6 +7,13 @@ class SpotAnnotationView < MKAnnotationView
     self.canShowCallout = true
     self.rightCalloutAccessoryView = UIButton.buttonWithType(UIButtonTypeDetailDisclosure)
     update_image
+
+    spot = self.annotation.spot
+
+    observe(spot, :unlocked) do |old_value, new_value|
+      update_image
+    end
+
     self
   end
 
