@@ -31,7 +31,7 @@ class Spot < Model
       }
     }
     VeoVeoAPI.get 'spots', options do |response, json|
-      if response.ok? && json.present?
+      if response.ok?
         spots = json.map do |spot_json|
           Spot.merge_or_insert(spot_json)
         end
