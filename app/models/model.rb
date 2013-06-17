@@ -27,6 +27,7 @@ class Model
             when :float
               value.to_f
             when :date
+              Time.iso8601_with_timezone(value.to_s)
               # parse date
             when :url
               NSURL.URLWithString value.to_s
@@ -109,24 +110,24 @@ class Model
     self.class.get_relationships.each do |name, type|
       json_value = json[name.to_s]
       self.send("#{name}=", json_value) if json_value
-    end if self.class.relationships
+    end
 
     self.class.get_attributes.each do |name, type|
       json_value = json[name.to_s]
       self.send("#{name}=", json_value) if json_value
-    end if self.class.attributes
+    end
   end
 
   def merge_with_model(model)
     self.class.get_relationships.each do |name, type|
       model_value = model.send("#{name}")
       self.send("#{name}=", model_value) if model_value
-    end if self.class.relationships
+    end
 
     self.class.get_attributes.each do |name, type|
       model_value = model.send("#{name}")
       self.send("#{name}=", model_value) if model_value
-    end if self.class.attributes
+    end
   end
 
   def ==(other)
