@@ -52,11 +52,12 @@ class MapVC < UIViewController
     navigationController.pushViewController(spot_vc, animated:true)
   end
 
-  def mapView(mapView, regionDidChangeAnimated:animated)
-    reload
+  def mapView(mapView, regionWillChangeAnimated:animated)
+    @query.connection.cancel if @query
   end
 
-  def mapViewDidFinishLoadingMap(mapView)
+  def mapView(mapView, regionDidChangeAnimated:animated)
+    reload
   end
 
   def reload
