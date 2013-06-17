@@ -4,6 +4,11 @@ class SpotVC < UIViewController
   MAP_CELL_IDENTIFIER = "MAP_CELL_IDENTIFIER"
   SPOT_ANNOTATION_IDENTIFIER = "SPOT_ANNOTATION_IDENTIFIER"
   ANSWER_CELL_IDENTIFIER = "ANSWER_CELL_IDENTIFIER"
+  SOCIAL_CELL_IDENTIFIER = "SOCIAL_CELL_IDENTIFIER"
+
+  MAP_CELL_SECTION = 0
+  ANSWER_CELL_SECTION = 1
+  SOCIAL_CELL_SECTION = 2
 
   stylesheet :spot_vc
 
@@ -14,6 +19,7 @@ class SpotVC < UIViewController
     @collection_view = subview(UICollectionView.alloc.initWithFrame(CGRectZero, collectionViewLayout:flow), :collection_view, delegate:self, dataSource:self)
     @collection_view.registerClass(MapCell, forCellWithReuseIdentifier:MAP_CELL_IDENTIFIER)
     @collection_view.registerClass(AnswerCell, forCellWithReuseIdentifier:ANSWER_CELL_IDENTIFIER)
+    @collection_view.registerClass(SocialCell, forCellWithReuseIdentifier:SOCIAL_CELL_IDENTIFIER)
     @collection_view.alwaysBounceVertical = true
   end
 
@@ -30,6 +36,12 @@ class SpotVC < UIViewController
   def viewDidLoad
     super
     add_logo_to_nav_bar
+
+    add_right_nav_button "Find It", self, :on_find_it unless self.spot.unlocked
+  end
+
+  def on_find_it
+
   end
 
   def reload
@@ -40,24 +52,51 @@ class SpotVC < UIViewController
   end
 
   def numberOfSectionsInCollectionView(collectionView)
-    2
+    3
   end
 
   def collectionView(collectionView, layout:collectionViewLayout, insetForSectionAtIndex:section)
-    section > 0 ? [5,7,0,7] : [10,0,0,0]
+    case section
+    when MAP_CELL_SECTION
+      [10,0,5,0]
+    when ANSWER_CELL_SECTION
+      [0,7,0,7]
+    when SOCIAL_CELL_SECTION
+      [0,7,0,7]
+    else
+      [0,0,0,0]
+    end
   end
 
   def collectionView(collectionView, numberOfItemsInSection:section)
-    section > 0 ? (self.spot.answers ? self.spot.answers.count : 0) : 1
+    case section
+    when MAP_CELL_SECTION
+      1
+    when ANSWER_CELL_SECTION
+      self.spot.answers ? self.spot.answers.count : 0
+    when SOCIAL_CELL_SECTION
+      1
+    else
+      0
+    end
   end
 
   def collectionView(collectionView, layout:collectionViewLayout, sizeForItemAtIndexPath:indexPath)
-    indexPath.section > 0 ? [150,200] : [306,175]
+    case indexPath.section
+    when MAP_CELL_SECTION
+      [306,175]
+    when ANSWER_CELL_SECTION
+      [150,200]
+    when SOCIAL_CELL_SECTION
+      [306,50]
+    else
+      [0,0]
+    end
   end
 
   def collectionView(collectionView, cellForItemAtIndexPath:indexPath)
     case indexPath.section
-    when 0
+    when MAP_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(MAP_CELL_IDENTIFIER, forIndexPath:indexPath)
 
 
@@ -71,9 +110,14 @@ class SpotVC < UIViewController
       # don't re add annotations
       cell.map_view.addAnnotation(annotation) unless cell.map_view.annotations.count > 0
       cell
-    when 1
+    when ANSWER_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(ANSWER_CELL_IDENTIFIER, forIndexPath:indexPath)
       cell.answer = @spot.answers.first if @spot.answers
+      cell
+    when SOCIAL_CELL_SECTION
+      cell = collectionView.dequeueReusableCellWithReuseIdentifier(SOCIAL_CELL_IDENTIFIER, forIndexPath:indexPath)
+      cell.user_image_view.set_image_from_url @spot.user.avatar_url_thumb if @spot.user
+      cell.label.attributedText = @spot.user.username.bold(11) + " originally found this on #{@spot.created_at.to_s}. Find to unlock their photo!"
       cell
     else
       nil
