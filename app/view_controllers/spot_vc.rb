@@ -44,6 +44,11 @@ class SpotVC < UIViewController
 
   end
 
+  def update_find_it_button(location)
+    distance = location.distanceFromLocation(CLLocation.alloc.initWithLatitude(self.spot.latitude, longitude:self.spot.longitude))
+    self.navigationItem.rightBarButtonItem.enabled = distance < 50
+  end
+
   def reload
     Spot.for self.spot.id do |response, spot|
       self.spot = spot if response.ok?
@@ -106,7 +111,7 @@ class SpotVC < UIViewController
       cell.map_view.region = MKCoordinateRegionMakeWithDistance(annotation.coordinate, 200, 200)
       cell.map_view.delegate = self
       cell.map_view.setUserInteractionEnabled(false)
-
+      update_find_it_button(cell.map_view.userLocation.location)
       # don't re add annotations
       cell.map_view.addAnnotation(annotation) unless cell.map_view.annotations.count > 0
       cell
@@ -136,6 +141,11 @@ class SpotVC < UIViewController
   def mapView(mapView, didUpdateUserLocation:userLocation)
     return unless userLocation.location
     @collection_view.reloadData if @collection_view
+  end
+
+  def mapView(mapView, didUpdateUserLocation:userLocation)
+    return unless userLocation.location
+    update_find_it_button(userLocation.location)
   end
 
 end
