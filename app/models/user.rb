@@ -1,16 +1,12 @@
 CurrentUserDidLoginNotification = "CurrentUserDidLoginNotification"
 CurrentUserDidLogoutNotification = "CurrentUserDidLogoutNotification"
-class User
-  include MotionModel::Model
-  include MotionModel::ArrayModelAdapter
-  include VeoVeo::IdentityMap
+class User < Model
 
-  columns :id => :integer,
-          :username => :string,
-          :email => :string,
-          :api_token => :string,
-          :avatar_url_thumb => :string,
-          :avatar_url_full => :string
+  set_attributes :username => :string,
+                 :email => :string,
+                 :api_token => :string,
+                 :avatar_url_thumb => :string,
+                 :avatar_url_full => :string
 
   class << self
 
@@ -19,27 +15,41 @@ class User
     def current=(current)
       @current = current
       if @current
-        NSKeyedArchiver.archiveRootObject(@current, toFile:store_path)
+        persist_user
         NSNotificationCenter.defaultCenter.postNotificationName(CurrentUserDidLoginNotification, object:nil)
       else
-        File.delete store_path
+        delete_user
         NSNotificationCenter.defaultCenter.postNotificationName(CurrentUserDidLogoutNotification, object:nil)
       end
     end
 
-    def current
-      @current ||= NSKeyedUnarchiver.unarchiveObjectWithFile store_path
+    def persist_user
+      attributes_to_persist = {}
+      self.attributes.each do |name, type|
+        user_value = @current.send("#{name}")
+        attributes_to_persist[name.to_s] = user_value if user_value
+      end
+      App::Persistence['current_user'] = attributes_to_persist
     end
 
-    def store_path
-      File.join App.documents_path, "current_user"
+    def delete_user
+      App::Persistence['current_user'] = nil
+    end
+
+    def get_user
+      persisted_attributes = App::Persistence['current_user']
+      persisted_user = self.merge_or_insert(persisted_attributes) if persisted_attributes
+    end
+
+    def current
+      @current ||= get_user
     end
 
     def sign_up(info, &block)
       options = {payload: BW::JSON.generate(info), format: :json}
       VeoVeoAPI.post "users/signup", options do |response, json|
         if response.ok?
-          user = self.merge_or_create json['user']
+          user = self.merge_or_insert json
           User.current = user
         end
         block.call(response.ok?) if block
@@ -50,7 +60,7 @@ class User
       options = {payload: BW::JSON.generate(info), format: :json}
       VeoVeoAPI.post "users/signin", options do |response, json|
         if response.ok?
-          user = self.merge_or_create json['user']
+          user = self.merge_or_insert json
           User.current = user
         end
         block.call(response.ok?)

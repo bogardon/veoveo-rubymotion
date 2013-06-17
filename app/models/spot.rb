@@ -1,16 +1,21 @@
-class Spot
-  include MotionModel::Model
-  include MotionModel::ArrayModelAdapter
-  include VeoVeo::IdentityMap
+class Spot < Model
 
-  columns :id => :integer,
-          :latitude => :float,
-          :longitude => :float,
-          :hint => :string,
-          :unlocked => :boolean
+  set_attributes :latitude => :float,
+                 :longitude => :float,
+                 :hint => :string,
+                 :unlocked => :boolean
 
-  attr_accessor :answers
-  attr_accessor :user
+  set_relationships :answers => :Answer,
+                    :user => :User
+
+  # MKProtocol
+  def coordinate
+    CLLocationCoordinate2DMake(self.latitude, self.longitude)
+  end
+
+  def title
+    self.hint
+  end
 
   def self.in_region(region, &block)
     options = {
@@ -24,17 +29,12 @@ class Spot
         }
       }
     }
-    VeoVeoAPI.get 'spots', options do |response, spots|
-      if response.ok? && spots.present?
-        spot_proxies = spots.valueForKeyPath("spot").map do |spot_json|
-          spot = Spot.merge_or_create spot_json
-          user = User.merge_or_create spot_json['user']
-          spot.user = user
-          proxy = SpotProxy.alloc.init
-          proxy.spot = spot
-          proxy
+    VeoVeoAPI.get 'spots', options do |response, json|
+      if response.ok? && json.present?
+        spots = json.map do |spot_json|
+          Spot.merge_or_insert(spot_json)
         end
-        block.call(response, spot_proxies) if block
+        block.call(response, spots) if block
       else
         block.call(response, nil) if block
       end
@@ -46,19 +46,9 @@ class Spot
       format: :json
     }
 
-    VeoVeoAPI.get "spots/#{spot_id}", options do |response, data|
+    VeoVeoAPI.get "spots/#{spot_id}", options do |response, json|
       if response.ok?
-        spot_json = data['spot']
-        answers_json = spot_json['answers']
-        answers = answers_json.valueForKeyPath("answer").map do |answer_json|
-          user_json = answer_json['user']
-          answer = Answer.merge_or_create answer_json
-          user = User.merge_or_create user_json
-          answer.user = user
-          answer
-        end
-        spot = Spot.merge_or_create spot_json
-        spot.answers = answers
+        spot = Spot.merge_or_insert(json)
         block.call(response, spot) if block
       else
         block.call(response, nil) if block

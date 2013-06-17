@@ -1,12 +1,7 @@
-class Answer
-  include MotionModel::Model
-  include MotionModel::ArrayModelAdapter
-  include VeoVeo::IdentityMap
+class Answer < Model
+  set_attributes :image_url_small => :string,
+                 :image_url_large => :string
 
-  columns :id => :integer,
-          :image_url_small => :string,
-          :image_url_large => :string
-
-  attr_accessor :spot
-  attr_accessor :user
+  set_relationships :spot => :Spot,
+                    :user => :User
 end
