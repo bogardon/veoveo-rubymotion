@@ -42,8 +42,20 @@ class TabBarVC < UITabBarController
     self.tabBar.frame = [[0, self.tabBar.superview.frame.size.height - 40], [self.tabBar.frame.size.width, 40]]
     self.tabBar.superview[0].frame = [[0,0], [self.tabBar.superview.frame.size.width, self.tabBar.superview.frame.size.height - 40]]
 
+
+    selection_indicator_image = "selector.png".uiimage
+    size = CGSizeMake(selection_indicator_image.size.width,40)
+    UIGraphicsBeginImageContextWithOptions(size, false, 0)
+    UIColor.clearColor.setFill
+    context = UIGraphicsGetCurrentContext()
+    CGContextFillRect(context, [[0,0],size])
+    selection_indicator_image.drawInRect([[0,size.height-2],[size.width, 2]])
+    selection_indicator_image = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+
+
     # setting nil actually uses some system default.
-    self.tabBar.selectionIndicatorImage = UIImage.alloc.init
+    self.tabBar.selectionIndicatorImage = selection_indicator_image
   end
 
   def show_landing(animated)
