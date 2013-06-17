@@ -27,8 +27,7 @@ class Model
             when :float
               value.to_f
             when :date
-              Time.iso8601_with_timezone(value.to_s)
-              # parse date
+              value.is_a?(Time) ? value : Time.iso8601_with_timezone(value.to_s)
             when :url
               NSURL.URLWithString value.to_s
             when :string
