@@ -41,7 +41,13 @@ class SpotVC < UIViewController
   end
 
   def on_find_it
-
+    source = BW::Device.camera.rear || BW::Device.camera.any
+    source.picture(media_types: [:image], allows_editing: true) do |result|
+      unless result[:error]
+        edited_image = result[:edited_image]
+        # upload this thing.
+      end
+    end if source
   end
 
   def update_find_it_button(location)
