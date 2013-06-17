@@ -59,16 +59,16 @@ class SpotVC < UIViewController
     when 0
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(MAP_CELL_IDENTIFIER, forIndexPath:indexPath)
 
-      spot_proxy = SpotProxy.alloc.init
-      spot_proxy.spot = @spot
 
-      cell.label.text = "\u201c#{spot_proxy.title}\u201d"
-      cell.map_view.region = MKCoordinateRegionMakeWithDistance(spot_proxy.coordinate, 200, 200)
+      annotation = SpotAnnotation.new self.spot
+
+      cell.label.text = "\u201c#{annotation.title}\u201d"
+      cell.map_view.region = MKCoordinateRegionMakeWithDistance(annotation.coordinate, 200, 200)
       cell.map_view.delegate = self
       cell.map_view.setUserInteractionEnabled(false)
 
       # don't re add annotations
-      cell.map_view.addAnnotation(spot_proxy) unless cell.map_view.annotations.count > 0
+      cell.map_view.addAnnotation(annotation) unless cell.map_view.annotations.count > 0
       cell
     when 1
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(ANSWER_CELL_IDENTIFIER, forIndexPath:indexPath)
@@ -80,7 +80,7 @@ class SpotVC < UIViewController
   end
 
   def mapView(mapView, viewForAnnotation:annotation)
-    return nil unless annotation.isKindOfClass(SpotProxy)
+    return nil unless annotation.isKindOfClass(SpotAnnotation)
     cached = mapView.dequeueReusableAnnotationViewWithIdentifier(SPOT_ANNOTATION_IDENTIFIER)
     annotation = cached || SpotAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier:SPOT_ANNOTATION_IDENTIFIER)
     annotation.canShowCallout = false
