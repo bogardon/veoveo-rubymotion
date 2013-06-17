@@ -7,7 +7,6 @@ class MapVC < UIViewController
     @map_view = subview(MKMapView, :map_view)
     @map_view.delegate = self
     @map_view.showsUserLocation = true
-    @map_view.userTrackingMode = MKUserTrackingModeFollow
   end
 
   def init
@@ -32,10 +31,28 @@ class MapVC < UIViewController
   def viewDidLoad
     super
     add_logo_to_nav_bar
+    @did_auto_center = false
+    center_on_user
+
+    self.tabBarController.delegate = self
+  end
+
+  def tabBarController(tabBarController, didSelectViewController:viewController)
+    if viewController == self.navigationController
+      center_on_user
+    end
+  end
+
+  def center_on_user
+    return unless @map_view.userLocation.location
+    region = MKCoordinateRegionMakeWithDistance(@map_view.userLocation.location.coordinate, 500, 500)
+    @map_view.setRegion(region, animated:true)
   end
 
   def mapView(mapView, didUpdateUserLocation:userLocation)
-    return unless userLocation.location
+    return unless userLocation.location && !@did_auto_center
+    @did_auto_center = true
+    center_on_user
   end
 
   SPOT_ANNOTATION_IDENTIFIER = "SPOT_ANNOTATION_IDENTIFIER"
