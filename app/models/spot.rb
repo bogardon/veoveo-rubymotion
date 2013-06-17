@@ -3,7 +3,8 @@ class Spot < Model
   set_attributes :latitude => :float,
                  :longitude => :float,
                  :hint => :string,
-                 :unlocked => :boolean
+                 :unlocked => :boolean,
+                 :created_at => :date
 
   set_relationships :answers => :Answer,
                     :user => :User
