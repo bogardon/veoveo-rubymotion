@@ -54,10 +54,11 @@ class MapVC < UIViewController
     self.presentViewController(nav, animated:true, completion:nil)
   end
 
-  def tabBarController(tabBarController, didSelectViewController:viewController)
-    if viewController == self.navigationController
+  def tabBarController(tabBarController, shouldSelectViewController:viewController)
+    unless viewController != tabBarController.selectedViewController || viewController != self.navigationController
       center_on_user
     end
+    true
   end
 
   def center_on_user
