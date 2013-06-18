@@ -8,7 +8,7 @@ class SpotAnnotationView < MKAnnotationView
     self.rightCalloutAccessoryView = UIButton.buttonWithType(UIButtonTypeDetailDisclosure)
     update_image
 
-    spot = self.annotation.spot
+    spot = self.annotation
 
     observe(spot, :unlocked) do |old_value, new_value|
       update_image
@@ -23,7 +23,7 @@ class SpotAnnotationView < MKAnnotationView
   end
 
   def update_image
-    spot = self.annotation.spot
+    spot = self.annotation
     state = spot.unlocked ? "found_pin" : "unfound_pin"
     selected = self.isSelected ? "_selected.png" : ".png"
     self.image = (state+selected).uiimage

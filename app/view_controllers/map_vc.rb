@@ -58,13 +58,13 @@ class MapVC < UIViewController
   SPOT_ANNOTATION_IDENTIFIER = "SPOT_ANNOTATION_IDENTIFIER"
 
   def mapView(mapView, viewForAnnotation:annotation)
-    return nil unless annotation.isKindOfClass(SpotAnnotation)
+    return nil unless annotation.isKindOfClass(Spot)
     annotation = mapView.dequeueReusableAnnotationViewWithIdentifier(SPOT_ANNOTATION_IDENTIFIER) || SpotAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier:SPOT_ANNOTATION_IDENTIFIER)
     annotation
   end
 
   def mapView(mapView, annotationView:view, calloutAccessoryControlTapped:control)
-    spot = view.annotation.spot
+    spot = view.annotation
     spot_vc = SpotVC.alloc.initWithSpot spot
     navigationController.pushViewController(spot_vc, animated:true)
   end
@@ -82,10 +82,7 @@ class MapVC < UIViewController
     @query.connection.cancel if @query
     @query = Spot.in_region @map_view.region do |response, spots|
       if response.ok?
-        spot_proxies = spots.map do |spot|
-          SpotAnnotation.new spot
-        end
-        new_spots = spot_proxies - @map_view.annotations
+        new_spots = spots - @map_view.annotations
         @map_view.addAnnotations(new_spots)
       end
     end

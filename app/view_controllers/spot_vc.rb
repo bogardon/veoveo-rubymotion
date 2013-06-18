@@ -124,7 +124,7 @@ class SpotVC < UIViewController
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(MAP_CELL_IDENTIFIER, forIndexPath:indexPath)
 
 
-      annotation = SpotAnnotation.new self.spot
+      annotation = self.spot
 
       cell.label.text = "\u201c#{annotation.title}\u201d"
       cell.map_view.region = MKCoordinateRegionMakeWithDistance(annotation.coordinate, 200, 200)
@@ -149,7 +149,7 @@ class SpotVC < UIViewController
   end
 
   def mapView(mapView, viewForAnnotation:annotation)
-    return nil unless annotation.isKindOfClass(SpotAnnotation)
+    return nil unless annotation.isKindOfClass(Spot)
     cached = mapView.dequeueReusableAnnotationViewWithIdentifier(SPOT_ANNOTATION_IDENTIFIER)
     annotation = cached || SpotAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier:SPOT_ANNOTATION_IDENTIFIER)
     annotation.canShowCallout = false
