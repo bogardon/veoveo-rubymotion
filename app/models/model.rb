@@ -118,6 +118,7 @@ class Model
   end
 
   def merge_with_model(model)
+    return false unless self.is_a?(model.class)
     self.class.get_relationships.each do |name, type|
       model_value = model.send("#{name}")
       self.send("#{name}=", model_value) if model_value
@@ -130,8 +131,12 @@ class Model
   end
 
   def ==(other)
-    return false unless other.is_a?(self.class)
+    return false unless self.is_a?(other.class)
     self.id == other.id
+  end
+
+  def hash
+    self.id.hash
   end
 
 end
