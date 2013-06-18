@@ -35,6 +35,23 @@ class MapVC < UIViewController
     center_on_user
 
     self.tabBarController.delegate = self
+
+    self.navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd, target:self, action: :on_add)
+  end
+
+  def on_add
+    return unless @map_view.userLocation.location
+    vc = AddVC.alloc.init
+    vc.location = @map_view.userLocation.location
+    vc.completion = lambda do |spot|
+      if spot
+        @map_view.addAnnotation(spot)
+        @map_view.selectAnnotation(spot, animated:false)
+        self.dismissViewControllerAnimated(true, completion:nil)
+      end
+    end
+    nav = UINavigationController.alloc.initWithRootViewController(vc)
+    self.presentViewController(nav, animated:true, completion:nil)
   end
 
   def tabBarController(tabBarController, didSelectViewController:viewController)
