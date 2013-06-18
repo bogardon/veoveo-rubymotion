@@ -25,7 +25,7 @@ class User < Model
 
     def persist_user
       attributes_to_persist = {}
-      self.attributes.each do |name, type|
+      self.get_attributes.each do |name, type|
         user_value = @current.send("#{name}")
         attributes_to_persist[name.to_s] = user_value if user_value
       end
