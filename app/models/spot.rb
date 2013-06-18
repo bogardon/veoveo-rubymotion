@@ -44,6 +44,27 @@ class Spot < Model
       end
     end
 
+    def add_new(hint, location, image, &block)
+      options = {
+        format: :form_data,
+        payload: {
+          hint: hint,
+          latitude: location.coordinate.latitude,
+          longitude: location.coordinate.longitude
+        },
+        files: {
+          image: UIImagePNGRepresentation(image)
+        }
+      }
+
+      VeoVeoAPI.post "spots", options do |response, json|
+        if response.ok?
+        else
+        end
+        block.call(response,json) if block
+      end
+    end
+
     def for(spot_id, &block)
       options = {
         format: :json
