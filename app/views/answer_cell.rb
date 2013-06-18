@@ -31,7 +31,10 @@ class AnswerCell < UICollectionViewCell
 
     @user_image_view.set_image_from_url @answer.user.avatar_url_thumb
 
-    @label.attributedText = (@answer.user.username.bold(11) + " found this on #{@answer.created_at.to_s}")
+    formatter = Time.cached_date_formatter("MMMM dd, YYYY")
+    date_str = formatter.stringFromDate(@answer.created_at)
+
+    @label.attributedText = (@answer.user.username.bold(11) + " found this on #{date_str}")
     @label.sizeToFit
   end
 end

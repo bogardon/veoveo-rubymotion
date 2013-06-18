@@ -141,7 +141,9 @@ class SpotVC < UIViewController
     when SOCIAL_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(SOCIAL_CELL_IDENTIFIER, forIndexPath:indexPath)
       cell.user_image_view.set_image_from_url @spot.user.avatar_url_thumb if @spot.user
-      cell.label.attributedText = @spot.user.username.bold(11) + " originally found this on #{@spot.created_at.to_s}. Find to unlock their photo!"
+      formatter = Time.cached_date_formatter("MMMM dd, YYYY")
+      date_str = formatter.stringFromDate(@spot.created_at)
+      cell.label.attributedText = @spot.user.username.bold(11) + " originally found this on #{date_str}. Find to unlock their photo!"
       cell
     else
       nil
