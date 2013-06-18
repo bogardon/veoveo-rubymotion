@@ -71,6 +71,17 @@ class User < Model
       end
     end
 
+    def get_id(user_id, &block)
+      options = {
+        format: :json
+      }
+
+      VeoVeoAPI.get "users/#{user_id}", options do |response, json|
+        user = User.merge_or_insert json
+        block.call(response, user) if block
+      end
+    end
+
   end # class << self
 
 end
