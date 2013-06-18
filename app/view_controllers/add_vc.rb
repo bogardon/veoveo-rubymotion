@@ -107,7 +107,6 @@ class AddVC < UIViewController
     case indexPath.section
     when HINT_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(HINT_CELL_IDENTIFIER, forIndexPath:indexPath)
-      p cell
       @form = cell.form
       cell
     when PHOTO_CELL_SECTION

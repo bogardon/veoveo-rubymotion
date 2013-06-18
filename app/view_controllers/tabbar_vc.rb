@@ -14,7 +14,8 @@ class TabBarVC < UITabBarController
     map_nav_vc.tabBarItem.setFinishedSelectedImage("finds_selected.png".uiimage, withFinishedUnselectedImage:"finds.png".uiimage)
     map_nav_vc.tabBarItem.imageInsets = [-4,0,4,0]
 
-    profile_nav_vc = UINavigationController.alloc.initWithRootViewController(ProfileVC.alloc.init)
+    profile_vc = ProfileVC.new User.current
+    profile_nav_vc = UINavigationController.alloc.initWithRootViewController(profile_vc)
     profile_nav_vc.tabBarItem.setFinishedSelectedImage("profile_selected.png".uiimage, withFinishedUnselectedImage:"profile.png".uiimage)
     profile_nav_vc.tabBarItem.imageInsets = [6,0,-6,0]
 
