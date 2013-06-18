@@ -95,6 +95,7 @@ class Model
     end
 
     def merge_or_insert(json)
+      return nil unless json.has_key?("id")
       new_model = self.new json
       old_model = self.identity_map[self.to_s][new_model.id]
       self.identity_map[self.to_s][new_model.id] = new_model unless old_model
