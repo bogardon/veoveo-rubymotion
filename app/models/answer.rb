@@ -25,4 +25,10 @@ class Answer < Model
       block.call(response, json) if block
     end
   end
+
+  def humanized_date
+    formatter = Time.cached_date_formatter("MMMM dd, YYYY")
+    date_str = formatter.stringFromDate(self.created_at)
+    date_str
+  end
 end
