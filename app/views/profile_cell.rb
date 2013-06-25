@@ -18,6 +18,11 @@ class ProfileCell < UICollectionViewCell
     horizontal.backgroundColor = vertical.backgroundColor
     self.contentView.addSubview(horizontal)
 
+    @username_label = UILabel.alloc.initWithFrame [[CGRectGetMaxX(vertical.frame) + 20, 0], [self.contentView.frame.size.width - 100, (self.contentView.frame.size.height/2).floor]]
+    @username_label.font = UIFont.boldSystemFontOfSize 16
+    @username_label.backgroundColor = UIColor.clearColor
+    self.contentView.addSubview(@username_label)
+
     self
   end
 
@@ -25,6 +30,6 @@ class ProfileCell < UICollectionViewCell
     @user = user
 
     @user_image_view.set_image_from_url @user.avatar_url_full
-
+    @username_label.text = @user.username
   end
 end

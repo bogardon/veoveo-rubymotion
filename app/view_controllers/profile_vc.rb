@@ -5,16 +5,20 @@ class ProfileVC < UIViewController
   attr_accessor :user
 
   PROFILE_SECTION = 0
+  FEED_SECTION = 1
   PROFILE_IDENTIFIER = "PROFILE_IDENTIFIER"
+  FEED_IDENTIFIER = "FEED_IDENTIFIER"
 
   layout do
     subview(UIImageView, :background)
     flow = UICollectionViewFlowLayout.alloc.init
     flow.minimumInteritemSpacing = 0
-    @collection_view = subview(UICollectionView.alloc.initWithFrame(CGRectZero, collectionViewLayout:flow), :collection_view, delegate:self, dataSource:self)
+    flow.minimumLineSpacing = 0
+    @collection_view = subview(CollectionView.alloc.initWithFrame(CGRectZero, collectionViewLayout:flow), :collection_view, delegate:self, dataSource:self)
     @collection_view.alwaysBounceVertical = true
 
     @collection_view.registerClass(ProfileCell, forCellWithReuseIdentifier:PROFILE_IDENTIFIER)
+    @collection_view.registerClass(UserFeedCell, forCellWithReuseIdentifier:FEED_IDENTIFIER)
   end
 
   def initialize(user)
@@ -33,8 +37,12 @@ class ProfileVC < UIViewController
 
   def viewDidLoad
     super
+    add_logo_to_nav_bar
+  end
+
+  def user=(user)
+    @user = user
     add_right_nav_button "Logout", self, :on_logout if self.user.is_current?
-    add_title_to_nav_bar self.user.username
   end
 
   def reload
@@ -49,14 +57,14 @@ class ProfileVC < UIViewController
   end
 
   def numberOfSectionsInCollectionView(collectionView)
-    1
+    2
   end
 
   def collectionView(collectionView, layout:collectionViewLayout, insetForSectionAtIndex:section)
     case section
     when PROFILE_SECTION
-      [10,7,5,7]
-    else
+      [10,7,10,7]
+    when FEED_SECTION
       [0,0,0,0]
     end
   end
@@ -65,8 +73,8 @@ class ProfileVC < UIViewController
     case section
     when PROFILE_SECTION
       1
-    else
-      0
+    when FEED_SECTION
+      self.user.answers ? self.user.answers.count : 0
     end
   end
 
@@ -74,8 +82,8 @@ class ProfileVC < UIViewController
     case indexPath.section
     when PROFILE_SECTION
       [306,90]
-    else
-      [0,0]
+    when FEED_SECTION
+      [306,50]
     end
   end
 
@@ -85,8 +93,20 @@ class ProfileVC < UIViewController
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(PROFILE_IDENTIFIER, forIndexPath:indexPath)
       cell.user = self.user
       cell
+    when FEED_SECTION
+      cell = collectionView.dequeueReusableCellWithReuseIdentifier(FEED_IDENTIFIER, forIndexPath:indexPath)
+      cell.answer = self.user.answers[indexPath.item]
+      cell
+    end
+  end
+
+  def collectionView(collectionView, didSelectItemAtIndexPath:indexPath)
+    case indexPath.section
+    when PROFILE_SECTION
+    when FEED_SECTION
+      spot_vc = SpotVC.alloc.initWithSpot self.user.answers[indexPath.item].spot
+      self.navigationController.pushViewController(spot_vc, animated:true)
     else
-      nil
     end
   end
 
