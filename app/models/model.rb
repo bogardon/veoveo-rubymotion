@@ -2,6 +2,17 @@ class Model
 
   class << self
 
+    def value_transformers
+      @@value_transformers ||= {}
+    end
+
+    def register_value_transformer(options)
+      format = options[:format]
+      to = options[:to]
+      return if self.value_transformers.has_key? format
+      self.value_transformers[format] = to
+    end
+
     attr_accessor :attributes
 
     def get_attributes
@@ -20,24 +31,8 @@ class Model
 
         # setter
         define_method("#{name}=") do |value|
-          new_value =
-            case type
-            when :integer
-              value.to_i
-            when :float
-              value.to_f
-            when :date
-              value.is_a?(Time) ? value : Time.iso8601_with_timezone(value.to_s)
-            when :url
-              value.is_a?(NSURL) ? value : NSURL.URLWithString(value.to_s)
-            when :string
-              value.to_s
-            when :boolean
-              # convert to bool
-              !!value
-            else
-              nil
-            end if value
+          transformer = self.class.value_transformers[type]
+          new_value = transformer.call(value) if transformer && value
           self.willChangeValueForKey name
           self.instance_variable_set("@#{name}", new_value)
           self.didChangeValueForKey name
@@ -103,6 +98,35 @@ class Model
       (old_model || new_model)
     end
   end
+
+  register_value_transformer :format => :boolean,
+                             :to => (lambda do |value|
+                                      !!value
+                                    end)
+  register_value_transformer :format => :integer,
+                             :to => (lambda do |value|
+                                      value.to_i
+                                    end)
+  register_value_transformer :format => :float,
+                             :to => (lambda do |value|
+                                      value.to_f
+                                    end)
+
+  register_value_transformer :format => :date,
+                             :to => (lambda do |value|
+                                      value.is_a?(Time) ? value : Time.iso8601_with_timezone(value.to_s)
+                                    end)
+
+  register_value_transformer :format => :url,
+                             :to => (lambda do |value|
+                                      value.is_a?(NSURL) ? value : NSURL.URLWithString(value.to_s)
+                                    end)
+
+  register_value_transformer :format => :string,
+                             :to => (lambda do |value|
+                                      value.to_s
+                                    end)
+
 
   set_attributes :id => :integer
 
