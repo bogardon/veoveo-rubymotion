@@ -36,8 +36,6 @@ class SpotVC < UIViewController
   def viewDidLoad
     super
     add_logo_to_nav_bar
-
-    add_right_nav_button "Find It", self, :on_find_it unless self.spot.unlocked
   end
 
   def on_find_it
@@ -72,6 +70,7 @@ class SpotVC < UIViewController
     Spot.for self.spot.id do |response, spot|
       self.spot = spot if response.ok?
       @collection_view.reloadData if @collection_view
+      add_right_nav_button "Find It", self, :on_find_it unless self.spot.unlocked
     end
   end
 
@@ -99,7 +98,7 @@ class SpotVC < UIViewController
     when ANSWER_CELL_SECTION
       self.spot.answers ? self.spot.answers.count : 0
     when SOCIAL_CELL_SECTION
-      self.spot.unlocked ? 0 : 1
+      self.spot.unlocked.nil? || self.spot.unlocked ? 0 : 1
     else
       0
     end
@@ -136,7 +135,7 @@ class SpotVC < UIViewController
       cell
     when ANSWER_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(ANSWER_CELL_IDENTIFIER, forIndexPath:indexPath)
-      cell.answer = @spot.answers.first if @spot.answers
+      cell.answer = @spot.answers[indexPath.item]
       cell
     when SOCIAL_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(SOCIAL_CELL_IDENTIFIER, forIndexPath:indexPath)
@@ -150,6 +149,15 @@ class SpotVC < UIViewController
     end
   end
 
+  def collectionView(collectionView, didSelectItemAtIndexPath:indexPath)
+    case indexPath.section
+    when ANSWER_CELL_SECTION
+      profile_vc = ProfileVC.new @spot.answers[indexPath.item].user
+      self.navigationController.pushViewController(profile_vc, animated:true)
+    else
+    end
+  end
+
   def mapView(mapView, viewForAnnotation:annotation)
     return nil unless annotation.isKindOfClass(Spot)
     cached = mapView.dequeueReusableAnnotationViewWithIdentifier(SPOT_ANNOTATION_IDENTIFIER)
@@ -157,11 +165,6 @@ class SpotVC < UIViewController
     annotation.canShowCallout = false
     annotation.setSelected(true, animated:false)
     annotation
-  end
-
-  def mapView(mapView, didUpdateUserLocation:userLocation)
-    return unless userLocation.location
-    @collection_view.reloadData if @collection_view
   end
 
   def mapView(mapView, didUpdateUserLocation:userLocation)
