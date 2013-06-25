@@ -8,6 +8,9 @@ class User < Model
                  :avatar_url_thumb => :string,
                  :avatar_url_full => :string
 
+  set_relationships :answers => :Answer,
+                    :spots => :Spot
+
   def is_current?
     self == User.current
   end
