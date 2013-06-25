@@ -63,7 +63,7 @@ class MapVC < UIViewController
 
   def center_on_user
     return unless @map_view.userLocation.location
-    region = MKCoordinateRegionMakeWithDistance(@map_view.userLocation.location.coordinate, 500, 500)
+    region = MKCoordinateRegionMakeWithDistance(@map_view.userLocation.location.coordinate, 1500, 1500)
     @map_view.setRegion(region, animated:true)
   end
 
