@@ -1,5 +1,5 @@
 class MapVC < UIViewController
-  include NavigationHelpers
+  include ViewControllerHelpers
 
   stylesheet :map_vc
 

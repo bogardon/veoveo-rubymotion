@@ -1,5 +1,5 @@
 class FeedVC < UIViewController
-  include NavigationHelpers
+  include ViewControllerHelpers
   stylesheet :feed_vc
 
   ANSWER_FEED_CELL_IDENTIFIER = "ANSWER_FEED_CELL_IDENTIFIER"

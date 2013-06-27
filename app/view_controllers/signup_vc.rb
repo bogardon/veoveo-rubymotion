@@ -1,5 +1,5 @@
 class SignUpVC < UIViewController
-  include NavigationHelpers
+  include ViewControllerHelpers
   stylesheet :signup_screen
   layout do
     subview(UIImageView, :background)
@@ -57,10 +57,13 @@ class SignUpVC < UIViewController
 
   def onNext
     return unless formValid
-    SVProgressHUD.show
+    @username_field.resignFirstResponder
+    @password_field.resignFirstResponder
+    @email_field.resignFirstResponder
+    self.show_hud
     # call backend and create user i guess?
     User.sign_up username: @username_field.text, password: @password_field.text, email: @email_field.text do |success|
-      SVProgressHUD.dismiss
+      self.hide_hud success
       dismissViewControllerAnimated(true, completion:nil) if success
     end
 

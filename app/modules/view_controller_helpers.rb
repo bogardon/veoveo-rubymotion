@@ -1,4 +1,4 @@
-module NavigationHelpers
+module ViewControllerHelpers
   def add_logo_to_nav_bar
     self.navigationItem.titleView = UIImageView.alloc.initWithImage "logo.png".uiimage;
   end
@@ -25,5 +25,19 @@ module NavigationHelpers
 
   def get_nav_button(title, target, selector)
     UIBarButtonItem.alloc.initWithTitle(title, style:UIBarButtonItemStyleBordered, target:target, action:selector)
+  end
+
+  def show_hud
+    hud = MBProgressHUD.HUDForView self.view || MBProgressHUD.showHUDAddedTo(self.view, animated:true)
+    hud.mode = MBProgressHUDModeIndeterminate
+    hud.labelText = nil
+    hud.show(true)
+  end
+
+  def hide_hud(success=true)
+    hud = MBProgressHUD.HUDForView self.view
+    hud.mode = MBProgressHUDModeText
+    hud.labelText = "Failed." unless success
+    hud.hide(true, afterDelay:success ? 0 : 1)
   end
 end

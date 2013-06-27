@@ -1,5 +1,5 @@
 class ProfileVC < UIViewController
-  include NavigationHelpers
+  include ViewControllerHelpers
   stylesheet :profile_vc
 
   attr_accessor :user
@@ -62,9 +62,9 @@ class ProfileVC < UIViewController
     source.picture(media_types: [:image], allows_editing: true) do |result|
       unless result[:error]
         photo = result[:edited_image]
-        SVProgressHUD.show
+        self.show_hud
         User.upload_avatar photo do |response, user|
-          SVProgressHUD.dismiss
+          self.hide_hud response.ok?
           @collection_view.reloadData
         end
       end

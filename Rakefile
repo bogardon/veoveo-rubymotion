@@ -19,8 +19,7 @@ Motion::Project::App.setup do |app|
 
   app.pods do
     pod 'Facebook-iOS-SDK'
-    pod 'PonyDebugger'
-    pod 'SVProgressHUD'
+    pod 'MBProgressHUD'
   end
 
   # icons

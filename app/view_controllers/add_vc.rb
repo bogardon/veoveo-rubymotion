@@ -1,5 +1,5 @@
 class AddVC < UIViewController
-  include NavigationHelpers
+  include ViewControllerHelpers
   stylesheet :add_vc
 
   attr_accessor :location
@@ -35,9 +35,9 @@ class AddVC < UIViewController
 
   def on_add
     return unless @photo && @form && @form.text && @form.text.length > 0
-    SVProgressHUD.show
+    self.show_hud
     Spot.add_new(@form.text, @location, @photo) do |response, json|
-      SVProgressHUD.dismiss
+      self.hide_hud response.ok?
       if response.ok?
         @completion.call(Spot.merge_or_insert(json))
         @completion = nil

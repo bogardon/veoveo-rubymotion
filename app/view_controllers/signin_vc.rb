@@ -1,5 +1,5 @@
 class SignInVC < UIViewController
-  include NavigationHelpers
+  include ViewControllerHelpers
   stylesheet :signin_screen
   layout do
     subview(UIImageView, :background)
@@ -38,9 +38,11 @@ class SignInVC < UIViewController
 
   def on_sign_in
     return unless form_valid?
-    SVProgressHUD.show
+    @username_field.resignFirstResponder
+    @password_field.resignFirstResponder
+    self.show_hud
     User.sign_in username: @username_field.text, password: @password_field.text do |success|
-      SVProgressHUD.dismiss
+      self.hide_hud success
       dismissViewControllerAnimated(true, completion:nil) if success
     end
   end

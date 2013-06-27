@@ -1,5 +1,5 @@
 class SpotVC < UIViewController
-  include NavigationHelpers
+  include ViewControllerHelpers
 
   MAP_CELL_IDENTIFIER = "MAP_CELL_IDENTIFIER"
   SPOT_ANNOTATION_IDENTIFIER = "SPOT_ANNOTATION_IDENTIFIER"
@@ -44,9 +44,9 @@ class SpotVC < UIViewController
       unless result[:error]
         edited_image = result[:edited_image]
         # upload this thing.
-        SVProgressHUD.show
+        self.show_hud
         Answer.submit(self.spot, edited_image) do |response, json|
-          SVProgressHUD.dismiss
+          self.hide_hud response.ok?
           if response.ok?
             answer = Answer.merge_or_insert(json)
             self.spot.answers << answer
