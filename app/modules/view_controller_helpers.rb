@@ -28,7 +28,7 @@ module ViewControllerHelpers
   end
 
   def show_hud
-    hud = MBProgressHUD.HUDForView self.view || MBProgressHUD.showHUDAddedTo(self.view, animated:true)
+    hud = MBProgressHUD.HUDForView(self.view) || MBProgressHUD.showHUDAddedTo(self.view, animated:true)
     hud.mode = MBProgressHUDModeIndeterminate
     hud.labelText = nil
     hud.show(true)
