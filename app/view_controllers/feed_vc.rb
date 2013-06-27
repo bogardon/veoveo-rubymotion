@@ -39,17 +39,21 @@ class FeedVC < UIViewController
   def viewDidLoad
     super
     add_logo_to_nav_bar
+
+    @refresh = UIRefreshControl.alloc.init
+    @refresh.when UIControlEventValueChanged do
+      reload
+    end
+    @collection_view.addSubview(@refresh)
   end
 
   def reload
     return unless User.current
-    options = {:format => :json}
     @query.connection.cancel if @query
-    @query = VeoVeoAPI.get 'answers', options do |response, json|
-      @answers = json.map do |data|
-        Answer.merge_or_insert data
-      end
+    @query = Answer.get_feed do |response, answers|
+      @answers = answers
       @collection_view.reloadData if @collection_view
+      @refresh.endRefreshing if @refresh
     end
   end
 

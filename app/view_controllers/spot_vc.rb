@@ -41,6 +41,11 @@ class SpotVC < UIViewController
   def viewDidLoad
     super
     add_logo_to_nav_bar
+    @refresh = UIRefreshControl.alloc.init
+    @refresh.when UIControlEventValueChanged do
+      reload
+    end
+    @collection_view.addSubview(@refresh)
   end
 
   def on_find_it
@@ -76,6 +81,7 @@ class SpotVC < UIViewController
     @query = Spot.for self.spot.id do |response, spot|
       self.spot = spot if response.ok?
       @collection_view.reloadData if @collection_view
+      @refresh.endRefreshing if @refresh
       add_right_nav_button "Find It", self, :on_find_it unless self.spot.unlocked
     end
   end

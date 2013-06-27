@@ -39,6 +39,11 @@ class ProfileVC < UIViewController
   def viewDidLoad
     super
     add_logo_to_nav_bar
+    @refresh = UIRefreshControl.alloc.init
+    @refresh.when UIControlEventValueChanged do
+      reload
+    end
+    @collection_view.addSubview(@refresh)
   end
 
   def user=(user)
@@ -51,6 +56,7 @@ class ProfileVC < UIViewController
     User.get_id self.user.id do |response, user|
       self.user = user
       @collection_view.reloadData if @collection_view
+      @refresh.endRefreshing if @refresh
     end
   end
 

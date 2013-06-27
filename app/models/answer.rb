@@ -26,6 +26,16 @@ class Answer < Model
     end
   end
 
+  def self.get_feed(&block)
+    options = {:format => :json}
+    VeoVeoAPI.get 'answers', options do |response, json|
+      answers = json.map do |data|
+        Answer.merge_or_insert data
+      end
+      block.call(response, answers) if block
+    end
+  end
+
   def humanized_date
     formatter = Time.cached_date_formatter("MMMM dd, YYYY")
     date_str = formatter.stringFromDate(self.created_at)
