@@ -24,11 +24,9 @@ module VeoVeoAPI
 
     def perform(method, path, options={}, &block)
       url = "#{protocol}://#{host}/#{path}"
-      p url
       options[:headers] ||= default_headers
       BW::HTTP.send(method, url, options) do |response|
         json = BW::JSON.parse(response.body.to_s) if response.body
-        p json
         block.call(response, json) if block
       end
     end
