@@ -1,6 +1,6 @@
 class Answer < Model
-  set_attributes :image_url_small => :string,
-                 :image_url_large => :string,
+  set_attributes :image_url_small => :url,
+                 :image_url_large => :url,
                  :created_at => :date
 
   set_relationships :spot => :Spot,

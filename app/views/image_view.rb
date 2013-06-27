@@ -5,6 +5,7 @@ class ImageView < UIImageView
   end
 
   def set_image_from_url(url)
+    return unless url.scheme
     @query.connection.cancel if @query
 
     @query = BW::HTTP.get url.to_s do |response|

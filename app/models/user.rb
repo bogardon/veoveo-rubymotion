@@ -5,8 +5,8 @@ class User < Model
   set_attributes :username => :string,
                  :email => :string,
                  :api_token => :string,
-                 :avatar_url_thumb => :string,
-                 :avatar_url_full => :string
+                 :avatar_url_thumb => :url,
+                 :avatar_url_full => :url
 
   set_relationships :answers => :Answer,
                     :spots => :Spot
