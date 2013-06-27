@@ -1,6 +1,7 @@
 class ProfileCell < UICollectionViewCell
 
   attr_accessor :user
+  attr_accessor :image_button
 
   def initWithFrame(frame)
     super
@@ -9,6 +10,9 @@ class ProfileCell < UICollectionViewCell
 
     @user_image_view = ImageView.alloc.initWithFrame [[5,5], [80, 80]]
     self.contentView.addSubview(@user_image_view)
+
+    @image_button = UIButton.alloc.initWithFrame @user_image_view.frame
+    self.contentView.addSubview(@image_button)
 
     vertical = UIView.alloc.initWithFrame [[90,0],[1, self.contentView.frame.size.height]]
     vertical.backgroundColor = [160,160,160].uicolor

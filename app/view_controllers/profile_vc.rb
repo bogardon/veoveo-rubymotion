@@ -57,6 +57,20 @@ class ProfileVC < UIViewController
     User.current = nil
   end
 
+  def on_take_photo
+    source = BW::Device.camera.rear || BW::Device.camera.any
+    source.picture(media_types: [:image], allows_editing: true) do |result|
+      unless result[:error]
+        photo = result[:edited_image]
+        SVProgressHUD.show
+        User.upload_avatar photo do |response, user|
+          SVProgressHUD.dismiss
+          @collection_view.reloadData
+        end
+      end
+    end if source
+  end
+
   def numberOfSectionsInCollectionView(collectionView)
     2
   end
@@ -92,6 +106,9 @@ class ProfileVC < UIViewController
     case indexPath.section
     when PROFILE_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(PROFILE_IDENTIFIER, forIndexPath:indexPath)
+      cell.image_button.when UIControlEventTouchUpInside do
+        on_take_photo
+      end if self.user.is_current?
       cell.user = self.user
       cell
     when FEED_SECTION
