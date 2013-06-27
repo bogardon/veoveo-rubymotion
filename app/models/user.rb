@@ -85,6 +85,20 @@ class User < Model
       end
     end
 
+    def upload_avatar(image, &block)
+      options = {
+        format: :form_data,
+        files: {
+          avatar: UIImagePNGRepresentation(image)
+        }
+      }
+
+      VeoVeoAPI.post "users/avatar", options do |response, json|
+
+        block.call(response, User.merge_or_insert(json)) if block
+      end
+    end
+
   end # class << self
 
 end
