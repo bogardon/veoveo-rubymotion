@@ -32,7 +32,7 @@ class Model
         # setter
         define_method("#{name}=") do |value|
           transformer = self.class.value_transformers[type]
-          new_value = transformer.call(value) if transformer && value
+          new_value = transformer.call(value) if transformer
           self.willChangeValueForKey name
           self.instance_variable_set("@#{name}", new_value)
           self.didChangeValueForKey name
@@ -133,12 +133,12 @@ class Model
   def initialize(json)
     self.class.get_relationships.each do |name, type|
       json_value = json[name.to_s]
-      self.send("#{name}=", json_value) if json_value
+      self.send("#{name}=", json_value) unless json_value.nil?
     end
 
     self.class.get_attributes.each do |name, type|
       json_value = json[name.to_s]
-      self.send("#{name}=", json_value) if json_value
+      self.send("#{name}=", json_value) unless json_value.nil?
     end
   end
 
@@ -146,12 +146,12 @@ class Model
     return false unless self.is_a?(model.class)
     self.class.get_relationships.each do |name, type|
       model_value = model.send("#{name}")
-      self.send("#{name}=", model_value) if model_value
+      self.send("#{name}=", model_value) unless model_value.nil?
     end
 
     self.class.get_attributes.each do |name, type|
       model_value = model.send("#{name}")
-      self.send("#{name}=", model_value) if model_value
+      self.send("#{name}=", model_value) unless model_value.nil?
     end
   end
 
