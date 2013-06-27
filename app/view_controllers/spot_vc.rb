@@ -96,9 +96,9 @@ class SpotVC < UIViewController
     when MAP_CELL_SECTION
       1
     when ANSWER_CELL_SECTION
-      self.spot.answers ? self.spot.answers.count : 0
+      self.spot.answers && self.spot.unlocked ? self.spot.answers.count : 0
     when SOCIAL_CELL_SECTION
-      self.spot.unlocked.nil? || self.spot.unlocked ? 0 : 1
+      self.spot.unlocked ? 0 : 1
     else
       0
     end
@@ -139,6 +139,10 @@ class SpotVC < UIViewController
       cell
     when SOCIAL_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(SOCIAL_CELL_IDENTIFIER, forIndexPath:indexPath)
+      cell.image_button.when UIControlEventTouchUpInside do
+        profile_vc = ProfileVC.new @spot.user
+        self.navigationController.pushViewController(profile_vc, animated:true)
+      end
       cell.user_image_view.set_image_from_url @spot.user.avatar_url_thumb if @spot.user
       formatter = Time.cached_date_formatter("MMMM dd, YYYY")
       date_str = formatter.stringFromDate(@spot.created_at)

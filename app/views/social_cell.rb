@@ -1,6 +1,7 @@
 class SocialCell < UICollectionViewCell
 
   attr_accessor :user_image_view
+  attr_accessor :image_button
   attr_accessor :label
 
   def initWithFrame(frame)
@@ -10,6 +11,9 @@ class SocialCell < UICollectionViewCell
 
         @user_image_view = UserImageView.alloc.initWithFrame([[7,6],[35,35]])
         self.contentView.addSubview(@user_image_view)
+
+        @image_button = UIButton.alloc.initWithFrame @user_image_view.frame
+        self.contentView.addSubview(@image_button)
 
         @label = UILabel.alloc.initWithFrame([[CGRectGetMaxX(@user_image_view.frame)+5,6],[self.contentView.frame.size.width - 35 - 5 - 5 - 5, self.contentView.frame.size.height - 12]])
         @label.backgroundColor = UIColor.clearColor
