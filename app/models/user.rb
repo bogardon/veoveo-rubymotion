@@ -34,7 +34,7 @@ class User < Model
       attributes_to_persist = {}
       self.get_attributes.each do |name, type|
         user_value = @current.send("#{name}")
-        attributes_to_persist[name.to_s] = user_value if user_value
+        attributes_to_persist[name.to_s] = user_value.to_s if user_value
       end
       App::Persistence['current_user'] = attributes_to_persist
     end
