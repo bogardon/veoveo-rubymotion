@@ -24,8 +24,10 @@ class MapVC < UIViewController
   end
 
   def dealloc
+    @query.connection.cancel if @query
     App.notification_center.unobserve @foreground_observer
     App.notification_center.unobserve @login_observer
+    super
   end
 
   def viewDidLoad

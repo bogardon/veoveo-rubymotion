@@ -30,8 +30,10 @@ class FeedVC < UIViewController
   end
 
   def dealloc
+    @query.connection.cancel if @query
     App.notification_center.unobserve @login_observer
     App.notofication_center.unobserve @foreground_observer
+    super
   end
 
   def viewDidLoad
@@ -40,9 +42,10 @@ class FeedVC < UIViewController
   end
 
   def reload
-
+    return unless User.current
     options = {:format => :json}
-    VeoVeoAPI.get 'answers', options do |response, json|
+    @query.connection.cancel if @query
+    @query = VeoVeoAPI.get 'answers', options do |response, json|
       @answers = json.map do |data|
         Answer.merge_or_insert data
       end

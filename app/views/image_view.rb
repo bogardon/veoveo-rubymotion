@@ -1,5 +1,10 @@
 class ImageView < UIImageView
 
+  def dealloc
+    @query.connection.cancel if @query
+    super
+  end
+
   def self.process_image(image)
     image
   end

@@ -33,6 +33,7 @@ class ProfileVC < UIViewController
 
   def dealloc
     App.notification_center.unobserve @login_observer
+    super
   end
 
   def viewDidLoad

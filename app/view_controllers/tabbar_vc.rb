@@ -35,6 +35,7 @@ class TabBarVC < UITabBarController
   def dealloc
     App.notification_center.unobserve @login_observer
     App.notification_center.unobserve @logout_observer
+    super
   end
 
   def viewDidLoad

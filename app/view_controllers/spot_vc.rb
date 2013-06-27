@@ -33,6 +33,11 @@ class SpotVC < UIViewController
     self
   end
 
+  def dealloc
+    @query.connection.cancel if @query
+    super
+  end
+
   def viewDidLoad
     super
     add_logo_to_nav_bar
@@ -67,7 +72,8 @@ class SpotVC < UIViewController
   end
 
   def reload
-    Spot.for self.spot.id do |response, spot|
+    @query.connection.cancel if @query
+    @query = Spot.for self.spot.id do |response, spot|
       self.spot = spot if response.ok?
       @collection_view.reloadData if @collection_view
       add_right_nav_button "Find It", self, :on_find_it unless self.spot.unlocked
