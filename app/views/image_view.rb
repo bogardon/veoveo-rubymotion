@@ -5,11 +5,13 @@ class ImageView < UIImageView
     super
   end
 
-  def self.process_image(image)
-    image
+  def set_image_from_url(url)
+    set_processed_image_from_url url do |image|
+      image
+    end
   end
 
-  def set_image_from_url(url)
+  def set_processed_image_from_url(url, &block)
     return unless url.scheme
     @query.connection.cancel if @query
 
@@ -21,7 +23,7 @@ class ImageView < UIImageView
         bg_queue.async do
           image_from_data = UIImage.imageWithData(@response.body)
           image_logical = UIImage.imageWithCGImage(image_from_data.CGImage, scale:UIScreen.mainScreen.scale, orientation:image_from_data.imageOrientation)
-          @processed_image = self.class.process_image image_logical
+          @processed_image = block.call(image_logical) if block
           main_queue = Dispatch::Queue.main
           main_queue.async do
             self.image = @processed_image
