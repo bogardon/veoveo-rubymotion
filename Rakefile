@@ -20,6 +20,7 @@ Motion::Project::App.setup do |app|
   app.pods do
     pod 'Facebook-iOS-SDK'
     pod 'MBProgressHUD'
+    pod 'GGFullscreenImageViewController'
   end
 
   # icons

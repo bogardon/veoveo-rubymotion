@@ -147,6 +147,13 @@ class SpotVC < UIViewController
       cell
     when ANSWER_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(ANSWER_CELL_IDENTIFIER, forIndexPath:indexPath)
+
+      cell.image_button.when UIControlEventTouchUpInside do
+        vc = GGFullscreenImageViewController.alloc.init
+        vc.liftedImageView = cell.answer_image_view
+        self.presentViewController(vc, animated:true, completion:nil)
+      end
+
       cell.answer = @spot.answers[indexPath.item]
       cell
     when SOCIAL_CELL_SECTION

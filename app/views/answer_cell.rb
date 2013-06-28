@@ -1,12 +1,18 @@
 class AnswerCell < UICollectionViewCell
   attr_accessor :answer
+  attr_accessor :image_button
+  attr_accessor :answer_image_view
 
   def initWithFrame(frame)
     super
     self.backgroundView = UIImageView.alloc.initWithImage("full_row.png".uiimage.stretchable([22,22,22,22]))
 
     @answer_image_view = AnswerImageView.alloc.initWithFrame([[1,1], [self.contentView.frame.size.width - 2, 148]])
+    @answer_image_view.contentMode = UIViewContentModeScaleAspectFit
     self.contentView.addSubview(@answer_image_view)
+
+    @image_button = UIButton.alloc.initWithFrame @answer_image_view.frame
+    self.contentView.addSubview @image_button
 
     horizontal = UIView.alloc.initWithFrame([[0, CGRectGetMaxY(@answer_image_view.frame)], [self.contentView.frame.size.width, 1]])
     horizontal.backgroundColor = [160,160,160].uicolor
