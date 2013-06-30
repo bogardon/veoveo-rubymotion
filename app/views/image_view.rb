@@ -23,7 +23,7 @@ class ImageView < UIImageView
         bg_queue.async do
           image_from_data = UIImage.imageWithData(@response.body)
           image_logical = UIImage.imageWithCGImage(image_from_data.CGImage, scale:UIScreen.mainScreen.scale, orientation:image_from_data.imageOrientation)
-          @processed_image = block.call(image_logical) if block
+          @processed_image = block ? block.call(image_logical) : image_logical
           main_queue = Dispatch::Queue.main
           main_queue.async do
             self.image = @processed_image

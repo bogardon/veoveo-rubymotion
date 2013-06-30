@@ -6,7 +6,8 @@ class SpotAnnotationView < MKAnnotationView
     self.centerOffset = [0, -18]
     self.canShowCallout = true
     self.rightCalloutAccessoryView = UIButton.buttonWithType(UIButtonTypeDetailDisclosure)
-    update_image
+
+    self.leftCalloutAccessoryView = UserImageView.alloc.initWithFrame [[0,0], [32,32]]
 
     spot = self.annotation
 
@@ -27,6 +28,8 @@ class SpotAnnotationView < MKAnnotationView
     state = spot.unlocked ? "found_pin" : "unfound_pin"
     selected = self.isSelected ? "_selected.png" : ".png"
     self.image = (state+selected).uiimage
+
+    self.leftCalloutAccessoryView.set_image_from_url spot.user.avatar_url_thumb
   end
 
 end

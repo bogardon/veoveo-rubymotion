@@ -79,8 +79,9 @@ class MapVC < UIViewController
 
   def mapView(mapView, viewForAnnotation:annotation)
     return nil unless annotation.isKindOfClass(Spot)
-    annotation = mapView.dequeueReusableAnnotationViewWithIdentifier(SPOT_ANNOTATION_IDENTIFIER) || SpotAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier:SPOT_ANNOTATION_IDENTIFIER)
-    annotation
+    annotation_view = mapView.dequeueReusableAnnotationViewWithIdentifier(SPOT_ANNOTATION_IDENTIFIER) || SpotAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier:SPOT_ANNOTATION_IDENTIFIER)
+    annotation_view.update_image
+    annotation_view
   end
 
   def mapView(mapView, annotationView:view, calloutAccessoryControlTapped:control)
