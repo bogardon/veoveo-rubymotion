@@ -63,7 +63,11 @@ class TabBarVC < UITabBarController
   def show_landing(animated)
     landing = LandingVC.alloc.init
     nav = UINavigationController.alloc.initWithRootViewController(landing)
-    self.presentViewController(nav, animated:animated, completion:nil)
+    self.presentViewController(nav, animated:animated, completion:lambda do
+      self.viewControllers.each do |nav|
+        nav.popToRootViewControllerAnimated(false)
+      end
+    end)
   end
 
 end
