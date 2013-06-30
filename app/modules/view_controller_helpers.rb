@@ -37,7 +37,7 @@ module ViewControllerHelpers
   def hide_hud(success=true)
     hud = MBProgressHUD.HUDForView self.view
     hud.mode = MBProgressHUDModeText
-    hud.labelText = "Failed." unless success
-    hud.hide(true, afterDelay:success ? 0 : 1)
+    hud.labelText = success ? "Success!" : "Failed."
+    hud.hide(true, afterDelay:1)
   end
 end
