@@ -79,6 +79,12 @@ class ProfileVC < UIViewController
     end
   end
 
+  def on_following
+    return unless self.user
+    vc = FollowingVC.new self.user
+    self.navigationController.pushViewController(vc, animated:true)
+  end
+
   def on_logout
     User.current = nil
   end
@@ -135,6 +141,9 @@ class ProfileVC < UIViewController
       cell.image_button.when UIControlEventTouchUpInside do
         on_take_photo
       end if self.user.is_current?
+      cell.following_button.when UIControlEventTouchUpInside do
+        on_following
+      end
       cell.user = self.user
       cell
     when FEED_SECTION

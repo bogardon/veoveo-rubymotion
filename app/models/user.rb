@@ -27,6 +27,16 @@ class User < Model
     end
   end
 
+  def get_following(&block)
+    options = {format: :json}
+    VeoVeoAPI.get "users/#{self.id}/following", options do |response, json|
+      users = json.map do |j|
+        User.merge_or_insert j
+      end
+      block.call(response, users) if block
+    end
+  end
+
   class << self
 
     attr_accessor :current

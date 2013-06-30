@@ -2,6 +2,7 @@ class ProfileCell < UICollectionViewCell
 
   attr_accessor :user
   attr_accessor :image_button
+  attr_accessor :following_button
 
   def initWithFrame(frame)
     super
@@ -26,6 +27,15 @@ class ProfileCell < UICollectionViewCell
     @username_label.font = UIFont.boldSystemFontOfSize 16
     @username_label.backgroundColor = UIColor.clearColor
     self.contentView.addSubview(@username_label)
+
+    @following_button = UIButton.alloc.initWithFrame([[CGRectGetMaxX(vertical.frame) + 20, CGRectGetMaxY(horizontal.frame)], [self.contentView.frame.size.width - 100, (self.contentView.frame.size.height/2).floor]])
+    @following_button.setTitle("Following", forState:UIControlStateNormal)
+    @following_button.titleLabel.font = UIFont.boldSystemFontOfSize 16
+    @following_button.setTitleColor(@username_label.textColor, forState:UIControlStateNormal)
+    @following_button.setImage("arrow.png".uiimage, forState:UIControlStateNormal)
+    @following_button.setTitleEdgeInsets([0,-100,0,45])
+    @following_button.setImageEdgeInsets([0,110,0,-100])
+    self.contentView.addSubview(@following_button)
 
     self
   end
