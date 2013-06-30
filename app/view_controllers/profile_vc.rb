@@ -48,7 +48,18 @@ class ProfileVC < UIViewController
 
   def user=(user)
     @user = user
-    add_right_nav_button "Logout", self, :on_logout if self.user.is_current?
+    configure_nav_button
+  end
+
+  def configure_nav_button
+    if self.user.is_current?
+      add_right_nav_button "Logout", self, :on_logout
+    elsif self.user.following
+      add_right_nav_button "Unfollow", self, :on_relationship
+    elsif !self.user.following
+      add_right_nav_button "Follow", self, :on_relationship
+    else
+    end
   end
 
   def reload
@@ -57,6 +68,14 @@ class ProfileVC < UIViewController
       self.user = user
       @collection_view.reloadData if @collection_view
       @refresh.endRefreshing if @refresh
+    end
+  end
+
+  def on_relationship
+    show_hud
+    self.user.toggle_following do |response, json|
+      hide_hud response.ok?
+      configure_nav_button
     end
   end
 
