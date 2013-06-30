@@ -24,11 +24,15 @@ module VeoVeoAPI
 
     def perform(method, path, options={}, &block)
       url = "#{protocol}://#{host}/#{path}"
+      p "#{method} to #{url}"
       options[:headers] ||= default_headers
-      BW::HTTP.send(method, url, options) do |response|
-        json = BW::JSON.parse(response.body.to_s) if response.body
+      q = BW::HTTP.send(method, url, options) do |response|
+        body = response.body
+        json = BW::JSON.parse(body) if body && response.ok?
+        p json
         block.call(response, json) if block
       end
+      q
     end
 
     def post(path, options={}, &block)
@@ -37,6 +41,14 @@ module VeoVeoAPI
 
     def get(path, options={}, &block)
       perform('get', path, options, &block)
+    end
+
+    def patch(path, options={}, &block)
+      perform('patch', path, options, &block)
+    end
+
+    def delete(path, options={}, &block)
+      perform('delete', path, options, &block)
     end
 
   end
