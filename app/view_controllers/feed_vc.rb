@@ -24,6 +24,9 @@ class FeedVC < UIViewController
     @foreground_observer = App.notification_center.observe UIApplicationWillEnterForegroundNotification do |notification|
       reload
     end
+    @followed_observer = App.notification_center.observe CurrentUserDidUpdateFollowedUsers do |notification|
+      reload
+    end
 
     reload
     self
@@ -33,6 +36,7 @@ class FeedVC < UIViewController
     @query.connection.cancel if @query
     App.notification_center.unobserve @login_observer
     App.notofication_center.unobserve @foreground_observer
+    App.notification_center.unobserve @followed_observer
     super
   end
 
