@@ -1,18 +1,30 @@
 CurrentUserDidLoginNotification = "CurrentUserDidLoginNotification"
 CurrentUserDidLogoutNotification = "CurrentUserDidLogoutNotification"
+CurrentUserDidUpdateFollowedUsers = "CurrentUserDidUpdateFollowedUsers"
 class User < Model
 
   set_attributes :username => :string,
                  :email => :string,
                  :api_token => :string,
                  :avatar_url_thumb => :url,
-                 :avatar_url_full => :url
+                 :avatar_url_full => :url,
+                 :following => :boolean
 
   set_relationships :answers => :Answer,
                     :spots => :Spot
 
   def is_current?
     self == User.current
+  end
+
+  def toggle_following(&block)
+    options = {format: :json, payload: {}.to_s}
+    method = self.following ? "delete" : "patch"
+    VeoVeoAPI.send(method, "users/#{self.id}/follow", options) do |response, json|
+      NSNotificationCenter.defaultCenter.postNotificationName(CurrentUserDidUpdateFollowedUsers, object:nil) if response.ok?
+      self.following ^= response.ok?
+      block.call(response, json) if block
+    end
   end
 
   class << self
