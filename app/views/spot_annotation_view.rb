@@ -5,7 +5,11 @@ class SpotAnnotationView < MKAnnotationView
     super
     self.centerOffset = [0, -18]
     self.canShowCallout = true
-    self.rightCalloutAccessoryView = UIButton.buttonWithType(UIButtonTypeDetailDisclosure)
+
+    arrow = "arrow.png".uiimage
+    button = UIButton.alloc.initWithFrame [[0,0], arrow.size]
+    button.setImage(arrow, forState:UIControlStateNormal)
+    self.rightCalloutAccessoryView = button
 
     self.leftCalloutAccessoryView = UserImageView.alloc.initWithFrame [[0,0], [32,32]]
 
