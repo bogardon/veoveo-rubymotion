@@ -22,6 +22,25 @@ class SpotAnnotationView < MKAnnotationView
     self
   end
 
+  def dealloc
+    if self.annotation
+      unobserve(spot, :unlocked)
+    end
+    super
+  end
+
+  def setAnnotation(annotation)
+    if self.annotation
+      unobserve(spot, :unlocked)
+    end
+    super
+    if self.annotation
+      observe(spot, :unlocked) do |old_value, new_value|
+        update_image
+      end
+    end
+  end
+
   def setSelected(selected, animated:animated)
     super
     update_image
@@ -29,6 +48,7 @@ class SpotAnnotationView < MKAnnotationView
 
   def update_image
     spot = self.annotation
+    return unless spot
     state = spot.unlocked ? "found_pin" : "unfound_pin"
     selected = self.isSelected ? "_selected.png" : ".png"
     self.image = (state+selected).uiimage

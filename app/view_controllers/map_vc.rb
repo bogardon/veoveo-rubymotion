@@ -3,6 +3,9 @@ class MapVC < UIViewController
 
   stylesheet :map_vc
 
+  EVERYONE = 0
+  FOLLOWING = 1
+
   layout do
     @map_view = subview(MKMapView, :map_view)
     @map_view.delegate = self
@@ -18,6 +21,8 @@ class MapVC < UIViewController
       reload
     end
 
+    @filter_following = false
+
     reload
 
     self
@@ -32,12 +37,20 @@ class MapVC < UIViewController
 
   def viewDidLoad
     super
-    add_logo_to_nav_bar
     @did_auto_center = false
     center_on_user
 
     self.tabBarController.delegate = self
     add_right_nav_button "Add", self, :on_add
+
+    segmented_control = MapSegmentedControl.alloc.initWithItems(["Everyone", "Following"])
+    segmented_control.selectedSegmentIndex = @filter_following ? FOLLOWING : EVERYONE
+    segmented_control.when UIControlEventValueChanged do
+      @filter_following ^= true
+      reload
+    end
+
+    self.navigationItem.titleView = segmented_control
   end
 
   def on_add
@@ -100,8 +113,10 @@ class MapVC < UIViewController
   def reload
     return unless User.current && @map_view && @map_view.isUserLocationVisible
     @query.connection.cancel if @query
-    @query = Spot.in_region @map_view.region, false do |response, spots|
+    @query = Spot.in_region @map_view.region, @filter_following do |response, spots|
       if response.ok?
+        old_spots = @map_view.annotations.select {|a| a.is_a? (Spot)} - spots
+        @map_view.removeAnnotations old_spots
         new_spots = spots - @map_view.annotations
         @map_view.addAnnotations(new_spots)
         @map_view.annotations.map do |annotation|
