@@ -28,7 +28,6 @@ class SpotVC < UIViewController
   def initWithSpot(spot)
     init
     self.spot = spot
-    self.hidesBottomBarWhenPushed = true
     reload
     self
   end
