@@ -35,6 +35,6 @@ Teacup::Appearance.new do
     bg_image_down: 'navbutton_down.png',
     back_bg_image_up: 'backbutton.png',
     back_bg_image_down: 'backbutton_down.png',
-    title_text_attributes: {UITextAttributeFont => UIFont.boldSystemFontOfSize(14)},
+    title_text_attributes: {UITextAttributeFont => UIFont.boldSystemFontOfSize(12)},
     title_position_adjustment: [0,0]
 end
