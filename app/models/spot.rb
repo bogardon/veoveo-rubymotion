@@ -20,10 +20,11 @@ class Spot < Model
 
   class << self
 
-    def in_region(region, &block)
+    def in_region(region, following, &block)
       options = {
         format: :json,
         payload: {
+          following: following.to_s,
           region: {
             latitude: region.center.latitude,
             longitude: region.center.longitude,
