@@ -37,8 +37,7 @@ class MapVC < UIViewController
     center_on_user
 
     self.tabBarController.delegate = self
-
-    self.navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd, target:self, action: :on_add)
+    add_right_nav_button "Add", self, :on_add
   end
 
   def on_add
