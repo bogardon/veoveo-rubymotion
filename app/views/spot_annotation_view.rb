@@ -7,11 +7,14 @@ class SpotAnnotationView < MKAnnotationView
     self.canShowCallout = true
 
     arrow = "arrow.png".uiimage
-    button = UIButton.alloc.initWithFrame [[0,0], arrow.size]
-    button.setImage(arrow, forState:UIControlStateNormal)
-    self.rightCalloutAccessoryView = button
+    right = UIButton.alloc.initWithFrame [[0,0], arrow.size]
+    right.setImage(arrow, forState:UIControlStateNormal)
+    self.rightCalloutAccessoryView = right
 
-    self.leftCalloutAccessoryView = UserImageView.alloc.initWithFrame [[0,0], [32,32]]
+    left = UIButton.alloc.initWithFrame [[0,0], [32, 32]]
+    @user_image_view = UserImageView.alloc.initWithFrame [[0,0], [32,32]]
+    left.addSubview(@user_image_view)
+    self.leftCalloutAccessoryView = left
 
     spot = self.annotation
 
@@ -53,7 +56,7 @@ class SpotAnnotationView < MKAnnotationView
     selected = self.isSelected ? "_selected.png" : ".png"
     self.image = (state+selected).uiimage
 
-    self.leftCalloutAccessoryView.set_image_from_url spot.user.avatar_url_thumb
+    @user_image_view.set_image_from_url spot.user.avatar_url_thumb
   end
 
 end

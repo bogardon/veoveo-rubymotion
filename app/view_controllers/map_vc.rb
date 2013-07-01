@@ -98,8 +98,15 @@ class MapVC < UIViewController
 
   def mapView(mapView, annotationView:view, calloutAccessoryControlTapped:control)
     spot = view.annotation
-    spot_vc = SpotVC.alloc.initWithSpot spot
-    navigationController.pushViewController(spot_vc, animated:true)
+    case control
+    when view.leftCalloutAccessoryView
+      profile_vc = ProfileVC.new spot.user
+      self.navigationController.pushViewController(profile_vc, animated:true)
+    when view.rightCalloutAccessoryView
+      spot_vc = SpotVC.alloc.initWithSpot spot
+      self.navigationController.pushViewController(spot_vc, animated:true)
+    else
+    end
   end
 
   def mapView(mapView, regionWillChangeAnimated:animated)
