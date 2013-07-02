@@ -118,11 +118,13 @@ class MapVC < UIViewController
   end
 
   def reload
-    return unless User.current && @map_view && @map_view.isUserLocationVisible
+    return unless User.current && @map_view && @map_view.userLocation.location
     @query.connection.cancel if @query
     @query = Spot.in_region @map_view.region, @filter_following do |response, spots|
       if response.ok?
-        old_spots = @map_view.annotations.select {|a| a.is_a? (Spot)} - spots
+        old_spots = @map_view.annotations.select do |a|
+          a.is_a?(Spot) && !a.user.is_current? && a.user.following != @filter_following
+        end - spots
         @map_view.removeAnnotations old_spots
         new_spots = spots - @map_view.annotations
         @map_view.addAnnotations(new_spots)
