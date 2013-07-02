@@ -35,7 +35,7 @@ class AnswerCell < UICollectionViewCell
 
     @answer_image_view.set_image_from_url @answer.image_url_large
 
-    @user_image_view.set_image_from_url @answer.user.avatar_url_thumb
+    @user_image_view.set_image_from_url @answer.user.avatar_url_thumb if @answer.user
 
     @label.attributedText = (@answer.user.username.bold(11) + " found this on #{@answer.humanized_date}")
     @label.sizeToFit

@@ -56,7 +56,7 @@ class SpotAnnotationView < MKAnnotationView
     selected = self.isSelected ? "_selected.png" : ".png"
     self.image = (state+selected).uiimage
 
-    @user_image_view.set_image_from_url spot.user.avatar_url_thumb
+    @user_image_view.set_image_from_url spot.user.avatar_url_thumb if spot.user
   end
 
 end
