@@ -94,7 +94,7 @@ class SpotVC < UIViewController
     when MAP_CELL_SECTION
       [10,0,5,0]
     when ANSWER_CELL_SECTION
-      [0,7,0,7]
+      [0,7,25,7]
     when SOCIAL_CELL_SECTION
       [0,7,0,7]
     else
@@ -109,7 +109,7 @@ class SpotVC < UIViewController
     when ANSWER_CELL_SECTION
       self.spot.answers && self.spot.unlocked ? self.spot.answers.count : 0
     when SOCIAL_CELL_SECTION
-      self.spot.unlocked ? 0 : 1
+      self.spot.unlocked.nil? || self.spot.unlocked ? 0 : 1
     else
       0
     end

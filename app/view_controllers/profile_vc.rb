@@ -112,7 +112,7 @@ class ProfileVC < UIViewController
     when PROFILE_SECTION
       [10,7,10,7]
     when FEED_SECTION
-      [0,0,0,0]
+      [0,0,25,0]
     end
   end
 
