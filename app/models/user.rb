@@ -30,8 +30,10 @@ class User < Model
   def get_following(&block)
     options = {format: :json}
     VeoVeoAPI.get "users/#{self.id}/following", options do |response, json|
-      users = json.map do |j|
-        User.merge_or_insert j
+      if response.ok?
+        users = json.map do |j|
+          User.merge_or_insert j
+        end
       end
       block.call(response, users) if block
     end

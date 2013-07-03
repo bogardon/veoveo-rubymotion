@@ -29,8 +29,10 @@ class Answer < Model
   def self.get_feed(&block)
     options = {:format => :json}
     VeoVeoAPI.get 'answers', options do |response, json|
-      answers = json.map do |data|
-        Answer.merge_or_insert data
+      if response.ok?
+        answers = json.map do |data|
+          Answer.merge_or_insert data
+        end
       end
       block.call(response, answers) if block
     end
