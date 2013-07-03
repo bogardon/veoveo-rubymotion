@@ -123,7 +123,7 @@ class MapVC < UIViewController
     @query = Spot.in_region @map_view.region, @filter_following do |response, spots|
       if response.ok?
         old_spots = @map_view.annotations.select do |a|
-          a.is_a?(Spot) && !a.user.is_current? && a.user.following != @filter_following
+          a.is_a?(Spot) && !a.user.is_current? && !a.user.following && @filter_following
         end - spots
         @map_view.removeAnnotations old_spots
         new_spots = spots - @map_view.annotations
