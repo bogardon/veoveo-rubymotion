@@ -104,7 +104,9 @@ class User < Model
       }
 
       VeoVeoAPI.get "users/#{user_id}", options do |response, json|
-        user = User.merge_or_insert json
+        if response.ok?
+          user = User.merge_or_insert json
+        end
         block.call(response, user) if block
       end
     end

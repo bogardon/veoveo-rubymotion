@@ -52,6 +52,7 @@ class ProfileVC < UIViewController
   end
 
   def configure_nav_button
+    return unless self.user
     if self.user.is_current?
       add_right_nav_button "Logout", self, :on_logout
     elsif self.user.following
@@ -121,7 +122,7 @@ class ProfileVC < UIViewController
     when PROFILE_SECTION
       1
     when FEED_SECTION
-      self.user.answers ? self.user.answers.count : 0
+      self.user && self.user.answers ? self.user.answers.count : 0
     end
   end
 
