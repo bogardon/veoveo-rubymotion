@@ -5,6 +5,7 @@ class AppDelegate
     setup_http_cache
     setup_main_screen
     fade_launch_image
+    setup_testflight
     true
   end
 
@@ -18,6 +19,12 @@ class AppDelegate
 
   def applicationWillTerminate(application)
     FBSession.activeSession.close
+  end
+
+  def setup_testflight
+    config = NSBundle.mainBundle.objectForInfoDictionaryKey('config', Hash)
+    testflight_token = config['testflight']['appToken']
+    TestFlight.takeOff(testflight_token) if testflight_token.length > 0
   end
 
   def setup_http_cache
