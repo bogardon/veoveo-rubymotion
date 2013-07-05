@@ -1,6 +1,6 @@
 Teacup::Stylesheet.new :landing_screen do
   style :background,
-    image: "splash.png".uiimage,
+    image: (Device.screen.height == 568 ? "Default-568h.png".uiimage : "Default.png".uiimage),
     frame: [[0,-20],["100%", "100% + 20"]]
 
   style :sign_up,

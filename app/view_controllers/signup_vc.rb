@@ -3,7 +3,7 @@ class SignUpVC < UIViewController
   stylesheet :signup_screen
   layout do
     subview(UIImageView, :background)
-    subview(UIScrollView, :scrollview) do
+    scroll_view = subview(UIScrollView, :scrollview) do
       subview(UIImageView, :signup_form_container) do
         subview(UILabel, :prompt, text: "1. Pick a Username & Password")
         @username_field = subview(FormTextField, :username, y: 55, delegate: self)
@@ -26,7 +26,8 @@ class SignUpVC < UIViewController
       @button.when(UIControlEventTouchUpInside) do
         onNext
       end
-    end.alwaysBounceVertical = true
+    end
+    scroll_view.alwaysBounceVertical = true
   end
 
   def viewDidLoad

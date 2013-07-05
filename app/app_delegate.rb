@@ -47,7 +47,8 @@ class AppDelegate
   end
 
   def fade_launch_image
-    @launchImage = UIImageView.alloc.initWithImage "Default-568h.png".uiimage
+    image_name = Device.screen.height == 568 ? "Default-568h.png" : "Default.png"
+    @launchImage = UIImageView.alloc.initWithImage image_name.uiimage
     @window.addSubview @launchImage
     UIView.animateWithDuration(0.5, delay:0.5, options:UIViewAnimationOptionCurveEaseInOut, animations:
     lambda do
