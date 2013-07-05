@@ -7,8 +7,13 @@ Bundler.require
 
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
-  app.name = 'VeoVeo'
-  app.identifier = 'com.tfm.veoveo'
+
+  config = YAML.load_file("config/#{app.build_mode}.yml")
+
+  app.name = config['app']['name']
+  app.identifier = config['app']['identifier']
+  app.provisioning_profile = config['app']['provisioning_profile']
+
   app.interface_orientations = [:portrait]
   app.deployment_target = '6.0'
 
@@ -33,16 +38,13 @@ Motion::Project::App.setup do |app|
 
   # we require location services n stuff
   app.info_plist['UIRequiredDeviceCapabilities'] = ['location-services', 'gps']
-
-  # need to figure out how to switch config
-  config = YAML.load_file("config/development.yml")
-  app.info_plist['AppConfig'] = config
+  app.info_plist['config'] = config
 
   # facebook and url schemes
-  config = app.info_plist['AppConfig']
   facebook_app_id = config['facebook']['appId']
   app.info_plist['FacebookAppID'] = facebook_app_id
   app.info_plist['CFBundleURLTypes'] = [{
+    'CFBundleURLName' => app.identifier,
     'CFBundleURLSchemes' => ["fb#{facebook_app_id}", "veoveo"]
   }]
 

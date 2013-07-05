@@ -5,7 +5,7 @@ module VeoVeoAPI
     PASSWORD = "lolumad"
 
     def protocol
-      config = NSBundle.mainBundle.objectForInfoDictionaryKey('AppConfig', Hash)
+      config = NSBundle.mainBundle.objectForInfoDictionaryKey('config', Hash)
       config["api"]["protocol"]
     end
 
@@ -18,7 +18,7 @@ module VeoVeoAPI
     end
 
     def host
-      config = NSBundle.mainBundle.objectForInfoDictionaryKey('AppConfig', Hash)
+      config = NSBundle.mainBundle.objectForInfoDictionaryKey('config', Hash)
       config["api"]["host"]
     end
 
