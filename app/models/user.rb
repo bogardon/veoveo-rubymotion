@@ -43,10 +43,27 @@ class User < Model
 
     attr_accessor :current
 
+    def patch_device_token(device_token)
+      payload = BW::JSON.generate({device_token: device_token})
+      options = {format: :json, payload: payload}
+      VeoVeoAPI.patch 'users/device_token', options do |response, json|
+      end
+    end
+
+    def register_push
+      return unless User.current
+      UIApplication.sharedApplication.registerForRemoteNotificationTypes(
+        UIRemoteNotificationTypeAlert |
+        UIRemoteNotificationTypeBadge |
+        UIRemoteNotificationTypeSound
+      )
+    end
+
     def current=(current)
       @current = current
       if @current
         persist_user
+        register_push
         NSNotificationCenter.defaultCenter.postNotificationName(CurrentUserDidLoginNotification, object:nil)
       else
         delete_user

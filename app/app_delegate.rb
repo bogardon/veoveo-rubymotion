@@ -9,11 +9,21 @@ class AppDelegate
     true
   end
 
+  def application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+    device_token = deviceToken.description.gsub(" ", "").gsub("<", "").gsub(">", "")
+    User.patch_device_token device_token
+  end
+
+  def application(application, didFailToRegisterForRemoteNotificationsWithError:error)
+
+  end
+
   def application(application, openURL:url, sourceApplication:sourceApplication, annotation:annotation)
     FBSession.activeSession.handleOpenURL url
   end
 
   def applicationDidBecomeActive(application)
+    User.register_push
     FBSession.activeSession.handleDidBecomeActive
   end
 
