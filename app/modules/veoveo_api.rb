@@ -24,12 +24,12 @@ module VeoVeoAPI
 
     def perform(method, path, options={}, &block)
       url = "#{protocol}://#{host}/#{path}"
-      p "#{method} to #{url}"
+      # p "#{method} to #{url}"
       options[:headers] ||= default_headers
       q = BW::HTTP.send(method, url, options) do |response|
         body = response.body
         json = BW::JSON.parse(body) if body && response.ok?
-        p json
+        # p json
         block.call(response, json) if block
       end
       q
