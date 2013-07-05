@@ -8,3 +8,4 @@ config
 vendor
 .dat*
 .idea
+provisioning_profiles
