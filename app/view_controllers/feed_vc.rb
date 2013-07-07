@@ -17,24 +17,11 @@ class FeedVC < UIViewController
 
   def init
     super
-    NSNotificationCenter.defaultCenter.addObserver(self, selector: :user_did_login, name:CurrentUserDidLoginNotification, object:nil)
-    NSNotificationCenter.defaultCenter.addObserver(self, selector: :app_will_enter_foreground, name:UIApplicationWillEnterForegroundNotification, object:nil)
-    NSNotificationCenter.defaultCenter.addObserver(self, selector: :user_did_update_followed_users, name:CurrentUserDidUpdateFollowedUsers, object:nil)
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:CurrentUserDidLoginNotification, object:nil)
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:UIApplicationWillEnterForegroundNotification, object:nil)
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:CurrentUserDidUpdateFollowedUsers, object:nil)
     reload
     self
-  end
-
-  def user_did_login
-    return unless self.navigationController.viewControllers.first == self
-    reload
-  end
-
-  def user_did_update_followed_users
-    reload
-  end
-
-  def app_will_enter_foreground
-    reload
   end
 
   def dealloc
@@ -58,8 +45,10 @@ class FeedVC < UIViewController
     return unless User.current
     @query.connection.cancel if @query
     @query = Answer.get_feed do |response, answers|
-      @answers = answers
-      @collection_view.reloadData if @collection_view
+      if response.ok?
+        @answers = answers
+        @collection_view.reloadData if @collection_view
+      end
       @refresh.endRefreshing if @refresh
     end
   end
