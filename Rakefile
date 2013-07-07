@@ -9,10 +9,10 @@ Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
 
   config = YAML.load_file("config/#{app.build_mode}.yml")
-
   app.name = config['app']['name']
   app.identifier = config['app']['identifier']
   app.provisioning_profile = config['app']['provisioning_profile']
+  app.entitlements['aps-environment'] = config['app']['aps-environment']
 
   if ENV['RUBYMOTION_LIB']
     app.motiondir = '../RubyMotion'
