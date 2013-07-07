@@ -6,6 +6,7 @@ class AppDelegate
     setup_main_screen
     fade_launch_image
     setup_testflight
+    User.register_push
     true
   end
 
