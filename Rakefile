@@ -14,6 +14,7 @@ Motion::Project::App.setup do |app|
   app.provisioning_profile = config['app']['provisioning_profile']
   app.entitlements['aps-environment'] = config['app']['aps-environment']
 
+  app.version = "1.0.0"
   if ENV['RUBYMOTION_LIB']
     app.motiondir = '../RubyMotion'
   end
