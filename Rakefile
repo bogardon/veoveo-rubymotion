@@ -17,6 +17,7 @@ Motion::Project::App.setup do |app|
   if ENV['RUBYMOTION_LIB']
     app.motiondir = '../RubyMotion'
   end
+  app.codesign_certificate = "iPhone Developer: John Wu (TGGVR9D88H)"
   app.interface_orientations = [:portrait]
   app.deployment_target = '6.0'
 
