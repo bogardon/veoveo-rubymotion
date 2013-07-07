@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-$:.unshift("/Library/RubyMotion/lib")
+$:.unshift(ENV["RUBYMOTION_LIB"] || "/Library/RubyMotion/lib")
 require 'motion/project/template/ios'
 require 'bundler'
 require 'sugarcube-attributedstring'
@@ -14,6 +14,9 @@ Motion::Project::App.setup do |app|
   app.identifier = config['app']['identifier']
   app.provisioning_profile = config['app']['provisioning_profile']
 
+  if ENV['RUBYMOTION_LIB']
+    app.motiondir = '../RubyMotion'
+  end
   app.interface_orientations = [:portrait]
   app.deployment_target = '6.0'
 
