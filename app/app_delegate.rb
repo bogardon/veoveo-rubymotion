@@ -23,8 +23,11 @@ class AppDelegate
   end
 
   def applicationDidBecomeActive(application)
-    User.register_push
     FBSession.activeSession.handleDidBecomeActive
+  end
+
+  def applicationWillEnterForeground(application)
+    User.register_push
   end
 
   def applicationWillTerminate(application)
