@@ -17,26 +17,29 @@ class FeedVC < UIViewController
 
   def init
     super
-    @login_observer = App.notification_center.observe CurrentUserDidLoginNotification do |notification|
-      return unless self.navigationController.viewControllers.first == self
-      reload
-    end
-    @foreground_observer = App.notification_center.observe UIApplicationWillEnterForegroundNotification do |notification|
-      reload
-    end
-    @followed_observer = App.notification_center.observe CurrentUserDidUpdateFollowedUsers do |notification|
-      reload
-    end
-
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: :user_did_login, name:CurrentUserDidLoginNotification, object:nil)
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: :app_will_enter_foreground, name:UIApplicationWillEnterForegroundNotification, object:nil)
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: :user_did_update_followed_users, name:CurrentUserDidUpdateFollowedUsers, object:nil)
     reload
     self
   end
 
+  def user_did_login
+    return unless self.navigationController.viewControllers.first == self
+    reload
+  end
+
+  def user_did_update_followed_users
+    reload
+  end
+
+  def app_will_enter_foreground
+    reload
+  end
+
   def dealloc
+    NSNotificationCenter.defaultCenter.removeObserver(self)
     @query.connection.cancel if @query
-    App.notification_center.unobserve @login_observer
-    App.notofication_center.unobserve @foreground_observer
-    App.notification_center.unobserve @followed_observer
     super
   end
 

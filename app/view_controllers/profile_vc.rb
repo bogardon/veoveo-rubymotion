@@ -23,17 +23,18 @@ class ProfileVC < UIViewController
 
   def initialize(user)
     @user = user
-    @login_observer = App.notification_center.observe CurrentUserDidLoginNotification do |notification|
-      return unless self.navigationController.viewControllers.first == self
-      self.user = User.current
-      reload
-    end
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: :user_did_log_in, name:CurrentUserDidLoginNotification, object:nil)
     reload
   end
 
   def dealloc
-    App.notification_center.unobserve @login_observer
+    NSNotificationCenter.defaultCenter.removeObserver(self)
     super
+  end
+
+  def user_did_log_in
+    self.user = User.current
+    reload
   end
 
   def viewDidLoad

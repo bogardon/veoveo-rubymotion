@@ -14,12 +14,9 @@ class MapVC < UIViewController
 
   def init
     super
-    @foreground_observer = App.notification_center.observe UIApplicationWillEnterForegroundNotification do |notification|
-      reload
-    end
-    @login_observer = App.notification_center.observe CurrentUserDidLoginNotification do |notification|
-      reload
-    end
+
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:UIApplicationWillEnterForegroundNotification, object:nil)
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:CurrentUserDidLoginNotification, object:nil)
 
     @filter_following = false
 
@@ -29,9 +26,8 @@ class MapVC < UIViewController
   end
 
   def dealloc
+    NSNotificationCenter.defaultCenter.removeObserver(self)
     @query.connection.cancel if @query
-    App.notification_center.unobserve @foreground_observer
-    App.notification_center.unobserve @login_observer
     super
   end
 

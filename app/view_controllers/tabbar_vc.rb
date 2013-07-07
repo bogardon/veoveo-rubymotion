@@ -29,12 +29,18 @@ class TabBarVC < UITabBarController
       show_landing(true)
     end
 
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: :show_landing, name:CurrentUserDidLogoutNotification, object:nil)
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: :user_did_login, name:CurrentUserDidLoginNotification, object:nil)
+
     self
   end
 
+  def user_did_login
+    self.selectedIndex = MAP_INDEX
+  end
+
   def dealloc
-    App.notification_center.unobserve @login_observer
-    App.notification_center.unobserve @logout_observer
+    NSNotificationCenter.defaultCenter.removeObserver(self)
     super
   end
 
@@ -60,7 +66,7 @@ class TabBarVC < UITabBarController
     self.tabBar.selectionIndicatorImage = selection_indicator_image
   end
 
-  def show_landing(animated)
+  def show_landing(animated=true)
     landing = LandingVC.alloc.init
     nav = UINavigationController.alloc.initWithRootViewController(landing)
     self.presentViewController(nav, animated:animated, completion:lambda do
