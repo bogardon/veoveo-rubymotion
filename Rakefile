@@ -7,18 +7,21 @@ Bundler.require
 
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
-
   config = YAML.load_file("config/#{app.build_mode}.yml")
   app.name = config['app']['name']
   app.identifier = config['app']['identifier']
   app.provisioning_profile = config['app']['provisioning_profile']
   app.entitlements['aps-environment'] = config['app']['aps-environment']
+  app.entitlements['get-task-allow'] = config['app']['get-task-allow']
+  app.codesign_certificate = config['app']['codesign_certificate']
 
-  app.version = "1.0.0"
+
+  app.version = "1"
+  app.short_version = "1.0.0"
+
   if ENV['RUBYMOTION_LIB']
     app.motiondir = '../RubyMotion'
   end
-  app.codesign_certificate = "iPhone Developer: John Wu (TGGVR9D88H)"
   app.interface_orientations = [:portrait]
   app.deployment_target = '6.0'
 
