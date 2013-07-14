@@ -67,9 +67,11 @@ class ProfileVC < UIViewController
   def reload
     return unless self.user
     User.get_id self.user.id do |response, user|
-      self.user = user
-      @collection_view.reloadData if @collection_view
-      @refresh.endRefreshing if @refresh
+      if response.ok?
+        self.user = user
+        @collection_view.reloadData if @collection_view
+        @refresh.endRefreshing if @refresh
+      end
     end
   end
 
@@ -142,7 +144,7 @@ class ProfileVC < UIViewController
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(PROFILE_IDENTIFIER, forIndexPath:indexPath)
       cell.image_button.when UIControlEventTouchUpInside do
         on_take_photo
-      end if self.user.is_current?
+      end if self.user && self.user.is_current?
       cell.following_button.when UIControlEventTouchUpInside do
         on_following
       end
