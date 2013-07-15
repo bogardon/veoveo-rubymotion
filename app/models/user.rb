@@ -88,12 +88,8 @@ class User < Model
     end
 
     def persist_user
-      attributes_to_persist = {}
-      self.get_attributes.each do |name, type|
-        user_value = @current.send("#{name}")
-        attributes_to_persist[name.to_s] = user_value.to_s if user_value
-      end
-      App::Persistence['current_user'] = attributes_to_persist
+      # this apparently only gets called on login, need to call more often...
+      App::Persistence['current_user'] = @current.to_hash.select {|k,v| v}
     end
 
     def delete_user
