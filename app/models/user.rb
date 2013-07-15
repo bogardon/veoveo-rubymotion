@@ -2,16 +2,32 @@ CurrentUserDidLoginNotification = "CurrentUserDidLoginNotification"
 CurrentUserDidLogoutNotification = "CurrentUserDidLogoutNotification"
 CurrentUserDidUpdateFollowedUsers = "CurrentUserDidUpdateFollowedUsers"
 class User < Model
+  include IdentityMap
+  establish_identity_on :id
 
-  set_attributes :username => :string,
-                 :email => :string,
-                 :api_token => :string,
-                 :avatar_url_thumb => :url,
-                 :avatar_url_full => :url,
-                 :following => :boolean
+  set_attribute name: :id,
+    type: :integer
 
-  set_relationships :answers => :Answer,
-                    :spots => :Spot
+  set_attribute name: :username,
+    type: :string
+
+  set_attribute name: :api_token,
+    type: :string
+
+  set_attribute name: :avatar_url_thumb,
+    type: :url
+
+  set_attribute name: :avatar_url_full,
+    type: :url
+
+  set_attribute name: :following,
+    type: :boolean
+
+  set_attribute name: :email,
+    type: :string
+
+  set_relationship name: :answers,
+    class_name: :Answer
 
   def is_current?
     self == User.current

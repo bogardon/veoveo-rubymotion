@@ -1,13 +1,30 @@
 class Spot < Model
+  include IdentityMap
+  establish_identity_on :id
 
-  set_attributes :latitude => :float,
-                 :longitude => :float,
-                 :hint => :string,
-                 :unlocked => :boolean,
-                 :created_at => :date
+  set_attribute name: :id,
+    type: :integer
 
-  set_relationships :answers => :Answer,
-                    :user => :User
+  set_attribute name: :latitude,
+    type: :float
+
+  set_attribute name: :longitude,
+    type: :float
+
+  set_attribute name: :created_at,
+    type: :date
+
+  set_attribute name: :hint,
+    type: :string
+
+  set_attribute name: :unlocked,
+    type: :boolean
+
+  set_relationship name: :answers,
+    class_name: :Answer
+
+  set_relationship name: :user,
+    class_name: :User
 
   # MKProtocol
   def coordinate
