@@ -31,6 +31,7 @@ class Answer < Model
       }
     }
     VeoVeoAPI.post "answers", options do |response, json|
+      spot.unlocked = response.ok?
       if response.ok?
 
       else
