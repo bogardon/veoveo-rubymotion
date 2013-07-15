@@ -1,13 +1,21 @@
 class AppDelegate
 
-  def application(application,didFinishLaunchingWithOptions: launchOptions)
+  def application(application, didFinishLaunchingWithOptions:launchOptions)
     setup_appearance_proxies
     setup_http_cache
     setup_main_screen
     fade_launch_image
     setup_testflight
     User.register_push
+    handle_push(launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey]) if launchOptions
     true
+  end
+
+  def application(application, didReceiveRemoteNotification:userInfo)
+    alert = BW::UIAlertView.new(:message => userInfo['alert'], :buttons => "OK", :on_click => (lambda do |alert|
+      handle_push userInfo
+    end))
+    alert.show
   end
 
   def application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
@@ -33,6 +41,12 @@ class AppDelegate
 
   def applicationWillTerminate(application)
     FBSession.activeSession.close
+  end
+
+  def handle_push(userInfo)
+    return unless userInfo
+    spot = Spot.merge_or_insert({:id => userInfo['spot_id']})
+    @tab_bar.selectedViewController.pushViewController(vc, animated:false)
   end
 
   def setup_testflight
