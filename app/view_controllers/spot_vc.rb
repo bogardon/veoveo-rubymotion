@@ -105,7 +105,7 @@ class SpotVC < UIViewController
   def collectionView(collectionView, numberOfItemsInSection:section)
     case section
     when MAP_CELL_SECTION
-      1
+      self.spot.latitude && self.spot.longitude ? 1 : 0
     when ANSWER_CELL_SECTION
       self.spot.answers && self.spot.unlocked ? self.spot.answers.count : 0
     when SOCIAL_CELL_SECTION
