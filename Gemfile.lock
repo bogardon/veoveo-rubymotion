@@ -52,7 +52,7 @@ GEM
       rake
       sugarcube
       teacup
-    teacup (2.0.2)
+    teacup (2.1.1)
     xcodeproj (0.6.0)
       activesupport (~> 3.2.13)
       colored (~> 1.2)
