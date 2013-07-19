@@ -12,10 +12,19 @@ class AppDelegate
   end
 
   def application(application, didReceiveRemoteNotification:userInfo)
-    alert = BW::UIAlertView.new(:message => userInfo['alert'], :buttons => "OK", :on_click => (lambda do |alert|
+    # {"aps"=>{"badge"=>1, "alert"=>"karina found das keyboard!"}, "spot_id"=>99}
+    case UIApplication.sharedApplication.applicationState
+    when UIApplicationStateActive
+      alert = BW::UIAlertView.new(:message => userInfo['aps']['alert'], :buttons => "OK", :on_click => (lambda do |alert|
+        handle_push userInfo, true
+      end))
+      alert.show
+    when UIApplicationStateInactive
+    when UIApplicationStateBackground
       handle_push userInfo
-    end))
-    alert.show
+    else
+    end
+
   end
 
   def application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
@@ -39,14 +48,21 @@ class AppDelegate
     User.register_push
   end
 
+  def applicationDidEnterBackground(application)
+    # clear badge on bg?
+    UIApplication.sharedApplication.applicationIconBadgeNumber = 0
+  end
+
   def applicationWillTerminate(application)
     FBSession.activeSession.close
   end
 
-  def handle_push(userInfo)
+  def handle_push(userInfo, animated=false)
     return unless userInfo
+    # {"aps"=>{"badge"=>1, "alert"=>"karina found das keyboard!"}, "spot_id"=>99}
     spot = Spot.merge_or_insert({:id => userInfo['spot_id']})
-    @tab_bar.selectedViewController.pushViewController(vc, animated:false)
+    vc = SpotVC.alloc.initWithSpot spot
+    @tab_bar.selectedViewController.pushViewController(vc, animated:animated)
   end
 
   def setup_testflight
