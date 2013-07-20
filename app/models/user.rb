@@ -87,18 +87,23 @@ class User < Model
       end
     end
 
+    def archive_path
+      App.documents_path + "/current_user"
+    end
+
     def persist_user
-      # this apparently only gets called on login, need to call more often...
-      App::Persistence['current_user'] = @current.to_hash.select {|k,v| v}
+      # called on login and background
+      hash_to_persist = @current.to_hash
+      NSKeyedArchiver.archiveRootObject(hash_to_persist, toFile:archive_path)
     end
 
     def delete_user
-      App::Persistence['current_user'] = nil
+      File.delete(archive_path)
     end
 
     def get_user
-      persisted_attributes = App::Persistence['current_user']
-      persisted_user = self.merge_or_insert(persisted_attributes) if persisted_attributes
+      persisted_hash = NSKeyedUnarchiver.unarchiveObjectWithFile(archive_path)
+      persisted_user = self.merge_or_insert(persisted_hash) if persisted_hash
     end
 
     def current
