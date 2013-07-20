@@ -8,6 +8,7 @@ class AppDelegate
     setup_testflight
     User.register_push
     handle_push(launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey]) if launchOptions
+    setup_location_change
     true
   end
 
@@ -110,5 +111,16 @@ class AppDelegate
      @launchImage.removeFromSuperview
      @launchImage = nil
     end)
+  end
+
+  def setup_location_change
+    BW::Location.get_significant do |result|
+      case UIApplication.sharedApplication.applicationState
+      when UIApplicationStateBackground
+
+      else
+      end
+      TFLog("------------------------------------\nGOT SIGNIFICANT LOCATION CHANGE\n#{result}\n------------------------------------")
+    end
   end
 end

@@ -3,6 +3,7 @@ $:.unshift(ENV["RUBYMOTION_LIB"] || "/Library/RubyMotion/lib")
 require 'motion/project/template/ios'
 require 'bundler'
 require 'sugarcube-attributedstring'
+require 'bubble-wrap/location'
 Bundler.require
 
 Motion::Project::App.setup do |app|
