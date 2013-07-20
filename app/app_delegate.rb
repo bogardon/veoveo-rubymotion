@@ -51,6 +51,7 @@ class AppDelegate
   def applicationDidEnterBackground(application)
     # clear badge on bg?
     UIApplication.sharedApplication.applicationIconBadgeNumber = 0
+    User.persist_user
   end
 
   def applicationWillTerminate(application)
