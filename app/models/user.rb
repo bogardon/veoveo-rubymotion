@@ -26,8 +26,21 @@ class User < Model
   set_attribute name: :email,
     type: :string
 
+  set_attribute name: :facebook_id,
+    type: :string
+
+  set_attribute name: :facebook_access_token,
+    type: :string
+
+  set_attribute name: :facebook_expires_at,
+    type: :date
+
   set_relationship name: :answers,
     class_name: :Answer
+
+  def facebook_connected?
+    !!self.facebook_id || !!self.facebook_access_token || !!self.facebook_expires_at
+  end
 
   def is_current?
     self == User.current
@@ -129,6 +142,20 @@ class User < Model
           User.current = user
         end
         block.call(response.ok?)
+      end
+    end
+
+    def connect_facebook(session, &block)
+      payload = {
+        facebook_access_token: session.accessToken,
+        facebook_expires_at: session.expirationDate.to_s
+      }
+      options = {
+        payload: BW::JSON.generate(payload),
+        format: :json
+      }
+      VeoVeoAPI.post 'users/facebook', options do |response, json|
+        block.call(response,json) if block
       end
     end
 

@@ -75,6 +75,27 @@ Teacup::Stylesheet.new :signin_screen do
 
 end
 
+Teacup::Stylesheet.new :connect_screen do
+  import :form_screen
+
+  style :connect_services_container, extends: :container,
+    frame: [[7,14], ["100% - 14", 100]]
+
+  style :facebook,
+    height: 32,
+    x: 15,
+    y: 45,
+    width: 32,
+    normal: {
+      bg_image: "fb_icon_off.png".uiimage
+    },
+    disabled: {
+      bg_image: "fb_icon_on.png".uiimage
+    }
+
+
+end
+
 Teacup.handler FormTextField, :labelText, :text do |target, text|
   target.label.text = text
 end
