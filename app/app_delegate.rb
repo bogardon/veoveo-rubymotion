@@ -120,7 +120,8 @@ class AppDelegate
 
       else
       end
-      TFLog("------------------------------------\nGOT SIGNIFICANT LOCATION CHANGE\n#{result}\n------------------------------------")
+      coordinate = result[:to].coordinate
+      TFLog("\n------------------------------------\nGOT SIGNIFICANT LOCATION CHANGE\nlat:#{coordinate.latitude}\nlong:#{coordinate.longitude}\n------------------------------------")
     end
   end
 end
