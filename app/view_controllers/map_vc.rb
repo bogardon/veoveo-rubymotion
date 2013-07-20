@@ -15,7 +15,6 @@ class MapVC < UIViewController
   def init
     super
 
-    NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:UIApplicationWillEnterForegroundNotification, object:nil)
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:CurrentUserDidLoginNotification, object:nil)
 
     @filter_following = false
