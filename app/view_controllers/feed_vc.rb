@@ -35,9 +35,7 @@ class FeedVC < UIViewController
     add_logo_to_nav_bar
 
     @refresh = UIRefreshControl.alloc.init
-    @refresh.when UIControlEventValueChanged do
-      reload
-    end
+    @refresh.addTarget(self, action: :reload, forControlEvents:UIControlEventValueChanged)
     @collection_view.addSubview(@refresh)
   end
 
@@ -71,15 +69,20 @@ class FeedVC < UIViewController
 
   def collectionView(collectionView, cellForItemAtIndexPath:indexPath)
     cell = collectionView.dequeueReusableCellWithReuseIdentifier(ANSWER_FEED_CELL_IDENTIFIER, forIndexPath:indexPath)
-    cell.image_button.when UIControlEventTouchUpInside do
-      user = @answers[indexPath.item].user
-      profile_vc = ProfileVC.new user
-      self.navigationController.pushViewController(profile_vc, animated:true)
-    end
+    cell.image_button.tag = indexPath.item
+
+    cell.image_button.removeTarget(self, action: "on_profile:", forControlEvents:UIControlEventTouchUpInside)
+    cell.image_button.addTarget(self, action: "on_profile:", forControlEvents:UIControlEventTouchUpInside)
+
     cell.answer = @answers[indexPath.item]
     cell
   end
 
+  def on_profile(sender)
+    user = @answers[sender.tag].user
+    profile_vc = ProfileVC.new user
+    self.navigationController.pushViewController(profile_vc, animated:true)
+  end
 
   def collectionView(collectionView, didSelectItemAtIndexPath:indexPath)
     spot_vc = SpotVC.alloc.initWithSpot @answers[indexPath.item].spot

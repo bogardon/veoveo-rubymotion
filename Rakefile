@@ -12,7 +12,10 @@ Motion::Project::App.setup do |app|
   app.sdk_version = "6.1"
   app.deployment_target = '6.1'
 
+  # load config file and put it in the info plist
   config = YAML.load_file("config/#{app.build_mode}.yml")
+  app.info_plist['config'] = config
+
   app.name = config['app']['name']
   app.identifier = config['app']['identifier']
   app.provisioning_profile = config['app']['provisioning_profile']
@@ -49,7 +52,6 @@ Motion::Project::App.setup do |app|
 
   # we require location services n stuff
   app.info_plist['UIRequiredDeviceCapabilities'] = ['location-services', 'gps']
-  app.info_plist['config'] = config
 
   # facebook and url schemes
   facebook_app_id = config['facebook']['appId']

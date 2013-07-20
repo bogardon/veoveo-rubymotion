@@ -9,26 +9,24 @@ class SignInVC < UIViewController
         @username_field.becomeFirstResponder
         subview(UIImageView, :separator, y: 35)
         @password_field = subview(FormTextField, :password, y: 41, delegate: self)
-
-        [@username_field, @password_field].each do |textfield|
-          textfield.when(UIControlEventEditingChanged) do
-            @button.enabled = form_valid?
-          end
-        end
-
       end
       @button = subview(UIButton, :button, y: 85)
       @button.setTitle("Sign In", forState:UIControlStateNormal)
       @button.enabled = false
-      @button.when(UIControlEventTouchUpInside) do
-        on_sign_in
-      end
+
     end.alwaysBounceVertical = true
   end
 
   def viewDidLoad
     super
     add_logo_to_nav_bar
+    @username_field.addTarget(self, action: :on_text_field_editing, forControlEvents:UIControlEventEditingChanged)
+    @password_field.addTarget(self, action: :on_text_field_editing, forControlEvents:UIControlEventEditingChanged)
+    @button.addTarget(self, action: :on_sign_in, forControlEvents:UIControlEventTouchUpInside)
+  end
+
+  def on_text_field_editing
+    @button.enabled = form_valid?
   end
 
   def viewWillAppear(animated)
@@ -48,7 +46,7 @@ class SignInVC < UIViewController
   end
 
   def form_valid?
-    @username_field.text && @password_field.text
+    @username_field.text && @password_field.text && @username_field.text.length > 0 && @password_field.text.length > 0
   end
 
   def textFieldShouldReturn(textfield)

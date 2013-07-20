@@ -13,19 +13,10 @@ class SignUpVC < UIViewController
         subview(UIImageView, :separator, y: 121)
         @email_field = subview(FormTextField, :email, y: 126, delegate:self)
 
-        [@username_field, @password_field, @email_field].each do |textfield|
-          textfield.when(UIControlEventEditingChanged) do
-            @button.enabled = formValid
-          end
-        end
-
       end
       @button = subview(UIButton, :button, y: 171)
       @button.setTitle("Next", forState:UIControlStateNormal)
       @button.enabled = false
-      @button.when(UIControlEventTouchUpInside) do
-        onNext
-      end
     end
     scroll_view.alwaysBounceVertical = true
   end
@@ -33,6 +24,14 @@ class SignUpVC < UIViewController
   def viewDidLoad
     super
     add_logo_to_nav_bar
+    @username_field.addTarget(self, action: :on_text_editing_changed, forControlEvents:UIControlEventEditingChanged)
+    @password_field.addTarget(self, action: :on_text_editing_changed, forControlEvents:UIControlEventEditingChanged)
+    @email_field.addTarget(self, action: :on_text_editing_changed, forControlEvents:UIControlEventEditingChanged)
+    @button.addTarget(self, action: :on_next, forControlEvents:UIControlEventTouchUpInside)
+  end
+
+  def on_text_editing_changed
+    @button.enabled = form_valid?
   end
 
   def viewWillAppear(animated)
@@ -47,7 +46,7 @@ class SignUpVC < UIViewController
     when @password_field
       @email_field.becomeFirstResponder
     when @email_field
-      onNext
+      on_next
     end
   end
 
@@ -56,7 +55,7 @@ class SignUpVC < UIViewController
     true
   end
 
-  def onNext
+  def on_next
     return unless formValid
     @username_field.resignFirstResponder
     @password_field.resignFirstResponder
@@ -70,7 +69,7 @@ class SignUpVC < UIViewController
 
   end
 
-  def formValid
+  def form_valid?
     @username_field.text && @username_field.text.length > 3 && @password_field.text && @password_field.text.length > 3 && @email_field.text && @email_field.text.length > 0 && (@email_field.text =~ /^(|(([A-Za-z0-9]+_+)|([A-Za-z0-9]+\-+)|([A-Za-z0-9]+\.+)|([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+\-+)|(\w+\.))*\w{1,63}\.[a-zA-Z]{2,6})$/i).present?
   end
 end

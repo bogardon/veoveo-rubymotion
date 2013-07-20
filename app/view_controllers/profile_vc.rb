@@ -41,9 +41,8 @@ class ProfileVC < UIViewController
     super
     add_logo_to_nav_bar
     @refresh = UIRefreshControl.alloc.init
-    @refresh.when UIControlEventValueChanged do
-      reload
-    end
+    @refresh.addTarget(self, action: :reload, forControlEvents:UIControlEventValueChanged)
+    @refresh.addTarget(self, action: :reload, forControlEvents:UIControlEventValueChanged)
     @collection_view.addSubview(@refresh)
   end
 
@@ -94,6 +93,7 @@ class ProfileVC < UIViewController
   end
 
   def on_take_photo
+    return unless self.user && self.user.is_current?
     source = BW::Device.camera.rear || BW::Device.camera.any
     source.picture(media_types: [:image], allows_editing: true) do |result|
       unless result[:error]
@@ -142,12 +142,13 @@ class ProfileVC < UIViewController
     case indexPath.section
     when PROFILE_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(PROFILE_IDENTIFIER, forIndexPath:indexPath)
-      cell.image_button.when UIControlEventTouchUpInside do
-        on_take_photo
-      end if self.user && self.user.is_current?
-      cell.following_button.when UIControlEventTouchUpInside do
-        on_following
-      end
+
+      cell.image_button.removeTarget(self, action: :on_take_photo, forControlEvents:UIControlEventTouchUpInside)
+      cell.image_button.addTarget(self, action: :on_take_photo, forControlEvents:UIControlEventTouchUpInside)
+
+      cell.following_button.removeTarget(self, action: :on_following, forControlEvents:UIControlEventTouchUpInside)
+      cell.following_button.addTarget(self, action: :on_following, forControlEvents:UIControlEventTouchUpInside)
+
       cell.user = self.user
       cell
     when FEED_SECTION
@@ -166,5 +167,7 @@ class ProfileVC < UIViewController
     else
     end
   end
+
+
 
 end

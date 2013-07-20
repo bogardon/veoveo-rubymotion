@@ -41,9 +41,7 @@ class SpotVC < UIViewController
     super
     add_logo_to_nav_bar
     @refresh = UIRefreshControl.alloc.init
-    @refresh.when UIControlEventValueChanged do
-      reload
-    end
+    @refresh.addTarget(self, action: :reload, forControlEvents:UIControlEventValueChanged)
     @collection_view.addSubview(@refresh)
   end
 
@@ -128,6 +126,14 @@ class SpotVC < UIViewController
     end
   end
 
+  def on_answer_image(button)
+    cell = @collection_view.cellForItemAtIndexPath [ANSWER_CELL_SECTION, button.tag].nsindexpath
+
+    vc = GGFullscreenImageViewController.alloc.init
+    vc.liftedImageView = cell.answer_image_view
+    self.presentViewController(vc, animated:true, completion:nil)
+  end
+
   def collectionView(collectionView, cellForItemAtIndexPath:indexPath)
     case indexPath.section
     when MAP_CELL_SECTION
@@ -145,22 +151,16 @@ class SpotVC < UIViewController
       cell.map_view.addAnnotation(annotation) unless cell.map_view.annotations.count > 0
       cell
     when ANSWER_CELL_SECTION
-      cell = collectionView.dequeueReusableCellWithReuseIdentifier(ANSWER_CELL_IDENTIFIER, forIndexPath:indexPath)
 
-      cell.image_button.when UIControlEventTouchUpInside do
-        vc = GGFullscreenImageViewController.alloc.init
-        vc.liftedImageView = cell.answer_image_view
-        self.presentViewController(vc, animated:true, completion:nil)
-      end
+      cell = collectionView.dequeueReusableCellWithReuseIdentifier(ANSWER_CELL_IDENTIFIER, forIndexPath:indexPath)
+      cell.image_button.tag = indexPath.item
+      cell.image_button.removeTarget(self, action: "on_answer_image:", forControlEvents:UIControlEventTouchUpInside)
+      cell.image_button.addTarget(self, action: "on_answer_image:", forControlEvents:UIControlEventTouchUpInside)
 
       cell.answer = @spot.answers[indexPath.item]
       cell
     when SOCIAL_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(SOCIAL_CELL_IDENTIFIER, forIndexPath:indexPath)
-      cell.image_button.when UIControlEventTouchUpInside do
-        profile_vc = ProfileVC.new @spot.user
-        self.navigationController.pushViewController(profile_vc, animated:true)
-      end
       cell.user_image_view.set_image_from_url @spot.user.avatar_url_thumb if @spot.user
       formatter = Time.cached_date_formatter("MMMM dd, YYYY")
       date_str = formatter.stringFromDate(@spot.created_at)
@@ -175,6 +175,9 @@ class SpotVC < UIViewController
     case indexPath.section
     when ANSWER_CELL_SECTION
       profile_vc = ProfileVC.new @spot.answers[indexPath.item].user
+      self.navigationController.pushViewController(profile_vc, animated:true)
+    when SOCIAL_CELL_SECTION
+      profile_vc = ProfileVC.new @spot.user
       self.navigationController.pushViewController(profile_vc, animated:true)
     else
     end

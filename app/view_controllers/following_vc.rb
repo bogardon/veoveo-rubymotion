@@ -31,9 +31,7 @@ class FollowingVC < UIViewController
     super
     add_title_to_nav_bar self.user.username
     @refresh = UIRefreshControl.alloc.init
-    @refresh.when UIControlEventValueChanged do
-      reload
-    end
+    @refresh.addTarget(self, action: :reload, forControlEvents:UIControlEventValueChanged)
     @collection_view.addSubview(@refresh)
   end
 

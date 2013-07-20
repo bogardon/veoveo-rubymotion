@@ -41,12 +41,14 @@ class MapVC < UIViewController
 
     segmented_control = MapSegmentedControl.alloc.initWithItems(["Everyone", "Following"])
     segmented_control.selectedSegmentIndex = @filter_following ? FOLLOWING : EVERYONE
-    segmented_control.when UIControlEventValueChanged do
-      @filter_following ^= true
-      reload
-    end
+    segmented_control.addTarget(self, action: :on_segment, forControlEvents:UIControlEventValueChanged)
 
     self.navigationItem.titleView = segmented_control
+  end
+
+  def on_segment
+    @filter_following ^= true
+    reload
   end
 
   def on_add

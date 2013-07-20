@@ -2,14 +2,22 @@ class LandingVC < UIViewController
   stylesheet :landing_screen
   layout do
     subview(UIImageView, :background)
-    subview(UIButton, :sign_up).when(UIControlEventTouchUpInside) do
-      # go sign up
-      navigationController.pushViewController(SignUpVC.alloc.init, animated:true)
+
+    subview(UIButton, :sign_up) do |sign_up|
+      sign_up.addTarget(self, action: :on_sign_up, forControlEvents:UIControlEventTouchUpInside)
     end
-    subview(UIButton, :sign_in).when(UIControlEventTouchUpInside) do
-      # go sign in
-      navigationController.pushViewController(SignInVC.alloc.init, animated:true)
+
+    subview(UIButton, :sign_in) do |sign_in|
+      sign_in.addTarget(self, action: :on_sign_in, forControlEvents:UIControlEventTouchUpInside)
     end
+  end
+
+  def on_sign_in
+    self.navigationController.pushViewController(SignInVC.alloc.init, animated:true)
+  end
+
+  def on_sign_up
+    self.navigationController.pushViewController(SignUpVC.alloc.init, animated:true)
   end
 
   def init
