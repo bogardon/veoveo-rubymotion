@@ -28,6 +28,27 @@ class Model
 
   class << self
 
+    # these methods are needed because subclasses do not inherit class instance variables
+    def get_attributes
+      attributes = []
+      klass = self
+      while klass.respond_to? :attributes
+        attributes += klass.attributes
+        klass = klass.superclass
+      end
+      attributes
+    end
+
+    def get_relationships
+      relationships = []
+      klass = self
+      while klass.respond_to? :relationships
+        relationships += klass.relationships
+        klass = klass.superclass
+      end
+      relationships
+    end
+
     def attributes
       @attributes ||= []
     end
@@ -87,10 +108,11 @@ class Model
     end
   end
 
-  def to_hash
-    # TODO
+  def to_hash(serialized=[])
+    serialized << self
+
     hash = {}
-    self.class.attributes.each do |attribute|
+    self.class.get_attributes.each do |attribute|
       name = attribute[:name]
       key_path = attribute[:key_path]
       type = attribute[:type]
@@ -113,7 +135,7 @@ class Model
       end
     end
 
-    self.class.relationships.each do |relationship|
+    self.class.get_relationships.each do |relationship|
       name = relationship[:name]
       key_path = relationship[:key_path]
       class_name = relationship[:class_name]
@@ -126,9 +148,11 @@ class Model
         if index == components.count-1
           inner_hash[component] = case model_value
           when Array
-            model_value.map {|e| e.to_hash}
+            model_value.map do |e|
+              serialized.include?(e) ? nil : e.to_hash(serialized)
+            end
           when Model
-            model_value.to_hash
+            serialized.include?(model_value) ? nil : model_value.to_hash(serialized)
           else
           end
         else
@@ -142,7 +166,7 @@ class Model
   end
 
   def initialize(json={})
-    self.class.relationships.each do |relationship|
+    self.class.get_relationships.each do |relationship|
       name = relationship[:name]
       default = relationship[:default]
       key_path = relationship[:key_path]
@@ -151,7 +175,7 @@ class Model
       self.send("#{name}=", value_to_send) unless value_to_send.nil?
     end
 
-    self.class.attributes.each do |attribute|
+    self.class.get_attributes.each do |attribute|
       name = attribute[:name]
       default = attribute[:default]
       key_path = attribute[:key_path]
