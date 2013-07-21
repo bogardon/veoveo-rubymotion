@@ -35,6 +35,7 @@ class AddVC < UIViewController
 
   def on_add
     return unless @photo && @form && @form.text && @form.text.length > 0
+    @form.resignFirstResponder
     self.show_hud
     Spot.add_new(@form.text, @location, @photo) do |response, json|
       self.hide_hud response.ok?
