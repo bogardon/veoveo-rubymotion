@@ -70,6 +70,7 @@ class AppDelegate
   def setup_testflight
     config = NSBundle.mainBundle.objectForInfoDictionaryKey('config', Hash)
     testflight_token = config['testflight']['appToken']
+    TestFlight.setDeviceIdentifier UIDevice.currentDevice.uniqueIdentifier
     TestFlight.takeOff(testflight_token) if testflight_token.length > 0
   end
 
@@ -121,7 +122,6 @@ class AppDelegate
       else
       end
       coordinate = result[:to].coordinate
-      TFLog("\n------------------------------------\nGOT SIGNIFICANT LOCATION CHANGE\nlat:#{coordinate.latitude}\nlong:#{coordinate.longitude}\n------------------------------------")
     end
   end
 end
