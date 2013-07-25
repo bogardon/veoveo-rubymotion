@@ -51,5 +51,27 @@ module VeoVeoAPI
       perform('delete', path, options, &block)
     end
 
+    def get_nearby_spots(region, &block)
+      options = {
+        format: :json,
+        payload: {
+          region: {
+            latitude: region.center.latitude,
+            longitude: region.center.longitude,
+            latitude_delta: region.span.latitudeDelta,
+            longitude_delta: region.span.longitudeDelta
+          }
+        }
+      }
+      get 'spots/nearby', options do |response, json|
+        if response.ok?
+          spots = json.map do |j|
+            Spot.merge_or_insert j
+          end
+        end
+        block.call(response,spots) if block
+      end
+    end
+
   end
 end
