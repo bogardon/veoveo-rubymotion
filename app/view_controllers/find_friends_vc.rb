@@ -44,6 +44,14 @@ class FindFriendsVC < UIViewController
     end
   end
 
+  def on_relationship(button)
+    user = @users[button.tag]
+    user.toggle_following do |response, json|
+      @collection_view.reloadData
+    end
+    @collection_view.reloadData
+  end
+
   def on_done
     self.dismissViewControllerAnimated(true, completion:nil)
   end
@@ -67,6 +75,9 @@ class FindFriendsVC < UIViewController
   def collectionView(collectionView, cellForItemAtIndexPath:indexPath)
     cell = collectionView.dequeueReusableCellWithReuseIdentifier(FOLLOWING_IDENTIFIER, forIndexPath:indexPath)
     cell.user = @users[indexPath.item]
+    cell.button.tag = indexPath.item
+    cell.button.removeTarget(self, action: "on_relationship:", forControlEvents:UIControlEventTouchUpInside)
+    cell.button.addTarget(self, action: "on_relationship:", forControlEvents:UIControlEventTouchUpInside)
     cell
   end
 
