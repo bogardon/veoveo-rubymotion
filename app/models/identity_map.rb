@@ -5,6 +5,11 @@ module IdentityMap
   end
 
   module ClassMethods
+
+    def [](x)
+      self.identity_map[x]
+    end
+
     def metaclass
       class << self; self; end
     end
