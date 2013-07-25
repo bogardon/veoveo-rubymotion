@@ -1,14 +1,15 @@
 class AppDelegate
 
   def application(application, didFinishLaunchingWithOptions:launchOptions)
-    setup_appearance_proxies
-    setup_http_cache
-    setup_main_screen
+    setup_appearance_proxies # basic styling
+    setup_http_cache # NSURLCache
+    setup_main_screen # rootViewController
     fade_launch_image
     setup_testflight
     User.register_push
     handle_push(launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey]) if launchOptions
     setup_location_change
+    Facebook.connect false
     true
   end
 
@@ -34,7 +35,6 @@ class AppDelegate
   end
 
   def application(application, didFailToRegisterForRemoteNotificationsWithError:error)
-
   end
 
   def application(application, openURL:url, sourceApplication:sourceApplication, annotation:annotation)
@@ -47,6 +47,7 @@ class AppDelegate
 
   def applicationWillEnterForeground(application)
     User.register_push
+    Facebook.connect false
   end
 
   def applicationDidEnterBackground(application)

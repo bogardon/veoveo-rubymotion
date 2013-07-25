@@ -93,8 +93,10 @@ class User < Model
       if @current
         persist_user
         register_push
+        Facebook.login
         NSNotificationCenter.defaultCenter.postNotificationName(CurrentUserDidLoginNotification, object:nil)
       else
+        Facebook.logout
         delete_user
         NSNotificationCenter.defaultCenter.postNotificationName(CurrentUserDidLogoutNotification, object:nil)
       end
@@ -145,19 +147,7 @@ class User < Model
       end
     end
 
-    def connect_facebook(session, &block)
-      payload = {
-        facebook_access_token: session.accessToken,
-        facebook_expires_at: session.expirationDate.to_s
-      }
-      options = {
-        payload: BW::JSON.generate(payload),
-        format: :json
-      }
-      VeoVeoAPI.post 'users/facebook', options do |response, json|
-        block.call(response,json) if block
-      end
-    end
+
 
     def get_id(user_id, &block)
       options = {
@@ -183,6 +173,21 @@ class User < Model
       VeoVeoAPI.post "users/avatar", options do |response, json|
 
         block.call(response, User.merge_or_insert(json)) if block
+      end
+    end
+
+    def find_facebook_friends(&block)
+      options = {
+        format: :json
+      }
+
+      VeoVeoAPI.get "facebook/find_friends", options do |response, json|
+        if response.ok?
+          users = json.map do |j|
+            User.merge_or_insert j
+          end
+        end
+        block.call(response, users) if block
       end
     end
 
