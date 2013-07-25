@@ -58,6 +58,10 @@ class AppDelegate
     FBSession.activeSession.close
   end
 
+  def application(application, didReceiveLocalNotification:notification)
+    # not sure where we're supposed to go here...
+  end
+
   def handle_push(userInfo, animated=false)
     return unless userInfo
     # {"aps"=>{"badge"=>1, "alert"=>"karina found das keyboard!"}, "spot_id"=>99}
@@ -115,12 +119,43 @@ class AppDelegate
 
   def setup_location_change
     BW::Location.get_significant do |result|
-      case UIApplication.sharedApplication.applicationState
-      when UIApplicationStateBackground
+      if User.current
+        coordinate = result[:to].coordinate
+        app_state = UIApplication.sharedApplication.applicationState
 
-      else
+        case app_state
+        when UIApplicationStateBackground
+          fetch_nearby_spots(coordinate)
+        else
+        end
+
       end
-      coordinate = result[:to].coordinate
+    end
+  end
+
+  def fetch_nearby_spots(coordinate)
+    # 50 meter radius around center
+    region = MKCoordinateRegionMakeWithDistance(coordinate, 100, 100)
+    VeoVeoAPI.get_nearby_spots region do |response, spots|
+      # skip if no spots found
+      if response.ok? && spots.count > 0
+        # do not notify twice
+        notified_spot_ids = App::Persistence['notified_spot_ids'] || []
+
+        spots_to_notify = spots.reject do |s|
+          notified_spot_ids.include?(s.id)
+        end
+
+        # do not notify unless there's stuff?
+        if spots_to_notify.count > 0
+          notification = UILocalNotification.alloc.init
+          notification.alertBody = "Near finds by your friends!"
+          UIApplication.sharedApplication.scheduleLocalNotification(notification)
+        end
+
+        # store notified spot ids
+        App::Persistence['notified_spot_ids'] =notified_spot_ids + spots_to_notify.map(&:id)
+      end
     end
   end
 end
