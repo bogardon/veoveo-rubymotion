@@ -1,5 +1,6 @@
 class FollowingCell < FeedCell
   attr_accessor :user
+  attr_accessor :button
 
   def initWithFrame(frame)
     super
