@@ -63,6 +63,7 @@ class FollowingVC < UIViewController
   def collectionView(collectionView, cellForItemAtIndexPath:indexPath)
     cell = collectionView.dequeueReusableCellWithReuseIdentifier(FOLLOWING_IDENTIFIER, forIndexPath:indexPath)
     cell.user = @users[indexPath.item]
+    cell.button.hidden = true
     cell
   end
 
