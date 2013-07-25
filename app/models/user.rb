@@ -38,10 +38,6 @@ class User < Model
   set_relationship name: :answers,
     class_name: :Answer
 
-  def facebook_connected?
-    !!self.facebook_id || !!self.facebook_access_token || !!self.facebook_expires_at
-  end
-
   def is_current?
     self == User.current
   end
