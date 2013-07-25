@@ -64,7 +64,9 @@ class SignUpVC < UIViewController
     # call backend and create user i guess?
     User.sign_up username: @username_field.text, password: @password_field.text, email: @email_field.text do |success|
       self.hide_hud success
-      dismissViewControllerAnimated(true, completion:nil) if success
+      if success
+        self.navigationController.pushViewController(ConnectVC.alloc.init, animated:true)
+      end
     end
 
   end

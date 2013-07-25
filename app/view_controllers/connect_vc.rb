@@ -1,47 +1,107 @@
 class ConnectVC < UIViewController
   include ViewControllerHelpers
-  stylesheet :connect_screen
+  stylesheet :connect_vc
+
+  PROMPT_CELL_IDENTIFIER = "PROMPT_CELL_IDENTIFIER"
+  CONNECT_CELL_IDENTIFIER = "CONNECT_CELL_IDENTIFIER"
+  ACTION_CELL_IDENTIFIER = "ACTION_CELL_IDENTIFIER"
+
+  PROMPT_SECTION = 0
+  CONNECT_SECTION = 1
+  ACTION_SECTION = 2
 
   layout do
     subview(UIImageView, :background)
-    scroll_view = subview(UIScrollView, :scrollview) do
-      subview(UIImageView, :connect_services_container) do
-        subview(UILabel, :prompt, text: "2. Connect Services")
-        @facebook = subview(UIButton, :facebook)
-        @facebook.enabled = User.current.facebook_connected?
-      end
-      @button = subview(UIButton, :button, y: 100)
-      @button.setTitle("Done", forState:UIControlStateNormal)
-    end
-    scroll_view.alwaysBounceVertical = true
+    flow = UICollectionViewFlowLayout.alloc.init
+    flow.minimumInteritemSpacing = 0
+    @collection_view = subview(UICollectionView.alloc.initWithFrame(CGRectZero, collectionViewLayout:flow), :collection_view, delegate:self, dataSource:self)
+    @collection_view.registerClass(PromptCell, forCellWithReuseIdentifier:PROMPT_CELL_IDENTIFIER)
+    @collection_view.registerClass(ConnectCell, forCellWithReuseIdentifier:CONNECT_CELL_IDENTIFIER)
+    @collection_view.registerClass(ActionCell, forCellWithReuseIdentifier:ACTION_CELL_IDENTIFIER)
+    @collection_view.alwaysBounceVertical = true
   end
 
   def viewDidLoad
     super
     add_logo_to_nav_bar
-    @button.addTarget(self, action: :on_done, forControlEvents:UIControlEventTouchUpInside)
-    @facebook.addTarget(self, action: :on_facebook, forControlEvents:UIControlEventTouchUpInside)
   end
 
-  def on_done
-    dismissViewControllerAnimated(true, completion:nil)
+  def numberOfSectionsInCollectionView(collectionView)
+    3
   end
 
-  def on_facebook
-    show_hud
-    Facebook.connect do |session, state, error|
-      case state
-      when FBSessionStateOpen
-        User.connect_facebook session do |response, json|
-          if response.ok?
-            @facebook.enabled = false
-            User.current.facebook_access_token = session.accessToken
-            User.current.facebook_expires_at = session.expirationDate
-          end
+  def collectionView(collectionView, layout:collectionViewLayout, insetForSectionAtIndex:section)
+    case section
+    when PROMPT_SECTION
+      [14,0,0,0]
+    when CONNECT_SECTION
+      [0,0,0,0]
+    when ACTION_SECTION
+      [0,0,0,0]
+    else
+      [0,0,0,0]
+    end
+  end
 
+  def collectionView(collectionView, numberOfItemsInSection:section)
+    case section
+    when PROMPT_SECTION
+      1
+    when CONNECT_SECTION
+      1 # only facebook for now
+    when ACTION_SECTION
+      1
+    else
+      0
+    end
+  end
+
+  def collectionView(collectionView, layout:collectionViewLayout, sizeForItemAtIndexPath:indexPath)
+    case indexPath.section
+    when PROMPT_SECTION
+      [306, 44]
+    when CONNECT_SECTION
+      [306, 44] # only facebook for now
+    when ACTION_SECTION
+      [306, 44]
+    else
+      0
+    end
+  end
+
+  def collectionView(collectionView, cellForItemAtIndexPath:indexPath)
+    case indexPath.section
+    when PROMPT_SECTION
+      cell = collectionView.dequeueReusableCellWithReuseIdentifier(PROMPT_CELL_IDENTIFIER, forIndexPath:indexPath)
+      cell.label.text = "2. Find Friends to Follow"
+      cell
+    when CONNECT_SECTION
+      cell = collectionView.dequeueReusableCellWithReuseIdentifier(CONNECT_CELL_IDENTIFIER, forIndexPath:indexPath)
+      cell
+    when ACTION_SECTION
+      cell = collectionView.dequeueReusableCellWithReuseIdentifier(ACTION_CELL_IDENTIFIER, forIndexPath:indexPath)
+      cell.label.text = "Done"
+      cell
+    end
+  end
+
+  def collectionView(collectionView, didSelectItemAtIndexPath:indexPath)
+    collectionView.deselectItemAtIndexPath(indexPath, animated:true)
+    case indexPath.section
+    when CONNECT_SECTION
+      if Facebook.is_open?
+        self.navigationController.pushViewController(FindFriendsVC.alloc.init, animated:true)
+      else
+        show_hud
+        Facebook.connect true do |response, json|
           hide_hud response.ok?
+          if response.ok?
+            self.navigationController.pushViewController(FindFriendsVC.alloc.init, animated:true)
+          end
         end
       end
+    when ACTION_SECTION
+      dismissViewControllerAnimated(true, completion:nil)
     end
   end
 
