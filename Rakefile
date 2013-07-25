@@ -24,7 +24,7 @@ Motion::Project::App.setup do |app|
   app.entitlements['get-task-allow'] = config['app']['get-task-allow']
   app.codesign_certificate = config['app']['codesign_certificate']
 
-  app.version = "5"
+  app.version = "6"
   app.short_version = "1.0.0"
 
   if ENV['RUBYMOTION_LIB']
@@ -62,4 +62,24 @@ Motion::Project::App.setup do |app|
     'CFBundleURLSchemes' => ["fb#{facebook_app_id}", "veoveo"]
   }]
 
+end
+
+desc "Release Testflight Build"
+task :testflight => [
+  :"archive:distribution"
+] do
+
+  build_path = './build/iPhoneOS-6.1-Release'
+  ipa_path = "#{build_path}/VeoVeo.ipa"
+  dsym_path = "#{build_path}/VeoVeo.dSYM"
+  zipped_dsym_path = "#{build_path}/VeoVeo.dSYM.zip"
+
+  # this should overwrite
+  sh "zip -r #{zipped_dsym_path} #{dsym_path}"
+
+  api_token = "c4e22ac831b1b976994bb7594d40902b_MTAxMjgy"
+  team_token = "59240848237026c0556eca2582cf8110_MjQ1NDQ2MjAxMy0wNy0wNyAxOToyNDozNC42NDgwNjU"
+  notes = "Latest Testflight Build"
+  distribution_lists = "VeoVeo"
+  sh "curl http://testflightapp.com/api/builds.json -F file=@#{ipa_path} -F dsym=@#{zipped_dsym_path} -F api_token=#{api_token} -F team_token=#{team_token} -F notes='#{notes}' -F distribution_lists=#{distribution_lists}"
 end
