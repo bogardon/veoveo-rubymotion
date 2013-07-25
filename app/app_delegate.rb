@@ -46,8 +46,6 @@ class AppDelegate
   end
 
   def applicationWillEnterForeground(application)
-    User.register_push
-    Facebook.connect false
   end
 
   def applicationDidEnterBackground(application)
