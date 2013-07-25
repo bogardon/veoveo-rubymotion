@@ -33,9 +33,15 @@ class FeedVC < UIViewController
     super
     add_logo_to_nav_bar
 
+    add_right_nav_button "Find Friends", self, :on_find_friends
+
     @refresh = UIRefreshControl.alloc.init
     @refresh.addTarget(self, action: :reload, forControlEvents:UIControlEventValueChanged)
     @collection_view.addSubview(@refresh)
+  end
+
+  def on_find_friends
+    self.presentViewController(UINavigationController.alloc.initWithRootViewController(ConnectVC.alloc.init), animated:true, completion:nil)
   end
 
   def reload
