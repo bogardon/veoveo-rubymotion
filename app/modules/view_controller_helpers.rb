@@ -28,6 +28,7 @@ module ViewControllerHelpers
   end
 
   def show_hud
+    UIApplication.sharedApplication.keyWindow.setUserInteractionEnabled(false)
     hud = MBProgressHUD.HUDForView(self.view)
     if hud
       hud.show(true)
@@ -39,6 +40,7 @@ module ViewControllerHelpers
   end
 
   def hide_hud(success=true)
+    UIApplication.sharedApplication.keyWindow.setUserInteractionEnabled(true)
     hud = MBProgressHUD.HUDForView self.view
     hud.mode = MBProgressHUDModeText
     hud.labelText = success ? "Success!" : "Failed."
