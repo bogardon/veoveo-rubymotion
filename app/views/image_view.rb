@@ -16,6 +16,7 @@ class ImageView < UIImageView
   end
 
   def set_processed_image_from_url(url, &block)
+    self.image = nil
     return unless url.scheme
     @query.connection.cancel if @query
 
