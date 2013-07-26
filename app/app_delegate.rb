@@ -138,6 +138,11 @@ class AppDelegate
     location_notification.alertBody = "Sig change @ #{coordinate.latitude},#{coordinate.longitude}"
     UIApplication.sharedApplication.scheduleLocalNotification(location_notification)
 
+    @bg_task = UIApplication.sharedApplication.beginBackgroundTaskWithExpirationHandler(lambda do
+      UIApplication.sharedApplication.endBackgroundTask(@bg_task)
+      @bg_task = UIBackgroundTaskInvalid
+    end)
+
     # 100 meter radius around center
     region = MKCoordinateRegionMakeWithDistance(coordinate, 200, 200)
     VeoVeoAPI.get_nearby_spots region do |response, spots|
@@ -174,6 +179,11 @@ class AppDelegate
         end
 
       end
+
+      # end bg task
+      UIApplication.sharedApplication.endBackgroundTask(@bg_task)
+      @bg_task = UIBackgroundTaskInvalid
+
     end
   end
 end
