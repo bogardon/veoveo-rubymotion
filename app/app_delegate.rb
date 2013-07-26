@@ -121,11 +121,6 @@ class AppDelegate
       coordinate = result[:to].coordinate
       app_state = UIApplication.sharedApplication.applicationState
 
-      changes = App::Persistence['significant_location_changes'] || []
-      change = {latitude: coordinate.latitude, longitude: coordinate.longitude, state: app_state}
-      changes << change
-      App::Persistence['significant_location_changes'] = changes
-
       if User.current && app_state == UIApplicationStateBackground
         fetch_nearby_spots(coordinate)
       end
@@ -133,10 +128,6 @@ class AppDelegate
   end
 
   def fetch_nearby_spots(coordinate)
-
-    location_notification = UILocalNotification.alloc.init
-    location_notification.alertBody = "Sig change @ #{coordinate.latitude},#{coordinate.longitude}"
-    UIApplication.sharedApplication.scheduleLocalNotification(location_notification)
 
     @bg_task = UIApplication.sharedApplication.beginBackgroundTaskWithExpirationHandler(lambda do
       UIApplication.sharedApplication.endBackgroundTask(@bg_task)
