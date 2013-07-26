@@ -148,7 +148,7 @@ class Model
         if index == components.count-1
           inner_hash[component] = case model_value
           when Array
-            model_value.map do |e|
+            model_value.compact.map do |e|
               serialized.include?(e) ? nil : e.to_hash(serialized)
             end
           when Model
