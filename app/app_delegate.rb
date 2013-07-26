@@ -118,42 +118,61 @@ class AppDelegate
 
   def setup_location_change
     BW::Location.get_significant do |result|
-      if User.current
-        coordinate = result[:to].coordinate
-        app_state = UIApplication.sharedApplication.applicationState
+      coordinate = result[:to].coordinate
+      app_state = UIApplication.sharedApplication.applicationState
 
-        case app_state
-        when UIApplicationStateBackground
-          fetch_nearby_spots(coordinate)
-        else
-        end
+      changes = App::Persistence['significant_location_changes'] || []
+      change = {latitude: coordinate.latitude, longitude: coordinate.longitude, state: app_state}
+      changes << change
+      App::Persistence['significant_location_changes'] = changes
 
+      if User.current && app_state == UIApplicationStateBackground
+        fetch_nearby_spots(coordinate)
       end
     end
   end
 
   def fetch_nearby_spots(coordinate)
-    # 50 meter radius around center
-    region = MKCoordinateRegionMakeWithDistance(coordinate, 100, 100)
+
+    location_notification = UILocalNotification.alloc.init
+    location_notification.alertBody = "Sig change @ #{coordinate.latitude},#{coordinate.longitude}"
+    UIApplication.sharedApplication.scheduleLocalNotification(location_notification)
+
+    # 100 meter radius around center
+    region = MKCoordinateRegionMakeWithDistance(coordinate, 200, 200)
     VeoVeoAPI.get_nearby_spots region do |response, spots|
       # skip if no spots found
       if response.ok? && spots.count > 0
         # do not notify twice
         notified_spot_ids = App::Persistence['notified_spot_ids'] || []
-
         spots_to_notify = spots.reject do |s|
           notified_spot_ids.include?(s.id)
         end
+        # store notified spot ids
+        App::Persistence['notified_spot_ids'] = notified_spot_ids + spots_to_notify.map(&:id)
 
         # do not notify unless there's stuff?
         if spots_to_notify.count > 0
-          notification = UILocalNotification.alloc.init
-          notification.alertBody = "Near finds by your friends!"
-          UIApplication.sharedApplication.scheduleLocalNotification(notification)
+          names = spots_to_notify.map do |s|
+            s.user.username
+          end.uniq
+
+          names_list = case names.count
+          when 1
+            names.first
+          when 2
+            names.first + ' and ' + names.last
+          else
+            # oxford comma
+            names[0...-1].join(', ') + " ,and #{names.last}"
+          end
+
+          spots_notification = UILocalNotification.alloc.init
+          spots_notification.alertBody = "#{names_list} discovered something near you. Find it!"
+          spots_notification.userInfo = {latitude: coordinate.latitude, longitude: coordinate.longitude}
+          UIApplication.sharedApplication.scheduleLocalNotification(spots_notification)
         end
 
-        # store notified spot ids
-        App::Persistence['notified_spot_ids'] =notified_spot_ids + spots_to_notify.map(&:id)
       end
     end
   end
