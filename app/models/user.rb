@@ -109,7 +109,9 @@ class User < Model
     def persist_user
       return unless @current
       # called on login and background
-      hash_to_persist = @current.to_hash
+      hash_to_persist = @current.to_hash.select do |k,v|
+        k != "answers"
+      end
       NSKeyedArchiver.archiveRootObject(hash_to_persist, toFile:archive_path)
     end
 
