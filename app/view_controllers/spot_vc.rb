@@ -164,7 +164,7 @@ class SpotVC < UIViewController
       cell.user_image_view.set_image_from_url @spot.user.avatar_url_thumb if @spot.user
       formatter = Time.cached_date_formatter("MMMM dd, YYYY")
       date_str = formatter.stringFromDate(@spot.created_at)
-      cell.label.attributedText = @spot.user.username.bold(11) + " originally found this on #{date_str}. Find to unlock their photo!" if @spot.user
+      cell.label.attributedText = @spot.user.username.bold(11) + " discovered this on #{date_str}. Find to unlock!" if @spot.user
       cell
     else
       nil
