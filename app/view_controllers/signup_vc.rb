@@ -56,7 +56,7 @@ class SignUpVC < UIViewController
   end
 
   def on_next
-    return unless formValid
+    return unless form_valid?
     @username_field.resignFirstResponder
     @password_field.resignFirstResponder
     @email_field.resignFirstResponder
