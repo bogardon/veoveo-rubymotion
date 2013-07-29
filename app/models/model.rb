@@ -150,7 +150,7 @@ class Model
         if index == components.count-1
           inner_hash[component] = case model_value
           when Array
-            model_value.map do |e|
+            model_value.compact.map do |e|
               serialized_hash_by_model[e] ? serialized_hash_by_model[e].clone : e.to_hash(serialized_hash_by_model)
             end
           when Model
