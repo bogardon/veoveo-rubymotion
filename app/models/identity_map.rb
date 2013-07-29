@@ -27,13 +27,14 @@ module IdentityMap
           key_path = attribute[:key_path]
           identity_key = json.valueForKeyPath(key_path)
           return nil unless identity_key
+          new_model = self.new json
           old_model = self.identity_map[identity_key]
           if old_model
-            old_model.merge_with_json(json)
+            old_model.merge_with_model(new_model)
           else
-            self.identity_map[identity_key] = self.new json
+            self.identity_map[identity_key] = new_model
           end
-          self.identity_map[identity_key]
+          (old_model || new_model)
         end
       end
 
@@ -41,6 +42,22 @@ module IdentityMap
 
     def identity_map
       @identity_map ||= Hash.new
+    end
+  end
+
+  def merge_with_model(model)
+    return unless self.is_a?(model.class)
+
+    self.class.get_relationships.each do |relationship|
+      name = relationship[:name]
+      model_value = model.send("#{name}")
+      self.send("#{name}=", model_value) unless model_value.nil?
+    end
+
+    self.class.get_attributes.each do |attribute|
+      name = attribute[:name]
+      model_value = model.send("#{name}")
+      self.send("#{name}=", model_value) unless model_value.nil?
     end
   end
 

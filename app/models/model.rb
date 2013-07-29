@@ -151,10 +151,10 @@ class Model
           inner_hash[component] = case model_value
           when Array
             model_value.map do |e|
-              serialized_hash_by_model[e] ? serialized_hash_by_model[e] : e.to_hash(serialized_hash_by_model)
+              serialized_hash_by_model[e] ? serialized_hash_by_model[e].clone : e.to_hash(serialized_hash_by_model)
             end
           when Model
-            serialized_hash_by_model[model_value] ? serialized_hash_by_model[model_value] : model_value.to_hash(serialized_hash_by_model)
+            serialized_hash_by_model[model_value] ? serialized_hash_by_model[model_value].clone : model_value.to_hash(serialized_hash_by_model)
           else
           end
         else
