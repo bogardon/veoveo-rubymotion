@@ -165,7 +165,7 @@ class User < Model
       options = {
         format: :form_data,
         files: {
-          avatar: UIImagePNGRepresentation(image)
+          avatar: UIImageJPEGRepresentation(image, 1)
         }
       }
 
