@@ -9,7 +9,7 @@ Bundler.require
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
 
-  # app.xcode_dir = "/Applications/Xcode.app/Contents/Developer"
+  app.xcode_dir = "/Applications/Xcode.app/Contents/Developer"
   app.sdk_version = "6.1"
   app.deployment_target = '6.1'
 

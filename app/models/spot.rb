@@ -71,7 +71,7 @@ class Spot < Model
           longitude: location.coordinate.longitude
         },
         files: {
-          image: UIImagePNGRepresentation(image)
+          image: UIImageJPEGRepresentation(image, 0)
         }
       }
 

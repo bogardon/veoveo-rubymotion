@@ -27,7 +27,7 @@ class Answer < Model
         spot_id: spot.id
       },
       files: {
-        image: UIImageJPEGRepresentation(image, 1)
+        image: UIImageJPEGRepresentation(image, 0)
       }
     }
     VeoVeoAPI.post "answers", options do |response, json|
