@@ -24,7 +24,7 @@ Motion::Project::App.setup do |app|
   app.entitlements['get-task-allow'] = config['app']['get-task-allow']
   app.codesign_certificate = config['app']['codesign_certificate']
 
-  app.version = "13"
+  app.version = "14"
   app.short_version = "1.0.0"
 
   if ENV['RUBYMOTION_LIB']
@@ -42,6 +42,7 @@ Motion::Project::App.setup do |app|
     pod 'MBProgressHUD'
     pod 'GGFullscreenImageViewController'
     pod 'TestFlightSDK'
+    pod 'SDWebImage'
   end
 
   # icons
