@@ -3,7 +3,6 @@ class AddVC < UIViewController
   stylesheet :add_vc
 
   attr_accessor :location
-  attr_accessor :completion
 
   HINT_CELL_SECTION = 0
   HINT_CELL_IDENTIFIER = "HINT_CELL_IDENTIFIER"
@@ -37,11 +36,10 @@ class AddVC < UIViewController
     return unless @photo && @form && @form.text && @form.text.length > 0
     @form.resignFirstResponder
     self.show_hud
-    Spot.add_new(@form.text, @location, @photo) do |response, json|
+    Spot.add_new(@form.text, @location, @photo) do |response, spot|
       self.hide_hud response.ok?
       if response.ok?
-        @completion.call(Spot.merge_or_insert(json))
-        @completion = nil
+        self.dismissViewControllerAnimated(true, completion:nil)
       else
       end
     end

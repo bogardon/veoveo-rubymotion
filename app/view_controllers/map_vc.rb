@@ -16,6 +16,8 @@ class MapVC < UIViewController
     super
 
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:CurrentUserDidLoginNotification, object:nil)
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: 'on_did_add_spot:', name:SpotDidAddNotification, object:nil)
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: 'on_did_delete_spot:', name:SpotDidDeleteNotification, object:nil)
 
     @filter_following = false
 
@@ -45,6 +47,17 @@ class MapVC < UIViewController
     self.navigationItem.titleView = segmented_control
   end
 
+  def on_did_add_spot(notification)
+    spot = notification.object
+    @map_view.addAnnotation(spot)
+    @map_view.selectAnnotation(spot, animated:false)
+  end
+
+  def on_did_delete_spot(notification)
+    spot = notification.object
+    @map_view.removeAnnotation(spot)
+  end
+
   def on_segment
     @filter_following ^= true
     reload
@@ -54,13 +67,6 @@ class MapVC < UIViewController
     return unless @map_view.userLocation.location
     vc = AddVC.alloc.init
     vc.location = @map_view.userLocation.location
-    vc.completion = lambda do |spot|
-      if spot
-        @map_view.addAnnotation(spot)
-        @map_view.selectAnnotation(spot, animated:false)
-        self.dismissViewControllerAnimated(true, completion:nil)
-      end
-    end
     nav = UINavigationController.alloc.initWithRootViewController(vc)
     self.presentViewController(nav, animated:true, completion:nil)
   end

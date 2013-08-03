@@ -45,6 +45,21 @@ class SpotVC < UIViewController
     @collection_view.addSubview(@refresh)
   end
 
+  def on_delete
+    alert = BW::UIAlertView.new(:title => "Really delete?", :message => "This cannot be undone.", :buttons => ["Delete", "Cancel"], :did_dismiss => (lambda do |alert|
+      if alert.clicked_button.index == 0
+        self.show_hud
+        self.spot.delete do |response, json|
+          self.hide_hud response.ok?
+          if response.ok?
+            self.navigationController.popViewControllerAnimated(true)
+          end
+        end
+      end
+    end))
+    alert.show
+  end
+
   def on_find_it
     source = BW::Device.camera.rear || BW::Device.camera.any
     source.picture(media_types: [:image], allows_editing: true) do |result|
@@ -80,6 +95,7 @@ class SpotVC < UIViewController
       @collection_view.reloadData if @collection_view
       @refresh.endRefreshing if @refresh
       add_right_nav_button "Find It", self, :on_find_it unless self.spot.unlocked
+      add_right_nav_button "Delete", self, :on_delete if self.spot.user == User.current
     end
   end
 

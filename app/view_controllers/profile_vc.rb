@@ -24,6 +24,8 @@ class ProfileVC < UIViewController
   def initialize(user)
     @user = user
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :user_did_log_in, name:CurrentUserDidLoginNotification, object:nil)
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: 'on_spot_did_add:', name:SpotDidAddNotification, object:nil)
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: 'on_spot_did_delete:', name:SpotDidDeleteNotification, object:nil)
     reload
   end
 
@@ -35,6 +37,20 @@ class ProfileVC < UIViewController
   def user_did_log_in
     self.user = User.current
     reload
+  end
+
+  def on_spot_did_add(notification)
+    reload
+  end
+
+  def on_spot_did_delete(notification)
+    spot = notification.object
+    if self.user && self.user.answers
+      self.user.answers.delete_if do |a|
+        a.spot == spot
+      end
+      @collection_view.reloadData if @collection_view
+    end
   end
 
   def viewDidLoad
@@ -162,12 +178,11 @@ class ProfileVC < UIViewController
     case indexPath.section
     when PROFILE_SECTION
     when FEED_SECTION
-      spot_vc = SpotVC.alloc.initWithSpot self.user.answers[indexPath.item].spot
+      answer = self.user.answers[indexPath.item]
+      spot_vc = SpotVC.alloc.initWithSpot answer.spot
       self.navigationController.pushViewController(spot_vc, animated:true)
     else
     end
   end
-
-
 
 end
