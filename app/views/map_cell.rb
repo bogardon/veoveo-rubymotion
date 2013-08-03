@@ -30,6 +30,7 @@ class MapCell < UICollectionViewCell
 
     @label = UILabel.alloc.initWithFrame(CGRectInset(top_bg.frame, 1, 1))
     @label.backgroundColor = UIColor.clearColor
+    @label.numberOfLines = 2
     @label.textAlignment = NSTextAlignmentCenter
     @label.font = UIFont.boldSystemFontOfSize(16)
     @label.textColor = BubbleWrap.rgb_color(51,51,51)
