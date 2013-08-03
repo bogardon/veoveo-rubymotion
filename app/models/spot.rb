@@ -1,3 +1,5 @@
+SpotDidDeleteNotification = "SpotDidDeleteNotification"
+SpotDidAddNotification = "SpotDidAddNotification"
 class Spot < Model
   include IdentityMap
   establish_identity_on :id
@@ -36,6 +38,15 @@ class Spot < Model
 
   def title
     self.hint
+  end
+
+  def delete(&block)
+    VeoVeoAPI.delete "spots/#{self.id}" do |response, json|
+      if response.ok?
+        NSNotificationCenter.defaultCenter.postNotificationName(SpotDidDeleteNotification, object:self, userInfo:nil)
+      end
+      block.call(response,json) if block
+    end
   end
 
   class << self
@@ -80,9 +91,11 @@ class Spot < Model
 
       VeoVeoAPI.post "spots", options do |response, json|
         if response.ok?
+          spot = Spot.merge_or_insert json
+          NSNotificationCenter.defaultCenter.postNotificationName(SpotDidAddNotification, object:spot, userInfo:nil)
         else
         end
-        block.call(response,json) if block
+        block.call(response, spot) if block
       end
     end
 
