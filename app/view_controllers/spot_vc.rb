@@ -82,7 +82,7 @@ class SpotVC < UIViewController
           self.hide_hud response.ok?
           if response.ok?
             answer = Answer.merge_or_insert(json)
-            self.spot.answers << answer
+            self.spot.answers.unshift(answer)
             self.spot.unlocked = true
             self.navigationItem.rightBarButtonItem = nil
             @collection_view.reloadData if @collection_view
