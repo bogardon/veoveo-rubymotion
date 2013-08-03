@@ -83,7 +83,7 @@ class SpotVC < UIViewController
   end
 
   def update_find_it_button(location)
-    return unless self.navigationItem.rightBarButtonItem
+    return if self.spot.user == User.current || !self.navigationItem.rightBarButtonItem
     distance = location.distanceFromLocation(CLLocation.alloc.initWithLatitude(self.spot.latitude, longitude:self.spot.longitude))
     self.navigationItem.rightBarButtonItem.enabled = distance < 50
   end
