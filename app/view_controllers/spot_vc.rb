@@ -61,6 +61,17 @@ class SpotVC < UIViewController
   end
 
   def on_find_it
+    return unless @map_view && @map_view.userLocation.location
+    distance = @map_view.userLocation.location.distanceFromLocation(CLLocation.alloc.initWithLatitude(self.spot.latitude, longitude:self.spot.longitude))
+    if distance < 50
+      take_photo
+    else
+      alert = BW::UIAlertView.new(:title => "Too far away!", :message => "You must be within 50 meters to find this.", :buttons => "OK")
+      alert.show
+    end
+  end
+
+  def take_photo
     source = BW::Device.camera.rear || BW::Device.camera.any
     source.picture(media_types: [:image], allows_editing: true) do |result|
       unless result[:error]
@@ -80,12 +91,6 @@ class SpotVC < UIViewController
         end
       end
     end if source
-  end
-
-  def update_find_it_button(location)
-    return if self.spot.user == User.current || !self.navigationItem.rightBarButtonItem
-    distance = location.distanceFromLocation(CLLocation.alloc.initWithLatitude(self.spot.latitude, longitude:self.spot.longitude))
-    self.navigationItem.rightBarButtonItem.enabled = distance < 50
   end
 
   def reload
@@ -162,7 +167,7 @@ class SpotVC < UIViewController
       cell.map_view.region = MKCoordinateRegionMakeWithDistance(annotation.coordinate, 200, 200)
       cell.map_view.delegate = self
       cell.map_view.setUserInteractionEnabled(false)
-      update_find_it_button(cell.map_view.userLocation.location)
+      @map_view = cell.map_view
       # don't re add annotations
       cell.map_view.addAnnotation(annotation) unless cell.map_view.annotations.count > 0
       cell
@@ -207,10 +212,4 @@ class SpotVC < UIViewController
     annotation.setSelected(true, animated:false)
     annotation
   end
-
-  def mapView(mapView, didUpdateUserLocation:userLocation)
-    return unless userLocation.location
-    update_find_it_button(userLocation.location)
-  end
-
 end
