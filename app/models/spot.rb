@@ -5,6 +5,9 @@ class Spot < Model
   set_attribute name: :id,
     type: :integer
 
+  set_attribute name: :user_id,
+    type: :integer
+
   set_attribute name: :latitude,
     type: :float
 

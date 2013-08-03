@@ -23,6 +23,9 @@ class AnswerFeedCell < FeedCell
     @answer = answer
 
     @user_image_view.set_image_from_url @answer.user.avatar_url_thumb
-    @label.attributedText = @answer.user.username.bold(12) + " found:\n" + @answer.spot.hint.bold(12) + "\n" + @answer.humanized_date.nsattributedstring.color(UIColor.lightGrayColor)
+
+    verb = @answer.user.id == @answer.spot.user_id ? "discovered" : "found"
+
+    @label.attributedText = @answer.user.username.bold(12) + " #{verb}:\n" + @answer.spot.hint.bold(12) + "\n" + @answer.humanized_date.nsattributedstring.color(UIColor.lightGrayColor)
   end
 end
