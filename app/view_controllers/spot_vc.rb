@@ -115,7 +115,7 @@ class SpotVC < UIViewController
     when ANSWER_CELL_SECTION
       [0,7,0,7]
     when SOCIAL_CELL_SECTION
-      [0,7,25,7]
+      [0,7,10,7]
     else
       [0,0,0,0]
     end
