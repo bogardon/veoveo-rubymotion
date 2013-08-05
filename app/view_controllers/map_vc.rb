@@ -10,6 +10,10 @@ class MapVC < UIViewController
     @map_view = subview(MKMapView, :map_view)
     @map_view.delegate = self
     @map_view.showsUserLocation = true
+
+    subview(UIButton, :center) do |button|
+      button.addTarget(self, action: :center_on_user, forControlEvents:UIControlEventTouchUpInside)
+    end
   end
 
   def init
@@ -37,7 +41,6 @@ class MapVC < UIViewController
     @did_auto_center = false
     center_on_user
 
-    self.tabBarController.delegate = self
     add_right_nav_button "Add", self, :on_add
 
     segmented_control = MapSegmentedControl.alloc.initWithItems(["Everyone", "Following"])
@@ -69,13 +72,6 @@ class MapVC < UIViewController
     vc.location = @map_view.userLocation.location
     nav = UINavigationController.alloc.initWithRootViewController(vc)
     self.presentViewController(nav, animated:true, completion:nil)
-  end
-
-  def tabBarController(tabBarController, shouldSelectViewController:viewController)
-    unless viewController != tabBarController.selectedViewController || viewController != self.navigationController
-      center_on_user
-    end
-    true
   end
 
   def center_on_user
