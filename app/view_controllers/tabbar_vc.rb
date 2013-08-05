@@ -7,16 +7,16 @@ class TabBarVC < UITabBarController
   def init
     super
     feed_nav_vc = UINavigationController.alloc.initWithRootViewController(FeedVC.alloc.init)
-    feed_nav_vc.tabBarItem.setFinishedSelectedImage("activity_selected.png".uiimage, withFinishedUnselectedImage:"activity.png".uiimage)
+    feed_nav_vc.tabBarItem.setFinishedSelectedImage("activity.png".uiimage, withFinishedUnselectedImage:"activity_icon_disabled.png".uiimage)
     feed_nav_vc.tabBarItem.imageInsets = [6,0,-6,0]
 
     map_nav_vc = UINavigationController.alloc.initWithRootViewController(MapVC.alloc.init)
-    map_nav_vc.tabBarItem.setFinishedSelectedImage("finds_selected.png".uiimage, withFinishedUnselectedImage:"finds.png".uiimage)
-    map_nav_vc.tabBarItem.imageInsets = [-4,0,4,0]
+    map_nav_vc.tabBarItem.setFinishedSelectedImage("map_icon_active.png".uiimage, withFinishedUnselectedImage:"map_icon_inactive.png".uiimage)
+    map_nav_vc.tabBarItem.imageInsets = [6,0,-6,0]
 
     profile_vc = ProfileVC.new User.current
     profile_nav_vc = UINavigationController.alloc.initWithRootViewController(profile_vc)
-    profile_nav_vc.tabBarItem.setFinishedSelectedImage("profile_selected.png".uiimage, withFinishedUnselectedImage:"profile.png".uiimage)
+    profile_nav_vc.tabBarItem.setFinishedSelectedImage("profile.png".uiimage, withFinishedUnselectedImage:"profile_icon_disabled.png".uiimage)
     profile_nav_vc.tabBarItem.imageInsets = [6,0,-6,0]
 
     self.viewControllers = [feed_nav_vc, map_nav_vc, profile_nav_vc]
@@ -46,18 +46,17 @@ class TabBarVC < UITabBarController
 
   def viewDidLoad
     super
-    self.tabBar.backgroundImage = "footer.png".uiimage
+    self.tabBar.backgroundImage = "bottom_nav.png".uiimage
     self.tabBar.frame = [[0, self.tabBar.superview.frame.size.height - 40], [self.tabBar.frame.size.width, 40]]
     self.tabBar.superview[0].frame = [[0,0], [self.tabBar.superview.frame.size.width, self.tabBar.superview.frame.size.height - 40]]
 
 
-    selection_indicator_image = "selector.png".uiimage
-    size = CGSizeMake(selection_indicator_image.size.width,40)
+
+    size = CGSizeMake(120,40)
     UIGraphicsBeginImageContextWithOptions(size, false, 0)
-    UIColor.clearColor.setFill
+    [127, 181, 163].uicolor.setFill
     context = UIGraphicsGetCurrentContext()
-    CGContextFillRect(context, [[0,0],size])
-    selection_indicator_image.drawInRect([[0,size.height-2],[size.width, 2]])
+    CGContextFillRect(context, [[0,38],[120,2]])
     selection_indicator_image = UIGraphicsGetImageFromCurrentImageContext()
     UIGraphicsEndImageContext()
 
