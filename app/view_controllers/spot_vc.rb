@@ -139,7 +139,7 @@ class SpotVC < UIViewController
     when MAP_CELL_SECTION
       [306,175]
     when ANSWER_CELL_SECTION
-      [150,200]
+      [150,220]
     when SOCIAL_CELL_SECTION
       [306,50]
     else
@@ -178,7 +178,9 @@ class SpotVC < UIViewController
       cell.image_button.removeTarget(self, action: "on_answer_image:", forControlEvents:UIControlEventTouchUpInside)
       cell.image_button.addTarget(self, action: "on_answer_image:", forControlEvents:UIControlEventTouchUpInside)
 
-      cell.answer = @spot.answers[indexPath.item]
+      answer = @spot.answers[indexPath.item]
+      cell.first_image_view.setHidden(@spot.user != answer.user)
+      cell.answer = answer
       cell
     when SOCIAL_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(SOCIAL_CELL_IDENTIFIER, forIndexPath:indexPath)
