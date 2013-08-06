@@ -5,6 +5,7 @@ class SpotVC < UIViewController
   SPOT_ANNOTATION_IDENTIFIER = "SPOT_ANNOTATION_IDENTIFIER"
   ANSWER_CELL_IDENTIFIER = "ANSWER_CELL_IDENTIFIER"
   SOCIAL_CELL_IDENTIFIER = "SOCIAL_CELL_IDENTIFIER"
+  LOADING_CELL_IDENTIFIER = "LOADING_CELL_IDENTIFIER"
 
   MAP_CELL_SECTION = 0
   ANSWER_CELL_SECTION = 1
@@ -20,6 +21,7 @@ class SpotVC < UIViewController
     @collection_view.registerClass(MapCell, forCellWithReuseIdentifier:MAP_CELL_IDENTIFIER)
     @collection_view.registerClass(AnswerCell, forCellWithReuseIdentifier:ANSWER_CELL_IDENTIFIER)
     @collection_view.registerClass(SocialCell, forCellWithReuseIdentifier:SOCIAL_CELL_IDENTIFIER)
+    @collection_view.registerClass(LoadMoreCell, forSupplementaryViewOfKind:UICollectionElementKindSectionFooter, withReuseIdentifier:LOADING_CELL_IDENTIFIER)
     @collection_view.alwaysBounceVertical = true
   end
 
@@ -28,6 +30,7 @@ class SpotVC < UIViewController
   def initWithSpot(spot)
     init
     self.spot = spot
+    @loaded = false
     reload
     self
   end
@@ -96,11 +99,15 @@ class SpotVC < UIViewController
   def reload
     @query.connection.cancel if @query
     @query = Spot.for self.spot.id do |response, spot|
-      self.spot = spot if response.ok?
-      @collection_view.reloadData if @collection_view
+      if response.ok?
+        @loaded = true
+        add_right_nav_button "Find It", self, :on_find_it unless self.spot.unlocked
+        add_right_nav_button "Delete", self, :on_delete if self.spot.user == User.current
+        self.spot = spot
+        @collection_view.reloadData if @collection_view
+      end
       @refresh.endRefreshing if @refresh
-      add_right_nav_button "Find It", self, :on_find_it unless self.spot.unlocked
-      add_right_nav_button "Delete", self, :on_delete if self.spot.user == User.current
+
     end
   end
 
@@ -203,6 +210,23 @@ class SpotVC < UIViewController
       profile_vc = ProfileVC.new @spot.user
       self.navigationController.pushViewController(profile_vc, animated:true)
     else
+    end
+  end
+
+  def collectionView(collectionView, layout:collectionViewLayout, referenceSizeForFooterInSection:section)
+    return [0,0] unless section == MAP_CELL_SECTION
+    @loaded ? [0, 0] : [320,30]
+  end
+
+#-(UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+
+  def collectionView(collectionView, viewForSupplementaryElementOfKind:kind, atIndexPath:indexPath)
+    return nil unless indexPath.section == MAP_CELL_SECTION
+    if @loaded
+      nil
+    else
+      # [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"CollectionHeaderView" forIndexPath:indexPath];
+      collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionFooter, withReuseIdentifier:LOADING_CELL_IDENTIFIER, forIndexPath:indexPath)
     end
   end
 
