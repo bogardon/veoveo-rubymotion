@@ -24,7 +24,7 @@ Motion::Project::App.setup do |app|
   app.entitlements['get-task-allow'] = config['app']['get-task-allow']
   app.codesign_certificate = config['app']['codesign_certificate']
 
-  app.version = "21"
+  app.version = "22"
   app.short_version = "1.0.0"
 
   if ENV['RUBYMOTION_LIB']

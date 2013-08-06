@@ -29,7 +29,6 @@ class ProfileVC < UIViewController
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :user_did_log_in, name:CurrentUserDidLoginNotification, object:nil)
     NSNotificationCenter.defaultCenter.addObserver(self, selector: 'on_spot_did_add:', name:SpotDidAddNotification, object:nil)
     NSNotificationCenter.defaultCenter.addObserver(self, selector: 'on_spot_did_delete:', name:SpotDidDeleteNotification, object:nil)
-    @answers = []
     reload_user
     reload_answers
   end
@@ -84,6 +83,10 @@ class ProfileVC < UIViewController
       add_right_nav_button "Follow", self, :on_relationship
     else
     end
+  end
+
+  def more_to_load?
+    @answers && @answers.count > 0 && @answers.count % LIMIT == 0
   end
 
   def reload_user
@@ -175,7 +178,7 @@ class ProfileVC < UIViewController
     when PROFILE_SECTION
       1
     when FEED_SECTION
-      @answers.count
+      @answers ? @answers.count : 0
     end
   end
 
@@ -224,7 +227,7 @@ class ProfileVC < UIViewController
     when PROFILE_SECTION
       [0,0]
     when FEED_SECTION
-      @answers.count % LIMIT > 0 ? [0,0] : [320, 30]
+      more_to_load? ? [320, 30] : [0,0]
     else
       [0,0]
     end
@@ -235,7 +238,7 @@ class ProfileVC < UIViewController
     when PROFILE_SECTION
       nil
     when FEED_SECTION
-      if @answers.count % LIMIT > 0
+      unless more_to_load?
         nil
       else
         # [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"CollectionHeaderView" forIndexPath:indexPath];

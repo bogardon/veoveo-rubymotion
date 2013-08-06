@@ -24,7 +24,6 @@ class FeedVC < UIViewController
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:CurrentUserDidLoginNotification, object:nil)
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:CurrentUserDidUpdateFollowedUsers, object:nil)
     reload
-    @answers = []
     self
   end
 
@@ -43,6 +42,10 @@ class FeedVC < UIViewController
     @refresh = UIRefreshControl.alloc.init
     @refresh.addTarget(self, action: :reload, forControlEvents:UIControlEventValueChanged)
     @collection_view.addSubview(@refresh)
+  end
+
+  def more_to_load?
+    @answers && @answers.count > 0 && @answers.count % LIMIT == 0
   end
 
   def on_find_friends
@@ -103,13 +106,13 @@ class FeedVC < UIViewController
   #- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)section
 
   def collectionView(collectionView, layout:collectionViewLayout, referenceSizeForFooterInSection:section)
-    @answers.count % LIMIT > 0 ? [0,0] : [320, 30]
+    more_to_load? ? [320,30] : [0, 0]
   end
 
 #-(UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
 
   def collectionView(collectionView, viewForSupplementaryElementOfKind:kind, atIndexPath:indexPath)
-    if @answers.count % LIMIT > 0
+    unless more_to_load?
       nil
     else
       # [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"CollectionHeaderView" forIndexPath:indexPath];
