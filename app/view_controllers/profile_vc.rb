@@ -66,6 +66,7 @@ class ProfileVC < UIViewController
     @refresh = UIRefreshControl.alloc.init
     @refresh.addTarget(self, action: :reload_answers, forControlEvents:UIControlEventValueChanged)
     @collection_view.addSubview(@refresh)
+    configure_nav_button
   end
 
   def user=(user)
