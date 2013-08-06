@@ -35,9 +35,6 @@ class User < Model
   set_attribute name: :facebook_expires_at,
     type: :date
 
-  set_relationship name: :answers,
-    class_name: :Answer
-
   def is_current?
     self == User.current
   end
@@ -145,6 +142,25 @@ class User < Model
           User.current = user
         end
         block.call(response.ok?)
+      end
+    end
+
+    def get_answers(user_id, limit, offset, &block)
+      options = {
+        format: :json,
+        payload: {
+          limit: limit,
+          offset: offset
+        }
+      }
+
+      VeoVeoAPI.get "users/#{user_id}/answers", options do |response, json|
+        if response.ok?
+          answers = json.map do |j|
+            Answer.merge_or_insert j
+          end
+        end
+        block.call(response, answers) if block
       end
     end
 

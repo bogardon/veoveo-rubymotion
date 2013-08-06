@@ -8,6 +8,8 @@ class ProfileVC < UIViewController
   FEED_SECTION = 1
   PROFILE_IDENTIFIER = "PROFILE_IDENTIFIER"
   FEED_IDENTIFIER = "FEED_IDENTIFIER"
+  LOAD_MORE_CELL_IDENTIFIER = "LOAD_MORE_CELL_IDENTIFIER"
+  LIMIT = 10
 
   layout do
     subview(UIImageView, :background)
@@ -19,6 +21,7 @@ class ProfileVC < UIViewController
 
     @collection_view.registerClass(ProfileCell, forCellWithReuseIdentifier:PROFILE_IDENTIFIER)
     @collection_view.registerClass(UserFeedCell, forCellWithReuseIdentifier:FEED_IDENTIFIER)
+    @collection_view.registerClass(LoadMoreCell, forSupplementaryViewOfKind:UICollectionElementKindSectionFooter, withReuseIdentifier:LOAD_MORE_CELL_IDENTIFIER)
   end
 
   def initialize(user)
@@ -26,7 +29,9 @@ class ProfileVC < UIViewController
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :user_did_log_in, name:CurrentUserDidLoginNotification, object:nil)
     NSNotificationCenter.defaultCenter.addObserver(self, selector: 'on_spot_did_add:', name:SpotDidAddNotification, object:nil)
     NSNotificationCenter.defaultCenter.addObserver(self, selector: 'on_spot_did_delete:', name:SpotDidDeleteNotification, object:nil)
-    reload
+    @answers = []
+    reload_user
+    reload_answers
   end
 
   def dealloc
@@ -36,17 +41,18 @@ class ProfileVC < UIViewController
 
   def user_did_log_in
     self.user = User.current
-    reload
+    reload_user
+    reload_answers
   end
 
   def on_spot_did_add(notification)
-    reload
+    reload_answers
   end
 
   def on_spot_did_delete(notification)
     spot = notification.object
-    if self.user && self.user.answers
-      self.user.answers.delete_if do |a|
+    if self.user && @answers
+      @answers.delete_if do |a|
         a.spot == spot
       end
       @collection_view.reloadData if @collection_view
@@ -57,8 +63,7 @@ class ProfileVC < UIViewController
     super
     add_logo_to_nav_bar
     @refresh = UIRefreshControl.alloc.init
-    @refresh.addTarget(self, action: :reload, forControlEvents:UIControlEventValueChanged)
-    @refresh.addTarget(self, action: :reload, forControlEvents:UIControlEventValueChanged)
+    @refresh.addTarget(self, action: :reload_answers, forControlEvents:UIControlEventValueChanged)
     @collection_view.addSubview(@refresh)
   end
 
@@ -79,14 +84,29 @@ class ProfileVC < UIViewController
     end
   end
 
-  def reload
+  def reload_user
     return unless self.user
-    User.get_id self.user.id do |response, user|
+    return if self.user.is_current?
+    @user_query.connection.cancel if @user_query
+    @user_query = User.get_id self.user.id do |response, user|
       if response.ok?
         self.user = user
-        @collection_view.reloadData if @collection_view
-        @refresh.endRefreshing if @refresh
       end
+    end
+  end
+
+  def reload_answers(offset=0)
+    return unless self.user
+    offset = 0 unless offset.is_a?(Fixnum)
+
+    @answers_query.connection.cancel if @answers_query
+    @answers_query = User.get_answers self.user.id, LIMIT, offset do |response, answers|
+      if response.ok?
+        @answers = [] unless offset > 0
+        @answers += answers
+        @collection_view.reloadData if @collection_view
+      end
+      @refresh.endRefreshing if @refresh
     end
   end
 
@@ -141,7 +161,7 @@ class ProfileVC < UIViewController
     when PROFILE_SECTION
       1
     when FEED_SECTION
-      self.user && self.user.answers ? self.user.answers.count : 0
+      @answers.count
     end
   end
 
@@ -169,7 +189,7 @@ class ProfileVC < UIViewController
       cell
     when FEED_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(FEED_IDENTIFIER, forIndexPath:indexPath)
-      cell.answer = self.user.answers[indexPath.item]
+      cell.answer = @answers[indexPath.item]
       cell
     end
   end
@@ -178,11 +198,41 @@ class ProfileVC < UIViewController
     case indexPath.section
     when PROFILE_SECTION
     when FEED_SECTION
-      answer = self.user.answers[indexPath.item]
+      answer = @answers[indexPath.item]
       spot_vc = SpotVC.alloc.initWithSpot answer.spot
       self.navigationController.pushViewController(spot_vc, animated:true)
     else
     end
   end
+
+  def collectionView(collectionView, layout:collectionViewLayout, referenceSizeForFooterInSection:section)
+    case section
+    when PROFILE_SECTION
+      [0,0]
+    when FEED_SECTION
+      @answers.count % LIMIT > 0 ? [0,0] : [320, 30]
+    else
+      [0,0]
+    end
+  end
+
+  def collectionView(collectionView, viewForSupplementaryElementOfKind:kind, atIndexPath:indexPath)
+    case indexPath.section
+    when PROFILE_SECTION
+      nil
+    when FEED_SECTION
+      if @answers.count % LIMIT > 0
+        nil
+      else
+        # [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"CollectionHeaderView" forIndexPath:indexPath];
+        reload_answers(@answers.count)
+
+        collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionFooter, withReuseIdentifier:LOAD_MORE_CELL_IDENTIFIER, forIndexPath:indexPath)
+      end
+    else
+      nil
+    end
+  end
+
 
 end
