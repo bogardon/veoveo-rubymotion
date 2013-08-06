@@ -127,7 +127,8 @@ class MapVC < UIViewController
         @map_view.removeAnnotations old_spots
         new_spots = spots - @map_view.annotations
         @map_view.addAnnotations(new_spots)
-        @map_view.annotations.map do |annotation|
+        existing_spots = @map_view.annotations - new_spots
+        existing_spots.map do |annotation|
           @map_view.viewForAnnotation(annotation)
         end.each do |annotation_view|
           next unless annotation_view.is_a?(SpotAnnotationView)
