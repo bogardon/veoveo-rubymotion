@@ -18,7 +18,6 @@ class ProfileVC < UIViewController
     flow.minimumLineSpacing = 0
     @collection_view = subview(CollectionView.alloc.initWithFrame(CGRectZero, collectionViewLayout:flow), :collection_view, delegate:self, dataSource:self)
     @collection_view.alwaysBounceVertical = true
-
     @collection_view.registerClass(ProfileCell, forCellWithReuseIdentifier:PROFILE_IDENTIFIER)
     @collection_view.registerClass(UserFeedCell, forCellWithReuseIdentifier:FEED_IDENTIFIER)
     @collection_view.registerClass(LoadMoreCell, forSupplementaryViewOfKind:UICollectionElementKindSectionFooter, withReuseIdentifier:LOAD_MORE_CELL_IDENTIFIER)
@@ -29,6 +28,8 @@ class ProfileVC < UIViewController
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :user_did_log_in, name:CurrentUserDidLoginNotification, object:nil)
     NSNotificationCenter.defaultCenter.addObserver(self, selector: 'on_spot_did_add:', name:SpotDidAddNotification, object:nil)
     NSNotificationCenter.defaultCenter.addObserver(self, selector: 'on_spot_did_delete:', name:SpotDidDeleteNotification, object:nil)
+    @more_to_load = true
+    @answers = []
     reload_user
     reload_answers
   end
@@ -108,6 +109,7 @@ class ProfileVC < UIViewController
     @answers_query = User.get_answers self.user.id, LIMIT, offset do |response, answers|
 
       if response.ok?
+        @more_to_load = answers.count == LIMIT
         if offset > 0
           old_count = @answers.count
           @answers += answers
@@ -227,7 +229,7 @@ class ProfileVC < UIViewController
     when PROFILE_SECTION
       [0,0]
     when FEED_SECTION
-      more_to_load? ? [320, 30] : [0,0]
+      @more_to_load ? [320, 30] : [0,0]
     else
       [0,0]
     end
@@ -238,7 +240,7 @@ class ProfileVC < UIViewController
     when PROFILE_SECTION
       nil
     when FEED_SECTION
-      unless more_to_load?
+      unless @more_to_load
         nil
       else
         # [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"CollectionHeaderView" forIndexPath:indexPath];
