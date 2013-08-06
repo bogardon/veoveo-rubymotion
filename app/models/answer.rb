@@ -41,8 +41,14 @@ class Answer < Model
     end
   end
 
-  def self.get_feed(&block)
-    options = {:format => :json}
+  def self.get_feed(limit=10, offset=0, &block)
+    options = {
+      :format => :json,
+      :payload => {
+        :limit => limit,
+        :offset => offset
+      }
+    }
     VeoVeoAPI.get 'answers', options do |response, json|
       if response.ok?
         answers = json.map do |data|

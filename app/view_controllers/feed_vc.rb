@@ -3,6 +3,8 @@ class FeedVC < UIViewController
   stylesheet :feed_vc
 
   ANSWER_FEED_CELL_IDENTIFIER = "ANSWER_FEED_CELL_IDENTIFIER"
+  LOAD_MORE_CELL_IDENTIFIER = "LOAD_MORE_CELL_IDENTIFIER"
+  LIMIT = 10
 
   layout do
     subview(UIImageView, :background)
@@ -13,6 +15,8 @@ class FeedVC < UIViewController
     @collection_view.alwaysBounceVertical = true
 
     @collection_view.registerClass(AnswerFeedCell, forCellWithReuseIdentifier:ANSWER_FEED_CELL_IDENTIFIER)
+    @collection_view.registerClass(LoadMoreCell, forSupplementaryViewOfKind:UICollectionElementKindSectionFooter, withReuseIdentifier:LOAD_MORE_CELL_IDENTIFIER)
+    #- (void)registerClass:(Class)viewClass forSupplementaryViewOfKind:(NSString *)elementKind withReuseIdentifier:(NSString *)identifier
   end
 
   def init
@@ -20,6 +24,7 @@ class FeedVC < UIViewController
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:CurrentUserDidLoginNotification, object:nil)
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:CurrentUserDidUpdateFollowedUsers, object:nil)
     reload
+    @answers = []
     self
   end
 
@@ -44,12 +49,14 @@ class FeedVC < UIViewController
     self.presentViewController(UINavigationController.alloc.initWithRootViewController(ConnectVC.alloc.init), animated:true, completion:nil)
   end
 
-  def reload
+  def reload(offset=0)
+    offset = 0 unless offset.is_a?(Fixnum)
     return unless User.current
     @query.connection.cancel if @query
-    @query = Answer.get_feed do |response, answers|
+    @query = Answer.get_feed LIMIT, offset do |response, answers|
       if response.ok?
-        @answers = answers
+        @answers = [] unless offset > 0
+        @answers += answers
         @collection_view.reloadData if @collection_view
       end
       @refresh.endRefreshing if @refresh
@@ -81,6 +88,26 @@ class FeedVC < UIViewController
 
     cell.answer = @answers[indexPath.item]
     cell
+  end
+
+  #- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)section
+
+  def collectionView(collectionView, layout:collectionViewLayout, referenceSizeForFooterInSection:section)
+    @answers.count % LIMIT > 0 ? [0,0] : [320, 30]
+  end
+
+#-(UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+
+  def collectionView(collectionView, viewForSupplementaryElementOfKind:kind, atIndexPath:indexPath)
+    if @answers.count % LIMIT > 0
+      nil
+    else
+      # [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"CollectionHeaderView" forIndexPath:indexPath];
+
+      reload(@answers.count)
+
+      collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionFooter, withReuseIdentifier:LOAD_MORE_CELL_IDENTIFIER, forIndexPath:indexPath)
+    end
   end
 
   def on_profile(sender)
