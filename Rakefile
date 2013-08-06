@@ -42,7 +42,7 @@ Motion::Project::App.setup do |app|
     pod 'MBProgressHUD'
     pod 'GGFullscreenImageViewController'
     pod 'TestFlightSDK'
-    pod 'SDWebImage'
+    pod 'TMCache'
   end
 
   # icons

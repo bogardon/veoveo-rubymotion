@@ -1,32 +1,38 @@
 class ImageView < UIImageView
 
-  def set_image_from_url(url)
-    set_processed_image_from_url url do |image|
+  def set_image_from_url(url, placeholder=nil)
+    set_processed_image_from_url url, placeholder do |image|
       image
     end
   end
 
-  # SDWebImage
-  # - (void)setImageWithURL:(NSURL *)url completed:(SDWebImageCompletedBlock)completedBlock;
-
-  def set_processed_image_from_url(url, &block)
-    self.image = nil
+  def set_processed_image_from_url(url, placeholder=nil, &block)
+    self.image = placeholder
 
     return unless url.scheme
 
-    self.setImageWithURL(url, placeholderImage:nil, options:SDWebImageRetryFailed, progress:nil, completed:(lambda do |image, error, cacheType|
-      self.image = nil
-      if image
-        Dispatch::Queue.concurrent(priority=:background).async do
-          image_logical = UIImage.imageWithCGImage(image.CGImage, scale:UIScreen.mainScreen.scale, orientation:image.imageOrientation)
-          processed_image = block ? block.call(image_logical) : image_logical
-          main_queue = Dispatch::Queue.main
-          main_queue.async do
-            self.image = processed_image
+    TMCache.sharedCache.objectForKey(url.to_s, block:(lambda do |cache, key, object|
+
+      Dispatch::Queue.main.async do
+        if object
+          self.image = object if @url.to_s == key
+        else
+          BW::HTTP.get url.to_s do |response|
+            Dispatch::Queue.concurrent(priority=:background).async do
+              image = UIImage.alloc.initWithData(response.body, scale:UIScreen.mainScreen.scale)
+              processed_image = block ? block.call(image) : image
+              TMCache.sharedCache.setObject(processed_image, forKey:key)
+              Dispatch::Queue.main.async do
+                self.image = processed_image if @url.to_s == key
+              end
+            end
           end
         end
       end
+
     end))
+
+    @url = url
   end
 
 end
