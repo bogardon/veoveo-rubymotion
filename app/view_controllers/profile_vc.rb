@@ -43,6 +43,7 @@ class ProfileVC < UIViewController
     self.user = User.current
     reload_user
     reload_answers
+    @collection_view.reloadData if @collection_view
   end
 
   def on_spot_did_add(notification)
@@ -101,10 +102,22 @@ class ProfileVC < UIViewController
 
     @answers_query.connection.cancel if @answers_query
     @answers_query = User.get_answers self.user.id, LIMIT, offset do |response, answers|
+
       if response.ok?
-        @answers = [] unless offset > 0
-        @answers += answers
-        @collection_view.reloadData if @collection_view
+        if offset > 0
+          old_count = @answers.count
+          @answers += answers
+          new_count = @answers.count
+
+          index_paths = (old_count...new_count).map do |i|
+            [FEED_SECTION, i].nsindexpath
+          end
+          @collection_view.insertItemsAtIndexPaths(index_paths) if @collection_view
+        else
+          @answers = answers
+          @collection_view.reloadData if @collection_view
+        end
+
       end
       @refresh.endRefreshing if @refresh
     end

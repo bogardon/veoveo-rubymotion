@@ -55,9 +55,19 @@ class FeedVC < UIViewController
     @query.connection.cancel if @query
     @query = Answer.get_feed LIMIT, offset do |response, answers|
       if response.ok?
-        @answers = [] unless offset > 0
-        @answers += answers
-        @collection_view.reloadData if @collection_view
+        if offset > 0
+          old_count = @answers.count
+          @answers += answers
+          new_count = @answers.count
+
+          index_paths = (old_count...new_count).map do |i|
+            [0, i].nsindexpath
+          end
+          @collection_view.insertItemsAtIndexPaths(index_paths) if @collection_view
+        else
+          @answers = answers
+          @collection_view.reloadData if @collection_view
+        end
       end
       @refresh.endRefreshing if @refresh
     end
