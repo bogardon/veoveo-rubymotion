@@ -31,6 +31,7 @@ class TabBarVC < UITabBarController
 
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :show_landing, name:CurrentUserDidLogoutNotification, object:nil)
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :user_did_login, name:CurrentUserDidLoginNotification, object:nil)
+    self.selectedIndex = MAP_INDEX
 
     self
   end
