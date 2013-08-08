@@ -41,7 +41,7 @@ class User < Model
 
   def toggle_following(&block)
     options = {format: :json, payload: {}.to_s}
-    method = self.following ? "delete" : "patch"
+    method = self.following ? "delete" : "post"
     old_following = self.following
     VeoVeoAPI.send(method, "users/#{self.id}/follow", options) do |response, json|
       NSNotificationCenter.defaultCenter.postNotificationName(CurrentUserDidUpdateFollowedUsers, object:nil) if response.ok?
