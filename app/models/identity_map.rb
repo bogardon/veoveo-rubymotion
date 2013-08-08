@@ -21,20 +21,39 @@ module IdentityMap
       end
 
       metaclass.instance_eval do
-        define_method("merge_or_insert") do |json|
+        define_method("merge_or_insert") do |obj|
+          case obj
+          when Hash
+            self.merge_or_insert_with_json(obj)
+          when Model
+            self.merge_or_insert_with_model(obj)
+          end
+        end
+
+        define_method("merge_or_insert_with_model") do |model|
+          return nil unless model
+          identity_key = model.send("#{attr_name}")
+          return nil unless identity_key
+          if old_model = self.identity_map[identity_key]
+            old_model.merge_with_model(model)
+          else
+            self.identity_map[identity_key] = model
+          end
+          self.identity_map[identity_key]
+        end
+
+        define_method("merge_or_insert_with_json") do |json|
           return nil unless json
           attribute = self.get_attributes.find {|a| a[:name] == attr_name}
           key_path = attribute[:key_path]
           identity_key = json.valueForKeyPath(key_path)
           return nil unless identity_key
-          new_model = self.new json
-          old_model = self.identity_map[identity_key]
-          if old_model
-            old_model.merge_with_model(new_model)
+          if old_model = self.identity_map[identity_key]
+            old_model.merge_with_json(json)
           else
-            self.identity_map[identity_key] = new_model
+            self.identity_map[identity_key] = self.new(json)
           end
-          (old_model || new_model)
+          self.identity_map[identity_key]
         end
       end
 
