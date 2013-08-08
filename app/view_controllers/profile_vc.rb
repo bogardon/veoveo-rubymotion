@@ -77,7 +77,7 @@ class ProfileVC < UIViewController
   def configure_nav_button
     return unless self.user
     if self.user.is_current?
-      add_right_nav_button "Logout", self, :on_logout
+      add_right_nav_button "Settings", self, :on_settings
     elsif self.user.following
       add_right_nav_button "Unfollow", self, :on_relationship
     elsif !self.user.following
@@ -143,8 +143,8 @@ class ProfileVC < UIViewController
     self.navigationController.pushViewController(vc, animated:true)
   end
 
-  def on_logout
-    User.current = nil
+  def on_settings
+    self.navigationController.pushViewController(SettingsVC.alloc.init, animated:true)
   end
 
   def on_take_photo
