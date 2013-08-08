@@ -21,14 +21,6 @@ class TabBarVC < UITabBarController
 
     self.viewControllers = [feed_nav_vc, map_nav_vc, profile_nav_vc]
 
-    @login_observer = App.notification_center.observe CurrentUserDidLoginNotification do |notification|
-      self.selectedIndex = MAP_INDEX
-    end
-
-    @logout_observer = App.notification_center.observe CurrentUserDidLogoutNotification do |notification|
-      show_landing(true)
-    end
-
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :show_landing, name:CurrentUserDidLogoutNotification, object:nil)
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :user_did_login, name:CurrentUserDidLoginNotification, object:nil)
     self.selectedIndex = MAP_INDEX
@@ -37,6 +29,9 @@ class TabBarVC < UITabBarController
   end
 
   def user_did_login
+    self.viewControllers.each do |nav|
+      nav.popToRootViewControllerAnimated(false)
+    end
     self.selectedIndex = MAP_INDEX
   end
 
@@ -69,11 +64,7 @@ class TabBarVC < UITabBarController
   def show_landing(animated=true)
     landing = LandingVC.alloc.init
     nav = UINavigationController.alloc.initWithRootViewController(landing)
-    self.presentViewController(nav, animated:animated, completion:lambda do
-      self.viewControllers.each do |nav|
-        nav.popToRootViewControllerAnimated(false)
-      end
-    end)
+    self.presentViewController(nav, animated:animated, completion:nil)
   end
 
 end
