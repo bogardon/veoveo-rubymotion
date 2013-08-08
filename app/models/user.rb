@@ -35,6 +35,14 @@ class User < Model
   set_attribute name: :facebook_expires_at,
     type: :date
 
+  set_attribute name: :spot_answered_push_enabled,
+    type: :boolean,
+    default: true
+
+  set_attribute name: :spots_nearby_push_enabled,
+    type: :boolean,
+    default: true
+
   def is_current?
     self == User.current
   end
@@ -121,6 +129,38 @@ class User < Model
 
     def current
       @current ||= get_user
+    end
+
+    def patch_spot_answered(val, &block)
+      info = {
+        user: {
+          spot_answered_push_enabled: val
+        }
+      }
+      options = {
+        format: :json,
+        payload: BW::JSON.generate(info)
+      }
+      User.current.spot_answered_push_enabled = val
+      VeoVeoAPI.patch 'users', options do |response, json|
+        block.call(response, json) if block
+      end
+    end
+
+    def patch_spots_nearby(val, &block)
+      info = {
+        user: {
+          spots_nearby_push_enabled: val
+        }
+      }
+      options = {
+        format: :json,
+        payload: BW::JSON.generate(info)
+      }
+      User.current.spots_nearby_push_enabled = val
+      VeoVeoAPI.patch 'users', options do |response, json|
+        block.call(response, json) if block
+      end
     end
 
     def sign_up(info, &block)
