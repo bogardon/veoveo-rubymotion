@@ -99,6 +99,7 @@ class User < Model
         persist_user
         register_push
         Facebook.login
+        LocationManager.start
         NSNotificationCenter.defaultCenter.postNotificationName(CurrentUserDidLoginNotification, object:nil)
       else
         Facebook.logout
@@ -159,6 +160,13 @@ class User < Model
       }
       User.current.spots_nearby_push_enabled = val
       VeoVeoAPI.patch 'users', options do |response, json|
+        if response.ok?
+          if val
+            LocationManager.start
+          else
+            LocationManager.stop
+          end
+        end
         block.call(response, json) if block
       end
     end
