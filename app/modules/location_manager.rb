@@ -2,7 +2,6 @@ module LocationManager
   class << self
     def start
       return unless User.current && User.current.spots_nearby_push_enabled
-      p 'starting'
       BW::Location.get_significant do |result|
         coordinate = result[:to].coordinate
         app_state = UIApplication.sharedApplication.applicationState
@@ -11,10 +10,11 @@ module LocationManager
           fetch_nearby_spots(coordinate)
         end
       end
+      @started = true
     end
 
     def stop
-      p 'stopping'
+      return unless @started
       BW::Location.stop
     end
 
