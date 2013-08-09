@@ -95,9 +95,9 @@ class SettingsVC < UIViewController
 
       cell.label.text = case indexPath.item
       when 0
-        "someone found your spot"
+        "Someone you follow finds your discovery"
       when 1
-        "friends spots are nearby"
+        "You're near a discovery by someone you follow"
       end
       cell.switch.on = case indexPath.item
       when 0
