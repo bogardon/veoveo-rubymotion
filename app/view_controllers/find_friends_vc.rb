@@ -28,7 +28,7 @@ class FindFriendsVC < UIViewController
 
   def viewDidLoad
     super
-    add_title_to_nav_bar "Following Friends"
+    add_title_to_nav_bar "Facebook Friends"
     # add_right_nav_button "Done", self, :on_done
     @refresh = UIRefreshControl.alloc.init
     @refresh.addTarget(self, action: :reload, forControlEvents:UIControlEventValueChanged)
