@@ -6,8 +6,12 @@ module Facebook
     end
 
     def login
+      return unless User.current && User.current.facebook_access_token && User.current.facebook_expires_at
+
       accessTokenData = FBAccessTokenData.createTokenFromString(User.current.facebook_access_token, permissions:read_permissions, expirationDate:User.current.facebook_expires_at, loginType:FBSessionLoginTypeNone, refreshDate:nil)
       session = FBSession.alloc.init
+
+      return unless session.state == FBSessionStateCreated
 
       did_open = session.openFromAccessTokenData(accessTokenData, completionHandler:(lambda do |session, state, error|
         case state
