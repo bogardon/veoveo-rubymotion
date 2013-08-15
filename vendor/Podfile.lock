@@ -1,0 +1,19 @@
+PODS:
+  - Facebook-iOS-SDK (3.5.1)
+  - GGFullscreenImageViewController (1.0.0)
+  - MBProgressHUD (0.7)
+  - TMCache (1.2.0)
+
+DEPENDENCIES:
+  - Facebook-iOS-SDK
+  - GGFullscreenImageViewController
+  - MBProgressHUD
+  - TMCache
+
+SPEC CHECKSUMS:
+  Facebook-iOS-SDK: 0dbd897e842cefeb012ec2eb8eba659ba6b96b12
+  GGFullscreenImageViewController: 81ff02e95ea08d28326e937090fbf3e2b2778193
+  MBProgressHUD: 1fd8591a2216d5dec6de24e09187bb03bcbe9946
+  TMCache: 78eabf36d9993431243007da2e9ba58b462eb43e
+
+COCOAPODS: 0.20.2

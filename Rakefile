@@ -6,6 +6,8 @@ require 'sugarcube-attributedstring'
 require 'bubble-wrap/location'
 Bundler.require
 
+
+
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
 
@@ -24,7 +26,7 @@ Motion::Project::App.setup do |app|
   app.entitlements['get-task-allow'] = config['app']['get-task-allow']
   app.codesign_certificate = config['app']['codesign_certificate']
 
-  app.version = "33"
+  app.version = "34"
   app.short_version = "1.0.0"
 
   if ENV['RUBYMOTION_LIB']
@@ -37,11 +39,16 @@ Motion::Project::App.setup do |app|
     MapKit
   ]
 
+  # required for testflight
+  app.libs += %w[
+    /usr/lib/libz.dylib
+  ]
+  app.vendor_project('vendor/TestFlightSDK2.0.0', :static)
+
   app.pods do
     pod 'Facebook-iOS-SDK'
     pod 'MBProgressHUD'
     pod 'GGFullscreenImageViewController'
-    pod 'TestFlightSDK'
     pod 'TMCache'
   end
 
