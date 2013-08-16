@@ -189,7 +189,7 @@ class ProfileVC < UIViewController
     when PROFILE_SECTION
       [306,90]
     when FEED_SECTION
-      [306,50]
+      UserFeedCell.size_for_answer(@answers[indexPath.item])
     end
   end
 

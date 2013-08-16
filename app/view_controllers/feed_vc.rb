@@ -84,7 +84,7 @@ class FeedVC < UIViewController
   end
 
   def collectionView(collectionView, layout:collectionViewLayout, sizeForItemAtIndexPath:indexPath)
-    [306,60]
+    AnswerFeedCell.size_for_answer(@answers[indexPath.item])
   end
 
   def collectionView(collectionView, layout:collectionViewLayout, insetForSectionAtIndex:section)
