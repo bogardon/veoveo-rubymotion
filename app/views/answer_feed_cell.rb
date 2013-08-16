@@ -11,7 +11,7 @@ class AnswerFeedCell < FeedCell
 
     @label = UILabel.alloc.initWithFrame [[CGRectGetMaxX(@user_image_view.frame)+10, 5], [self.contentView.frame.size.width - @user_image_view.frame.size.width - 5 - 5 - 10, self.contentView.frame.size.height - 10]]
     @label.autoresizingMask = UIViewAutoresizingFlexibleHeight
-    @label.numberOfLines = 3
+    @label.numberOfLines = 0
     @label.backgroundColor = UIColor.clearColor
     @label.font = UIFont.systemFontOfSize 12
     self.contentView.addSubview(@label)
