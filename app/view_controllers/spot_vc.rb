@@ -118,7 +118,7 @@ class SpotVC < UIViewController
   def collectionView(collectionView, layout:collectionViewLayout, insetForSectionAtIndex:section)
     case section
     when MAP_CELL_SECTION
-      [10,0,5,0]
+      [7,0,7,0]
     when ANSWER_CELL_SECTION
       [0,7,0,7]
     when SOCIAL_CELL_SECTION

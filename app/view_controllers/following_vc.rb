@@ -57,7 +57,7 @@ class FollowingVC < UIViewController
   end
 
   def collectionView(collectionView, layout:collectionViewLayout, insetForSectionAtIndex:section)
-    [10,0,10,0]
+    [7,0,7,0]
   end
 
   def collectionView(collectionView, cellForItemAtIndexPath:indexPath)

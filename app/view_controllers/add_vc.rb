@@ -66,7 +66,7 @@ class AddVC < UIViewController
   def collectionView(collectionView, layout:collectionViewLayout, insetForSectionAtIndex:section)
     case section
     when HINT_CELL_SECTION
-      [10,7,0,7]
+      [7,7,0,7]
     when PHOTO_CELL_SECTION
       [0,7,0,7]
     when ACTION_CELL_SECTION

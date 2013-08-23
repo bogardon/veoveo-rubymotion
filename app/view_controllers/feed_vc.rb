@@ -88,7 +88,7 @@ class FeedVC < UIViewController
   end
 
   def collectionView(collectionView, layout:collectionViewLayout, insetForSectionAtIndex:section)
-    [10,0,10,0]
+    [7,7,7,7]
   end
 
   def collectionView(collectionView, cellForItemAtIndexPath:indexPath)

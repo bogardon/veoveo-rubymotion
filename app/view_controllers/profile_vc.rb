@@ -169,7 +169,7 @@ class ProfileVC < UIViewController
   def collectionView(collectionView, layout:collectionViewLayout, insetForSectionAtIndex:section)
     case section
     when PROFILE_SECTION
-      [10,7,10,7]
+      [7,7,7,7]
     when FEED_SECTION
       [0,0,10,0]
     end

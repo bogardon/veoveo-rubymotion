@@ -33,7 +33,7 @@ class ConnectVC < UIViewController
   def collectionView(collectionView, layout:collectionViewLayout, insetForSectionAtIndex:section)
     case section
     when PROMPT_SECTION
-      [14,0,0,0]
+      [7,0,0,0]
     when CONNECT_SECTION
       [0,0,0,0]
     when ACTION_SECTION
