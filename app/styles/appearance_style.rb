@@ -7,7 +7,7 @@ Teacup.handler UIBarButtonItem, :bg_image_up { |image|
 }
 
 Teacup.handler UIBarButtonItem, :bg_image_down { |image|
-  setBackgroundImage(image.uiimage.stretchable([16,5,15,5]), forState:UIControlStateNormal, barMetrics:UIBarMetricsDefault)
+  setBackgroundImage(image.uiimage.stretchable([16,5,15,5]), forState:UIControlStateHighlighted, barMetrics:UIBarMetricsDefault)
 }
 
 Teacup.handler UIBarButtonItem, :back_bg_image_up { |image|
@@ -15,7 +15,7 @@ Teacup.handler UIBarButtonItem, :back_bg_image_up { |image|
 }
 
 Teacup.handler UIBarButtonItem, :back_bg_image_down { |image|
-  setBackButtonBackgroundImage(image.uiimage.stretchable([16,14,16,4]), forState:UIControlStateNormal, barMetrics:UIBarMetricsDefault)
+  setBackButtonBackgroundImage(image.uiimage.stretchable([16,14,16,4]), forState:UIControlStateHighlighted, barMetrics:UIBarMetricsDefault)
 }
 
 Teacup.handler UIBarButtonItem, :title_text_attributes { |attributes|
