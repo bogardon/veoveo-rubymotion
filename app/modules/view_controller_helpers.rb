@@ -16,6 +16,8 @@ module ViewControllerHelpers
     label.backgroundColor = UIColor.clearColor
     label.textAlignment = NSTextAlignmentCenter
     label.textColor = UIColor.whiteColor
+    label.shadowColor = UIColor.darkGrayColor
+    label.shadowOffset = [0,0.5]
     label.font = UIFont.boldSystemFontOfSize(20)
     label.text = title
     label.numberOfLines = 0
