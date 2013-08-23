@@ -17,6 +17,11 @@ class UserFeedCell < FeedCell
     self
   end
 
+  def layoutSubviews
+    super
+    @icon.frame = [[15, ((self.contentView.frame.size.height-@icon.frame.size.height)/2).floor], @icon.frame.size]
+  end
+
   def answer=(answer)
     @answer = answer
 
