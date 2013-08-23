@@ -20,10 +20,6 @@ class AnswerCell < UICollectionViewCell
     self.contentView.addSubview(@first_image_view)
     @first_image_view.setHidden(true)
 
-    horizontal = UIView.alloc.initWithFrame([[0, CGRectGetMaxY(@answer_image_view.frame)], [self.contentView.frame.size.width, 1]])
-    horizontal.backgroundColor = [160,160,160].uicolor
-    self.contentView.addSubview(horizontal)
-
     @user_image_view = UserImageView.alloc.initWithFrame([[6, CGRectGetMaxY(@answer_image_view.frame) + 6], [35, 35]])
     self.contentView.addSubview(@user_image_view)
 
@@ -33,11 +29,11 @@ class AnswerCell < UICollectionViewCell
     @label.backgroundColor = UIColor.clearColor
     self.contentView.addSubview(@label)
 
-    horizontal = UIView.alloc.initWithFrame([[0, CGRectGetMaxY(@user_image_view.frame) + 6], [self.contentView.frame.size.width, 1]])
-    horizontal.backgroundColor = [160,160,160].uicolor
+    horizontal = UIView.alloc.initWithFrame([[1, CGRectGetMaxY(@user_image_view.frame) + 6], [self.contentView.frame.size.width-2, 0.5]])
+    horizontal.backgroundColor = [200,200,200].uicolor
     self.contentView.addSubview(horizontal)
 
-    @date_label = UILabel.alloc.initWithFrame([[6, CGRectGetMaxY(horizontal.frame) + 4], [self.contentView.frame.size.width - 12, 12]])
+    @date_label = UILabel.alloc.initWithFrame([[6, CGRectGetMaxY(horizontal.frame) + 5.5], [self.contentView.frame.size.width - 12, 12]])
     @date_label.font = UIFont.systemFontOfSize(11)
     @date_label.backgroundColor = UIColor.clearColor
     self.contentView.addSubview(@date_label)
