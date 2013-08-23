@@ -39,17 +39,12 @@ Motion::Project::App.setup do |app|
     MapKit
   ]
 
-  # required for testflight
-  app.libs += %w[
-    /usr/lib/libz.dylib
-  ]
-  app.vendor_project('vendor/TestFlightSDK2.0.0', :static)
-
   app.pods do
     pod 'Facebook-iOS-SDK'
     pod 'MBProgressHUD'
     pod 'GGFullscreenImageViewController'
     pod 'TMCache'
+    pod 'TestFlightSDK'
   end
 
   # icons
