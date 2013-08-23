@@ -1,7 +1,8 @@
 Teacup::Stylesheet.new :following_vc do
   style :background,
     image: "bg.png".uiimage,
-    frame: [[0,-44],["100%", "100% + 44"]]
+    contentMode: UIViewContentModeScaleAspectFill,
+    frame: [[0, 0],["100%", "100%"]]
 
   style :collection_view,
     frame: [[0,0], ["100%", "100%"]],
