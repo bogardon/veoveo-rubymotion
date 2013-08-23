@@ -47,7 +47,7 @@ class FeedVC < UIViewController
   end
 
   def on_find_friends
-    self.presentViewController(UINavigationController.alloc.initWithRootViewController(ConnectVC.alloc.init), animated:true, completion:nil)
+    self.navigationController.pushViewController(ConnectVC.alloc.init, animated:true)
   end
 
   def reload(offset=0)

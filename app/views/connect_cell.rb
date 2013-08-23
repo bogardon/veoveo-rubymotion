@@ -8,7 +8,7 @@ class ConnectCell < UICollectionViewCell
     self.contentView.addSubview(image_view)
 
     label = UILabel.alloc.initWithFrame [[CGRectGetMaxX(image_view.frame)+10,12], [200, 20]]
-    label.text = "Connect with Facebook"
+    label.text = Facebook.is_open? ? "Check Facebook" : "Connect with Facebook"
     label.font = UIFont.boldSystemFontOfSize(16)
     label.backgroundColor = UIColor.clearColor
     self.contentView.addSubview(label)
