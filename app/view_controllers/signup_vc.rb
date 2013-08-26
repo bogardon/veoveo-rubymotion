@@ -72,6 +72,6 @@ class SignUpVC < UIViewController
   end
 
   def form_valid?
-    @username_field.text && @username_field.text.length > 3 && @password_field.text && @password_field.text.length > 3 && @email_field.text && @email_field.text.length > 0 && (@email_field.text =~ /^(|(([A-Za-z0-9]+_+)|([A-Za-z0-9]+\-+)|([A-Za-z0-9]+\.+)|([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+\-+)|(\w+\.))*\w{1,63}\.[a-zA-Z]{2,6})$/i).present?
+    @username_field.text && @username_field.text.length > 3 && @password_field.text && @password_field.text.length > 3 && @email_field.text && @email_field.text.length > 0 && !(@email_field.text =~ /^(|(([A-Za-z0-9]+_+)|([A-Za-z0-9]+\-+)|([A-Za-z0-9]+\.+)|([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+\-+)|(\w+\.))*\w{1,63}\.[a-zA-Z]{2,6})$/i).nil?
   end
 end
