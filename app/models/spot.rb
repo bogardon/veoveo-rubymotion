@@ -36,6 +36,11 @@ class Spot < Model
     CLLocationCoordinate2DMake(self.latitude, self.longitude)
   end
 
+  def setCoordinate(coordinate)
+    self.latitude = coordinate.latitude
+    self.longitude = coordinate.longitude
+  end
+
   def title
     self.hint
   end
@@ -76,13 +81,13 @@ class Spot < Model
       end
     end
 
-    def add_new(hint, coordinate, image, &block)
+    def add_new(hint, latitude, longitude, image, &block)
       options = {
         format: :form_data,
         payload: {
           hint: hint,
-          latitude: coordinate.latitude,
-          longitude: coordinate.longitude
+          latitude: latitude,
+          longitude: longitude
         },
         files: {
           image: UIImageJPEGRepresentation(image, 0)
