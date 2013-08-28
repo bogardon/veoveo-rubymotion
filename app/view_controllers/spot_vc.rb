@@ -176,7 +176,7 @@ class SpotVC < UIViewController
       cell.map_view.setUserInteractionEnabled(false)
       @map_view = cell.map_view
       # don't re add annotations
-      cell.map_view.addAnnotation(annotation) unless cell.map_view.annotations.count > 0
+      cell.map_view.addAnnotation(annotation) unless cell.map_view.annotations.include?(annotation)
       cell
     when ANSWER_CELL_SECTION
 
