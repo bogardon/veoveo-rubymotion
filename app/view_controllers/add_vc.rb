@@ -114,9 +114,8 @@ class AddVC < UIViewController
     when HINT_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(HINT_CELL_IDENTIFIER, forIndexPath:indexPath)
       @form = cell.form
-      @map_view = cell.map_view
-      @map_view.delegate = self
-      @map_view.showsUserLocation = true
+      cell.map_view.delegate = self
+      cell.map_view.showsUserLocation = true
       cell
     when PHOTO_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(PHOTO_CELL_IDENTIFIER, forIndexPath:indexPath)
@@ -150,6 +149,7 @@ class AddVC < UIViewController
     view.image = "found_pin_selected.png".uiimage
     view.centerOffset = [0, -18]
     view.draggable = true
+    view.setSelected(true, animated:false)
     view.canShowCallout = false
     view
   end
@@ -162,7 +162,7 @@ class AddVC < UIViewController
     mapView.setRegion(region)
     json = {'id' => -1, "unlocked" => true, "latitude" => coordinate.latitude, "longitude" => coordinate.longitude}
     @spot = Spot.new json
-    @map_view.addAnnotation(@spot)
+    mapView.addAnnotation(@spot)
   end
 
   def mapView(mapView, annotationView:annotationView, didChangeDragState:newState, fromOldState:oldState)
