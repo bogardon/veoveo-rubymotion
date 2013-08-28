@@ -76,13 +76,13 @@ class Spot < Model
       end
     end
 
-    def add_new(hint, location, image, &block)
+    def add_new(hint, coordinate, image, &block)
       options = {
         format: :form_data,
         payload: {
           hint: hint,
-          latitude: location.coordinate.latitude,
-          longitude: location.coordinate.longitude
+          latitude: coordinate.latitude,
+          longitude: coordinate.longitude
         },
         files: {
           image: UIImageJPEGRepresentation(image, 0)

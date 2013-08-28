@@ -2,8 +2,6 @@ class AddVC < UIViewController
   include ViewControllerHelpers
   stylesheet :add_vc
 
-  attr_accessor :location
-
   HINT_CELL_SECTION = 0
   HINT_CELL_IDENTIFIER = "HINT_CELL_IDENTIFIER"
 
@@ -12,6 +10,8 @@ class AddVC < UIViewController
 
   ACTION_CELL_SECTION = 2
   ACTION_CELL_IDENTIFIER = "ACTION_CELL_IDENTIFIER"
+
+  USER_LOCATION_IDENTIFIER = "USER_LOCATION_IDENTIFIER"
 
   layout do
     subview(UIImageView, :background)
@@ -25,6 +25,12 @@ class AddVC < UIViewController
 
   end
 
+  def init
+    super
+    @did_auto_center = false
+    self
+  end
+
   def viewDidLoad
     super
     add_logo_to_nav_bar
@@ -33,10 +39,12 @@ class AddVC < UIViewController
   end
 
   def on_add
-    return unless @photo && @form && @form.text && @form.text.length > 0
+    coordinate = @map_view.annotations.first.coordinate
+    return unless @photo && @form && @form.text && @form.text.length > 0 && coordinate
     @form.resignFirstResponder
     self.show_hud
-    Spot.add_new(@form.text, @location, @photo) do |response, spot|
+
+    Spot.add_new(@form.text, coordinate, @photo) do |response, spot|
       self.hide_hud response.ok?
       if response.ok?
         self.dismissViewControllerAnimated(true, completion:nil)
@@ -92,7 +100,7 @@ class AddVC < UIViewController
   def collectionView(collectionView, layout:collectionViewLayout, sizeForItemAtIndexPath:indexPath)
     case indexPath.section
     when HINT_CELL_SECTION
-      [306,44]
+      [306,171]
     when PHOTO_CELL_SECTION
       [306,306]
     when ACTION_CELL_SECTION
@@ -107,6 +115,9 @@ class AddVC < UIViewController
     when HINT_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(HINT_CELL_IDENTIFIER, forIndexPath:indexPath)
       @form = cell.form
+      @map_view = cell.map_view
+      @map_view.delegate = self
+      @map_view.showsUserLocation = true
       cell
     when PHOTO_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(PHOTO_CELL_IDENTIFIER, forIndexPath:indexPath)
@@ -131,6 +142,27 @@ class AddVC < UIViewController
 
   def scrollViewDidScroll(scrollView)
     @form.resignFirstResponder
+  end
+
+  def mapView(mapView, viewForAnnotation:annotation)
+    cached = mapView.dequeueReusableAnnotationViewWithIdentifier(USER_LOCATION_IDENTIFIER)
+    view = cached || MKAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier:USER_LOCATION_IDENTIFIER)
+    view.image = "found_pin_selected.png".uiimage
+    view.centerOffset = [0, -18]
+    view.draggable = true
+    view.canShowCallout = false
+    view.setSelected(true, animated:false)
+    view
+  end
+
+  def mapView(mapView, didUpdateUserLocation:userLocation)
+    return unless userLocation.location && !@did_auto_center
+    @did_auto_center = true
+    region = MKCoordinateRegionMakeWithDistance(userLocation.location.coordinate, 100, 100)
+    mapView.setRegion(region)
+  end
+
+  def mapView(mapView, annotationView:annotationView, didChangeDragState:newState, fromOldState:oldState)
   end
 
 end

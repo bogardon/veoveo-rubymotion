@@ -233,9 +233,10 @@ class SpotVC < UIViewController
   def mapView(mapView, viewForAnnotation:annotation)
     return nil unless annotation.isKindOfClass(Spot)
     cached = mapView.dequeueReusableAnnotationViewWithIdentifier(SPOT_ANNOTATION_IDENTIFIER)
-    annotation = cached || SpotAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier:SPOT_ANNOTATION_IDENTIFIER)
-    annotation.canShowCallout = false
-    annotation.setSelected(true, animated:false)
-    annotation
+    view = cached || SpotAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier:SPOT_ANNOTATION_IDENTIFIER)
+    view.canShowCallout = false
+    view.setSelected(true, animated:false)
+    view
   end
+
 end

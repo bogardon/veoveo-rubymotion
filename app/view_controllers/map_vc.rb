@@ -67,9 +67,7 @@ class MapVC < UIViewController
   end
 
   def on_add
-    return unless @map_view.userLocation.location
     vc = AddVC.alloc.init
-    vc.location = @map_view.userLocation.location
     nav = UINavigationController.alloc.initWithRootViewController(vc)
     self.presentViewController(nav, animated:true, completion:nil)
   end
