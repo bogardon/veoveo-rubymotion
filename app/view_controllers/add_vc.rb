@@ -160,6 +160,7 @@ class AddVC < UIViewController
     coordinate = userLocation.location.coordinate
     region = MKCoordinateRegionMakeWithDistance(coordinate, 100, 100)
     mapView.setRegion(region)
+    mapView.showsUserLocation = false
     json = {'id' => -1, "unlocked" => true, "latitude" => coordinate.latitude, "longitude" => coordinate.longitude}
     @spot = Spot.new json
     mapView.addAnnotation(@spot)
