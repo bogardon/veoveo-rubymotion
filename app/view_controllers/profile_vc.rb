@@ -26,8 +26,10 @@ class ProfileVC < UIViewController
   def initialize(user)
     @user = user
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :user_did_log_in, name:CurrentUserDidLoginNotification, object:nil)
-    NSNotificationCenter.defaultCenter.addObserver(self, selector: 'on_spot_did_add:', name:SpotDidAddNotification, object:nil)
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload_answers, name:SpotDidAddNotification, object:nil)
     NSNotificationCenter.defaultCenter.addObserver(self, selector: 'on_spot_did_delete:', name:SpotDidDeleteNotification, object:nil)
+
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload_answers, name:CurrentUserDidSubmitAnswer, object:nil)
     @more_to_load = true
     @answers = []
     reload_user
@@ -44,10 +46,6 @@ class ProfileVC < UIViewController
     reload_user
     reload_answers
     @collection_view.reloadData if @collection_view
-  end
-
-  def on_spot_did_add(notification)
-    reload_answers
   end
 
   def on_spot_did_delete(notification)

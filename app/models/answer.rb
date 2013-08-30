@@ -1,3 +1,4 @@
+CurrentUserDidSubmitAnswer = "CurrentUserDidSubmitAnswer"
 class Answer < Model
   include IdentityMap
   establish_identity_on :id
@@ -33,7 +34,7 @@ class Answer < Model
     VeoVeoAPI.post "answers", options do |response, json|
       spot.unlocked = response.ok?
       if response.ok?
-
+        NSNotificationCenter.defaultCenter.postNotificationName(CurrentUserDidSubmitAnswer, object:nil)
       else
 
       end
