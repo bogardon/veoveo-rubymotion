@@ -85,7 +85,18 @@ class AppDelegate
   end
 
   def setup_appearance_proxies
-    Teacup::Appearance.apply
+    UINavigationBar.appearance.setBackgroundImage("header.png".uiimage, forBarMetrics:UIBarMetricsDefault)
+    UIBarButtonItem.appearance.setBackgroundImage("navbutton.png".uiimage.stretchable([16,5,15,5]), forState:UIControlStateNormal, barMetrics:UIBarMetricsDefault)
+    UIBarButtonItem.appearance.setBackgroundImage('navbutton_down.png'.uiimage.stretchable([16,5,15,5]), forState:UIControlStateHighlighted, barMetrics:UIBarMetricsDefault)
+
+    UIBarButtonItem.appearance.setBackButtonBackgroundImage('backbutton.png'.uiimage.stretchable([16,14,16,4]), forState:UIControlStateNormal, barMetrics:UIBarMetricsDefault)
+    UIBarButtonItem.appearance.setBackButtonBackgroundImage('backbutton_down.png'.uiimage.stretchable([16,14,16,4]), forState:UIControlStateHighlighted, barMetrics:UIBarMetricsDefault)
+
+    text_attributes = {UITextAttributeFont => UIFont.boldSystemFontOfSize(12)}
+    UIBarButtonItem.appearance.setTitleTextAttributes(text_attributes, forState:UIControlStateNormal)
+    UIBarButtonItem.appearance.setTitleTextAttributes(text_attributes, forState:UIControlStateHighlighted)
+
+    UIBarButtonItem.appearance.setTitlePositionAdjustment([0,0], forBarMetrics:UIBarMetricsDefault)
   end
 
   def setup_main_screen

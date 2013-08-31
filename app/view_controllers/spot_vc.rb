@@ -11,20 +11,6 @@ class SpotVC < UIViewController
   ANSWER_CELL_SECTION = 1
   SOCIAL_CELL_SECTION = 2
 
-  stylesheet :spot_vc
-
-  layout do
-    subview(UIImageView, :background)
-    flow = UICollectionViewFlowLayout.alloc.init
-    flow.minimumInteritemSpacing = 0
-    @collection_view = subview(UICollectionView.alloc.initWithFrame(CGRectZero, collectionViewLayout:flow), :collection_view, delegate:self, dataSource:self)
-    @collection_view.registerClass(MapCell, forCellWithReuseIdentifier:MAP_CELL_IDENTIFIER)
-    @collection_view.registerClass(AnswerCell, forCellWithReuseIdentifier:ANSWER_CELL_IDENTIFIER)
-    @collection_view.registerClass(SocialCell, forCellWithReuseIdentifier:SOCIAL_CELL_IDENTIFIER)
-    @collection_view.registerClass(LoadMoreCell, forSupplementaryViewOfKind:UICollectionElementKindSectionFooter, withReuseIdentifier:LOADING_CELL_IDENTIFIER)
-    @collection_view.alwaysBounceVertical = true
-  end
-
   attr_accessor :spot
 
   def initWithSpot(spot)
@@ -38,6 +24,28 @@ class SpotVC < UIViewController
   def dealloc
     @query.connection.cancel if @query
     super
+  end
+
+  def loadView
+    super
+    flow = UICollectionViewFlowLayout.alloc.init
+    flow.minimumInteritemSpacing = 0
+    @collection_view = UICollectionView.alloc.initWithFrame(self.view.bounds, collectionViewLayout:flow)
+    @collection_view.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth
+    @collection_view.delegate = self
+    @collection_view.dataSource = self
+    @collection_view.alwaysBounceVertical = true
+
+    @collection_view.registerClass(MapCell, forCellWithReuseIdentifier:MAP_CELL_IDENTIFIER)
+    @collection_view.registerClass(AnswerCell, forCellWithReuseIdentifier:ANSWER_CELL_IDENTIFIER)
+    @collection_view.registerClass(SocialCell, forCellWithReuseIdentifier:SOCIAL_CELL_IDENTIFIER)
+    @collection_view.registerClass(LoadMoreCell, forSupplementaryViewOfKind:UICollectionElementKindSectionFooter, withReuseIdentifier:LOADING_CELL_IDENTIFIER)
+
+    background = "bg.png".uiimageview
+    background.contentMode = UIViewContentModeScaleAspectFill
+
+    @collection_view.backgroundView = background
+    self.view.addSubview(@collection_view)
   end
 
   def viewDidLoad

@@ -1,6 +1,6 @@
 class FormTextField < UITextField
   attr_accessor :label
-  def init
+  def initWithFrame(frame)
     super
     @label = UILabel.alloc.initWithFrame [[0,0],[80,25]]
     @label.font = UIFont.boldSystemFontOfSize(12)

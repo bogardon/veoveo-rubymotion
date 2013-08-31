@@ -1,20 +1,8 @@
 class MapVC < UIViewController
   include ViewControllerHelpers
 
-  stylesheet :map_vc
-
   EVERYONE = 0
   FOLLOWING = 1
-
-  layout do
-    @map_view = subview(MKMapView, :map_view)
-    @map_view.delegate = self
-    @map_view.showsUserLocation = true
-
-    subview(UIButton, :center) do |button|
-      button.addTarget(self, action: :center_on_user, forControlEvents:UIControlEventTouchUpInside)
-    end
-  end
 
   def init
     super
@@ -34,6 +22,21 @@ class MapVC < UIViewController
     NSNotificationCenter.defaultCenter.removeObserver(self)
     @query.connection.cancel if @query
     super
+  end
+
+  def loadView
+    super
+    @map_view = MKMapView.alloc.initWithFrame(self.view.bounds)
+    @map_view.delegate = self
+    @map_view.showsUserLocation = true
+    self.view.addSubview(@map_view)
+
+    center_button = UIButton.buttonWithType(UIButtonTypeCustom)
+    center_button.frame = [[self.view.frame.size.width - 40, self.view.frame.size.height - 40], [40, 40]]
+    center_button.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin
+    center_button.addTarget(self, action: :center_on_user, forControlEvents:UIControlEventTouchUpInside)
+    center_button.setImage("locate.png".uiimage, forState:UIControlStateNormal)
+    self.view.addSubview(center_button)
   end
 
   def viewDidLoad

@@ -1,6 +1,5 @@
 class AddVC < UIViewController
   include ViewControllerHelpers
-  stylesheet :add_vc
 
   HINT_CELL_SECTION = 0
   HINT_CELL_IDENTIFIER = "HINT_CELL_IDENTIFIER"
@@ -13,22 +12,30 @@ class AddVC < UIViewController
 
   SPOT_ANNOTATION_IDENTIFIER = "SPOT_ANNOTATION_IDENTIFIER"
 
-  layout do
-    subview(UIImageView, :background)
+  def init
+    super
+    @did_auto_center = false
+    self
+  end
+
+  def loadView
+    super
     flow = UICollectionViewFlowLayout.alloc.init
     flow.minimumInteritemSpacing = 0
-    @collection_view = subview(UICollectionView.alloc.initWithFrame(CGRectZero, collectionViewLayout:flow), :collection_view, delegate:self, dataSource:self)
+    @collection_view = UICollectionView.alloc.initWithFrame(self.view.bounds, collectionViewLayout:flow)
+    @collection_view.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth
+    @collection_view.delegate = self
+    @collection_view.dataSource = self
     @collection_view.alwaysBounceVertical = true
     @collection_view.registerClass(HintCell, forCellWithReuseIdentifier:HINT_CELL_IDENTIFIER)
     @collection_view.registerClass(PhotoCell, forCellWithReuseIdentifier:PHOTO_CELL_IDENTIFIER)
     @collection_view.registerClass(ActionCell, forCellWithReuseIdentifier:ACTION_CELL_IDENTIFIER)
 
-  end
+    background = "bg.png".uiimageview
+    background.contentMode = UIViewContentModeScaleAspectFill
 
-  def init
-    super
-    @did_auto_center = false
-    self
+    @collection_view.backgroundView = background
+    self.view.addSubview(@collection_view)
   end
 
   def viewDidLoad
@@ -160,7 +167,6 @@ class AddVC < UIViewController
     coordinate = userLocation.location.coordinate
     region = MKCoordinateRegionMakeWithDistance(coordinate, 100, 100)
     mapView.setRegion(region)
-    mapView.showsUserLocation = false
     json = {'id' => -1, "unlocked" => true, "latitude" => coordinate.latitude, "longitude" => coordinate.longitude}
     @spot = Spot.new json
     mapView.addAnnotation(@spot)

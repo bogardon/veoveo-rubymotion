@@ -1,19 +1,7 @@
 class FindFriendsVC < UIViewController
   include ViewControllerHelpers
-  stylesheet :find_friends_vc
 
   FOLLOWING_IDENTIFIER = "FOLLOWING_IDENTIFIER"
-
-  layout do
-    subview(UIImageView, :background)
-    flow = UICollectionViewFlowLayout.alloc.init
-    flow.minimumInteritemSpacing = 0
-    flow.minimumLineSpacing = 0
-    @collection_view = subview(CollectionView.alloc.initWithFrame(CGRectZero, collectionViewLayout:flow), :collection_view, delegate:self, dataSource:self)
-    @collection_view.alwaysBounceVertical = true
-
-    @collection_view.registerClass(FollowingCell, forCellWithReuseIdentifier:FOLLOWING_IDENTIFIER)
-  end
 
   def init
     super
@@ -24,6 +12,26 @@ class FindFriendsVC < UIViewController
   def dealloc
     @query.connection.cancel if @query
     super
+  end
+
+  def loadView
+    super
+    flow = UICollectionViewFlowLayout.alloc.init
+    flow.minimumInteritemSpacing = 0
+    flow.minimumLineSpacing = 0
+    @collection_view = CollectionView.alloc.initWithFrame(self.view.bounds, collectionViewLayout:flow)
+    @collection_view.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth
+    @collection_view.delegate = self
+    @collection_view.dataSource = self
+    @collection_view.alwaysBounceVertical = true
+
+    @collection_view.registerClass(FollowingCell, forCellWithReuseIdentifier:FOLLOWING_IDENTIFIER)
+
+    background = "bg.png".uiimageview
+    background.contentMode = UIViewContentModeScaleAspectFill
+
+    @collection_view.backgroundView = background
+    self.view.addSubview(@collection_view)
   end
 
   def viewDidLoad

@@ -44,7 +44,7 @@ class TabBarVC < UITabBarController
     super
     self.tabBar.backgroundImage = "bottom_nav.png".uiimage
     self.tabBar.frame = [[0, self.tabBar.superview.frame.size.height - 40], [self.tabBar.frame.size.width, 40]]
-    self.tabBar.superview[0].frame = [[0,0], [self.tabBar.superview.frame.size.width, self.tabBar.superview.frame.size.height - 40]]
+    self.tabBar.superview.subviews[0].frame = [[0,0], [self.tabBar.superview.frame.size.width, self.tabBar.superview.frame.size.height - 40]]
 
 
 

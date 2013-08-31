@@ -1,6 +1,5 @@
 class ConnectVC < UIViewController
   include ViewControllerHelpers
-  stylesheet :connect_vc
 
   PROMPT_CELL_IDENTIFIER = "PROMPT_CELL_IDENTIFIER"
   CONNECT_CELL_IDENTIFIER = "CONNECT_CELL_IDENTIFIER"
@@ -10,15 +9,24 @@ class ConnectVC < UIViewController
   CONNECT_SECTION = 1
   ACTION_SECTION = 2
 
-  layout do
-    subview(UIImageView, :background)
+  def loadView
+    super
     flow = UICollectionViewFlowLayout.alloc.init
     flow.minimumInteritemSpacing = 0
-    @collection_view = subview(UICollectionView.alloc.initWithFrame(CGRectZero, collectionViewLayout:flow), :collection_view, delegate:self, dataSource:self)
+    @collection_view = UICollectionView.alloc.initWithFrame(self.view.bounds, collectionViewLayout:flow)
+    @collection_view.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth
+    @collection_view.delegate = self
+    @collection_view.dataSource = self
+    @collection_view.alwaysBounceVertical = true
     @collection_view.registerClass(PromptCell, forCellWithReuseIdentifier:PROMPT_CELL_IDENTIFIER)
     @collection_view.registerClass(ConnectCell, forCellWithReuseIdentifier:CONNECT_CELL_IDENTIFIER)
     @collection_view.registerClass(ActionCell, forCellWithReuseIdentifier:ACTION_CELL_IDENTIFIER)
-    @collection_view.alwaysBounceVertical = true
+
+    background = "bg.png".uiimageview
+    background.contentMode = UIViewContentModeScaleAspectFill
+
+    @collection_view.backgroundView = background
+    self.view.addSubview(@collection_view)
   end
 
   def viewDidLoad

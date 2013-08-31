@@ -1,23 +1,9 @@
 class FeedVC < UIViewController
   include ViewControllerHelpers
-  stylesheet :feed_vc
 
   ANSWER_FEED_CELL_IDENTIFIER = "ANSWER_FEED_CELL_IDENTIFIER"
   LOAD_MORE_CELL_IDENTIFIER = "LOAD_MORE_CELL_IDENTIFIER"
   LIMIT = 10
-
-  layout do
-    subview(UIImageView, :background)
-    flow = UICollectionViewFlowLayout.alloc.init
-    flow.minimumInteritemSpacing = 0
-    flow.minimumLineSpacing = 0
-    @collection_view = subview(CollectionView.alloc.initWithFrame(CGRectZero, collectionViewLayout:flow), :collection_view, delegate:self, dataSource:self)
-    @collection_view.alwaysBounceVertical = true
-
-    @collection_view.registerClass(AnswerFeedCell, forCellWithReuseIdentifier:ANSWER_FEED_CELL_IDENTIFIER)
-    @collection_view.registerClass(LoadMoreCell, forSupplementaryViewOfKind:UICollectionElementKindSectionFooter, withReuseIdentifier:LOAD_MORE_CELL_IDENTIFIER)
-    #- (void)registerClass:(Class)viewClass forSupplementaryViewOfKind:(NSString *)elementKind withReuseIdentifier:(NSString *)identifier
-  end
 
   def init
     super
@@ -33,6 +19,27 @@ class FeedVC < UIViewController
     NSNotificationCenter.defaultCenter.removeObserver(self)
     @query.connection.cancel if @query
     super
+  end
+
+  def loadView
+    super
+    flow = UICollectionViewFlowLayout.alloc.init
+    flow.minimumInteritemSpacing = 0
+    flow.minimumLineSpacing = 0
+    @collection_view = CollectionView.alloc.initWithFrame(self.view.bounds, collectionViewLayout:flow)
+    @collection_view.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth
+    @collection_view.delegate = self
+    @collection_view.dataSource = self
+    @collection_view.alwaysBounceVertical = true
+
+    @collection_view.registerClass(AnswerFeedCell, forCellWithReuseIdentifier:ANSWER_FEED_CELL_IDENTIFIER)
+    @collection_view.registerClass(LoadMoreCell, forSupplementaryViewOfKind:UICollectionElementKindSectionFooter, withReuseIdentifier:LOAD_MORE_CELL_IDENTIFIER)
+
+    background = "bg.png".uiimageview
+    background.contentMode = UIViewContentModeScaleAspectFill
+
+    @collection_view.backgroundView = background
+    self.view.addSubview(@collection_view)
   end
 
   def viewDidLoad

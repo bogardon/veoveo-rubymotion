@@ -1,6 +1,5 @@
 class SettingsVC < UIViewController
   include ViewControllerHelpers
-  stylesheet :settings_vc
 
   LOGOUT_CELL_IDENTIFIER = "LOGOUT_CELL_IDENTIFIER"
   SWITCH_CELL_IDENTIFIER = "SWITCH_CELL_IDENTIFIER"
@@ -9,16 +8,26 @@ class SettingsVC < UIViewController
   NOTIFICATION_SECTION = 0
   LOGOUT_SECTION = 1
 
-  layout do
-    subview(UIImageView, :background)
+  def loadView
+    super
     flow = UICollectionViewFlowLayout.alloc.init
     flow.minimumInteritemSpacing = 0
     flow.minimumLineSpacing = 0
-    @collection_view = subview(CollectionView.alloc.initWithFrame(CGRectZero, collectionViewLayout:flow), :collection_view, delegate:self, dataSource:self)
+    @collection_view = CollectionView.alloc.initWithFrame(self.view.bounds, collectionViewLayout:flow)
+    @collection_view.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth
+    @collection_view.delegate = self
+    @collection_view.dataSource = self
     @collection_view.alwaysBounceVertical = true
+
     @collection_view.registerClass(LogoutCell, forCellWithReuseIdentifier:LOGOUT_CELL_IDENTIFIER)
     @collection_view.registerClass(SwitchCell, forCellWithReuseIdentifier:SWITCH_CELL_IDENTIFIER)
     @collection_view.registerClass(HeaderCell, forSupplementaryViewOfKind:UICollectionElementKindSectionHeader, withReuseIdentifier:HEADER_CELL_IDENTIFIER)
+
+    background = "bg.png".uiimageview
+    background.contentMode = UIViewContentModeScaleAspectFill
+
+    @collection_view.backgroundView = background
+    self.view.addSubview(@collection_view)
   end
 
   def viewDidLoad

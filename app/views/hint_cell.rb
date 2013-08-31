@@ -25,4 +25,9 @@ class HintCell < UICollectionViewCell
     self
   end
 
+  def dealloc
+    p 'hint celll gone '
+    super
+  end
+
 end

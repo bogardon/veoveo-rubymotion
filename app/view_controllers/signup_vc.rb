@@ -1,24 +1,71 @@
 class SignUpVC < UIViewController
   include ViewControllerHelpers
-  stylesheet :signup_screen
-  layout do
-    subview(UIImageView, :background)
-    scroll_view = subview(UIScrollView, :scrollview) do
-      subview(UIImageView, :signup_form_container) do
-        subview(UILabel, :prompt, text: "1. Pick a Username & Password")
-        @username_field = subview(FormTextField, :username, y: 55, delegate: self)
-        @username_field.becomeFirstResponder
-        subview(UIImageView, :separator, y: 85)
-        @password_field = subview(FormTextField, :password, y: 91, delegate: self)
-        subview(UIImageView, :separator, y: 121)
-        @email_field = subview(FormTextField, :email, y: 126, delegate:self)
 
-      end
-      @button = subview(UIButton, :button, y: 171)
-      @button.setTitle("Next", forState:UIControlStateNormal)
-      @button.enabled = false
-    end
+  def loadView
+    super
+    background = "bg.png".uiimageview
+    background.frame = self.view.bounds
+    background.contentMode = UIViewContentModeScaleAspectFill
+    background.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth
+    self.view.addSubview(background)
+
+    scroll_view = UIScrollView.alloc.initWithFrame(self.view.bounds)
+    scroll_view.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth
     scroll_view.alwaysBounceVertical = true
+    self.view.addSubview(scroll_view)
+
+    sign_up_container = "row_top.png".uiimage.stretchable([22,22,21,21]).uiimageview
+    sign_up_container.setUserInteractionEnabled(true)
+    sign_up_container.frame = [[7,7], [self.view.frame.size.width - 14, 157]]
+    scroll_view.addSubview(sign_up_container)
+
+    prompt = UILabel.alloc.initWithFrame([[5,10], [sign_up_container.frame.size.width - 10, 30]])
+    prompt.text = "1. Pick a Username & Password"
+    prompt.font = UIFont.boldSystemFontOfSize(14)
+    prompt.textAlignment = NSTextAlignmentCenter
+    prompt.backgroundColor = UIColor.clearColor
+    sign_up_container.addSubview(prompt)
+
+    @username_field = FormTextField.alloc.initWithFrame([[15, 55], [276,25]])
+    @username_field.label.text = "USERNAME:"
+    @username_field.delegate = self
+    @username_field.becomeFirstResponder
+    @username_field.returnKeyType = UIReturnKeyNext
+    sign_up_container.addSubview(@username_field)
+
+    separator = "line.png".uiimageview
+    separator.frame = [[0, 85], [306, 1]]
+    sign_up_container.addSubview(separator)
+
+    @password_field = FormTextField.alloc.initWithFrame([[15, 91], [276, 25]])
+    @password_field.label.text = "PASSWORD:"
+    @password_field.setSecureTextEntry(true)
+    @password_field.delegate = self
+    @password_field.returnKeyType = UIReturnKeyNext
+    sign_up_container.addSubview(@password_field)
+
+    separator = "line.png".uiimageview
+    separator.frame = [[0, 121], [306, 1]]
+    sign_up_container.addSubview(separator)
+
+    @email_field = FormTextField.alloc.initWithFrame([[15, 126], [276, 25]])
+    @email_field.label.text = "EMAIL:"
+    @email_field.delegate = self
+    @email_field.returnKeyType = UIReturnKeyGo
+    sign_up_container.addSubview(@email_field)
+
+    @button =  UIButton.buttonWithType UIButtonTypeCustom
+    @button.frame = [[7,164], [self.view.frame.size.width - 14, 44]]
+    @button.titleLabel.font = UIFont.boldSystemFontOfSize(20)
+    @button.titleLabel.shadowOffset = [0, 0.5]
+    @button.setTitleShadowColor(UIColor.darkGrayColor, forState:UIControlStateNormal)
+    @button.setBackgroundImage("halfbutton.png".uiimage.stretchable([22,22,21,21]), forState:UIControlStateNormal)
+    @button.setBackgroundImage("halfbutton_down.png".uiimage.stretchable([22,22,21,21]), forState:UIControlStateHighlighted)
+    @button.setTitle("Next", forState:UIControlStateNormal)
+    @button.enabled = false
+    scroll_view.addSubview(@button)
+
+    scroll_view.contentSize = [320, CGRectGetMaxY(@button.frame) + 7]
   end
 
   def viewDidLoad
