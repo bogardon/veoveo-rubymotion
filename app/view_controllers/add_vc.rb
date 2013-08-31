@@ -121,6 +121,7 @@ class AddVC < UIViewController
     when HINT_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(HINT_CELL_IDENTIFIER, forIndexPath:indexPath)
       @form = cell.form
+      @form.becomeFirstResponder
       cell.map_view.delegate = self
       cell.map_view.showsUserLocation = true
       cell
