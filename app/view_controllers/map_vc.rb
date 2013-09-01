@@ -29,6 +29,7 @@ class MapVC < UIViewController
     @map_view = MKMapView.alloc.initWithFrame(self.view.bounds)
     @map_view.delegate = self
     @map_view.showsUserLocation = true
+    @map_view.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth
     self.view.addSubview(@map_view)
 
     center_button = UIButton.buttonWithType(UIButtonTypeCustom)
