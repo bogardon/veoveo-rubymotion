@@ -65,7 +65,7 @@ class AppDelegate
   def handle_push(userInfo, animated=false)
     return unless userInfo
     # {"aps"=>{"badge"=>1, "alert"=>"karina found das keyboard!"}, "spot_id"=>99}
-    spot = Spot.merge_or_insert({:id => userInfo['spot_id']})
+    spot = Spot.merge_or_insert({"id" => userInfo['spot_id']})
     vc = SpotVC.alloc.initWithSpot spot
     @tab_bar.selectedViewController.pushViewController(vc, animated:animated)
   end
