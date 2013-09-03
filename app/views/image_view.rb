@@ -9,7 +9,7 @@ class ImageView < UIImageView
   def set_processed_image_from_url(url, placeholder=nil, &block)
     self.image = placeholder
 
-    return unless url.scheme
+    return unless url && url.scheme
 
     TMCache.sharedCache.objectForKey(url.to_s, block:(lambda do |cache, key, object|
 

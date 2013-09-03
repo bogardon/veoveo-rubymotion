@@ -65,9 +65,15 @@ class AppDelegate
   def handle_push(userInfo, animated=false)
     return unless userInfo
     # {"aps"=>{"badge"=>1, "alert"=>"karina found das keyboard!"}, "spot_id"=>99}
-    spot = Spot.merge_or_insert({"id" => userInfo['spot_id']})
-    vc = SpotVC.alloc.initWithSpot spot
-    @tab_bar.selectedViewController.pushViewController(vc, animated:animated)
+    if spot_id = userInfo['spot_id']
+      spot = Spot.merge_or_insert({"id" => spot_id})
+      vc = SpotVC.alloc.initWithSpot spot
+      @tab_bar.selectedViewController.pushViewController(vc, animated:animated)
+    elsif user_id = userInfo['user_id']
+      user = User.merge_or_insert({"id" => user_id})
+      vc = ProfileVC.new user
+      @tab_bar.selectedViewController.pushViewController(vc, animated:animated)
+    end
   end
 
   def setup_testflight
