@@ -156,17 +156,27 @@ class ProfileVC < UIViewController
 
   def on_take_photo
     return unless self.user && self.user.is_current?
-    source = BW::Device.camera.rear || BW::Device.camera.any
-    source.picture(media_types: [:image], allows_editing: true) do |result|
-      unless result[:error]
-        photo = result[:edited_image]
-        self.show_hud
-        User.upload_avatar photo do |response, user|
-          self.hide_hud response.ok?
-          @collection_view.reloadData
-        end
+
+    UIActionSheet.alert("Choose Source", buttons: ["Cancel", nil, "Photos App", "Camera"], success: lambda do |title, index|
+      source = case index
+      when 0
+        BW::Device.camera.any
+      when 1
+        BW::Device.camera.rear
+      else
+        nil
       end
-    end if source
+      source.picture(media_types: [:image], allows_editing: true) do |result|
+        unless result[:error]
+          photo = result[:edited_image]
+          self.show_hud
+          User.upload_avatar photo do |response, user|
+            self.hide_hud response.ok?
+            @collection_view.reloadData
+          end
+        end
+      end if source
+    end)
   end
 
   def numberOfSectionsInCollectionView(collectionView)
