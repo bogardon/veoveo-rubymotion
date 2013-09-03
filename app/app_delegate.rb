@@ -21,10 +21,8 @@ class AppDelegate
         handle_push userInfo, true
       end))
       alert.show
-    when UIApplicationStateInactive
-    when UIApplicationStateBackground
-      handle_push userInfo
     else
+      handle_push userInfo
     end
 
   end
