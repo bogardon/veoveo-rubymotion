@@ -25,7 +25,10 @@ Motion::Project::App.setup do |app|
   app.entitlements['get-task-allow'] = config['app']['get-task-allow']
   app.codesign_certificate = config['app']['codesign_certificate']
 
-  app.version = "46"
+  app.archs['iPhoneOS'] << 'arm64'
+  app.archs['iPhoneSimulator'] << 'x86_64'
+
+  app.version = "48"
   app.short_version = "1.0.0"
 
   if ENV['RUBYMOTION_LIB']
