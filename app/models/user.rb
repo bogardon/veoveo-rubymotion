@@ -35,13 +35,21 @@ class User < Model
   set_attribute name: :facebook_expires_at,
     type: :date
 
-  set_attribute name: :spot_answered_push_enabled,
-    type: :boolean,
-    default: true
+  set_attribute name: :spots_nearby_push,
+    type: :string,
+    default: "anyone"
 
-  set_attribute name: :spots_nearby_push_enabled,
-    type: :boolean,
-    default: true
+  set_attribute name: :spot_answered_push,
+    type: :string,
+    default: "anyone"
+
+  set_attribute name: :followed_push,
+    type: :string,
+    default: "anyone"
+
+  def spots_nearby_push_enabled
+    self.spots_nearby_push != "noone"
+  end
 
   def is_current?
     self == User.current
@@ -132,41 +140,50 @@ class User < Model
       @current ||= get_user
     end
 
-    def patch_spot_answered(val, &block)
+    def patch_followed_push(val, &block)
       info = {
         user: {
-          spot_answered_push_enabled: val
+          followed_push: val
         }
       }
       options = {
         format: :json,
         payload: BW::JSON.generate(info)
       }
-      User.current.spot_answered_push_enabled = val
+      User.current.followed_push = val
       VeoVeoAPI.patch 'users', options do |response, json|
         block.call(response, json) if block
       end
     end
 
-    def patch_spots_nearby(val, &block)
+    def patch_spot_answered_push(val, &block)
       info = {
         user: {
-          spots_nearby_push_enabled: val
+          spot_answered_push: val
         }
       }
       options = {
         format: :json,
         payload: BW::JSON.generate(info)
       }
-      User.current.spots_nearby_push_enabled = val
+      User.current.spot_answered_push = val
       VeoVeoAPI.patch 'users', options do |response, json|
-        if response.ok?
-          if val
-            LocationManager.start
-          else
-            LocationManager.stop
-          end
-        end
+        block.call(response, json) if block
+      end
+    end
+
+    def patch_spots_nearby_push(val, &block)
+      info = {
+        user: {
+          spots_nearby_push: val
+        }
+      }
+      options = {
+        format: :json,
+        payload: BW::JSON.generate(info)
+      }
+      User.current.spots_nearby_push = val
+      VeoVeoAPI.patch 'users', options do |response, json|
         block.call(response, json) if block
       end
     end
