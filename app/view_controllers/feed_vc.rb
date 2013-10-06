@@ -1,7 +1,7 @@
 class FeedVC < UIViewController
   include ViewControllerHelpers
 
-  ANSWER_FEED_CELL_IDENTIFIER = "ANSWER_FEED_CELL_IDENTIFIER"
+  NOTIFICATION_FEED_CELL_IDENTIFIER = "NOTIFICATION_FEED_CELL_IDENTIFIER"
   LOAD_MORE_CELL_IDENTIFIER = "LOAD_MORE_CELL_IDENTIFIER"
   LIMIT = 10
 
@@ -10,7 +10,7 @@ class FeedVC < UIViewController
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:CurrentUserDidLoginNotification, object:nil)
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:CurrentUserDidUpdateFollowedUsers, object:nil)
     @more_to_load = true
-    @answers = []
+    @notifications = []
     reload
     self
   end
@@ -32,7 +32,7 @@ class FeedVC < UIViewController
     @collection_view.dataSource = self
     @collection_view.alwaysBounceVertical = true
 
-    @collection_view.registerClass(AnswerFeedCell, forCellWithReuseIdentifier:ANSWER_FEED_CELL_IDENTIFIER)
+    @collection_view.registerClass(NotificationCell, forCellWithReuseIdentifier:NOTIFICATION_FEED_CELL_IDENTIFIER)
     @collection_view.registerClass(LoadMoreCell, forSupplementaryViewOfKind:UICollectionElementKindSectionFooter, withReuseIdentifier:LOAD_MORE_CELL_IDENTIFIER)
 
     background = "bg.png".uiimageview
@@ -61,20 +61,20 @@ class FeedVC < UIViewController
     offset = 0 unless offset.is_a?(Fixnum)
     return unless User.current
     @query.connection.cancel if @query
-    @query = Answer.get_feed LIMIT, offset do |response, answers|
+    Notification.get_feed LIMIT, offset do |response, notifications|
       if response.ok?
-        @more_to_load = answers.count == LIMIT
+        @more_to_load = notifications.count == LIMIT
         if offset > 0
-          old_count = @answers.count
-          @answers += answers
-          new_count = @answers.count
+          old_count = @notifications.count
+          @notifications += answers
+          new_count = @notifications.count
 
           index_paths = (old_count...new_count).map do |i|
             [0, i].nsindexpath
           end
           @collection_view.insertItemsAtIndexPaths(index_paths) if @collection_view
         else
-          @answers = answers
+          @notifications = notifications
           @collection_view.reloadData if @collection_view
         end
       end
@@ -87,11 +87,11 @@ class FeedVC < UIViewController
   end
 
   def collectionView(collectionView, numberOfItemsInSection:section)
-    @answers ? @answers.count : 0
+    @notifications ? @notifications.count : 0
   end
 
   def collectionView(collectionView, layout:collectionViewLayout, sizeForItemAtIndexPath:indexPath)
-    AnswerFeedCell.size_for_answer(@answers[indexPath.item])
+    NotificationCell.size_for_notification(@notifications[indexPath.item])
   end
 
   def collectionView(collectionView, layout:collectionViewLayout, insetForSectionAtIndex:section)
@@ -99,13 +99,13 @@ class FeedVC < UIViewController
   end
 
   def collectionView(collectionView, cellForItemAtIndexPath:indexPath)
-    cell = collectionView.dequeueReusableCellWithReuseIdentifier(ANSWER_FEED_CELL_IDENTIFIER, forIndexPath:indexPath)
+    cell = collectionView.dequeueReusableCellWithReuseIdentifier(NOTIFICATION_FEED_CELL_IDENTIFIER, forIndexPath:indexPath)
     cell.image_button.tag = indexPath.item
 
     cell.image_button.removeTarget(self, action: "on_profile:", forControlEvents:UIControlEventTouchUpInside)
     cell.image_button.addTarget(self, action: "on_profile:", forControlEvents:UIControlEventTouchUpInside)
 
-    cell.answer = @answers[indexPath.item]
+    cell.notification = @notifications[indexPath.item]
     cell
   end
 
@@ -123,21 +123,27 @@ class FeedVC < UIViewController
     else
       # [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"CollectionHeaderView" forIndexPath:indexPath];
 
-      reload(@answers.count)
+      reload(@notifications.count)
 
       collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionFooter, withReuseIdentifier:LOAD_MORE_CELL_IDENTIFIER, forIndexPath:indexPath)
     end
   end
 
   def on_profile(sender)
-    user = @answers[sender.tag].user
+    user = @notifications[sender.tag].src_user
     profile_vc = ProfileVC.new user
     self.navigationController.pushViewController(profile_vc, animated:true)
   end
 
   def collectionView(collectionView, didSelectItemAtIndexPath:indexPath)
-    spot_vc = SpotVC.alloc.initWithSpot @answers[indexPath.item].spot
-    self.navigationController.pushViewController(spot_vc, animated:true)
+    notification = @notifications[indexPath.item]
+    vc = case notification.notifiable_type
+    when "Answer"
+      vc = SpotVC.alloc.initWithSpot notification.answer.spot
+    when "Relationship"
+      vc = ProfileVC.new notification.src_user
+    end
+    self.navigationController.pushViewController(vc, animated:true)
   end
 
 end
