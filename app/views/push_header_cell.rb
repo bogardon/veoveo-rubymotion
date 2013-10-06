@@ -1,4 +1,4 @@
-class NotificationHeaderCell < FeedCell
+class PushHeaderCell < FeedCell
   attr_accessor :label
   def initWithFrame(frame)
     super

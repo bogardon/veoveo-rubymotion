@@ -4,8 +4,8 @@ class SettingsVC < UIViewController
   LOGOUT_CELL_IDENTIFIER = "LOGOUT_CELL_IDENTIFIER"
   SWITCH_CELL_IDENTIFIER = "SWITCH_CELL_IDENTIFIER"
   HEADER_CELL_IDENTIFIER = "HEADER_CELL_IDENTIFIER"
-  NOTIFICATION_HEADER_CELL_IDENTIFIER = "NOTIFICATION_HEADER_CELL_IDENTIFIER"
-  NOTIFICATION_CELL_IDENTIFIER = "NOTIFICATION_CELL_IDENTIFIER"
+  PUSH_HEADER_CELL_IDENTIFIER = "PUSH_HEADER_CELL_IDENTIFIER"
+  PUSH_CELL_IDENTIFIER = "PUSH_CELL_IDENTIFIER"
 
   SPOT_ANSWERED_SECTION = 0
   SPOTS_NEARBY_SECTION = 1
@@ -25,8 +25,8 @@ class SettingsVC < UIViewController
     @collection_view.allowsMultipleSelection = true
 
     @collection_view.registerClass(LogoutCell, forCellWithReuseIdentifier:LOGOUT_CELL_IDENTIFIER)
-    @collection_view.registerClass(NotificationHeaderCell, forCellWithReuseIdentifier:NOTIFICATION_HEADER_CELL_IDENTIFIER)
-    @collection_view.registerClass(NotificationCell, forCellWithReuseIdentifier:NOTIFICATION_CELL_IDENTIFIER)
+    @collection_view.registerClass(PushHeaderCell, forCellWithReuseIdentifier:PUSH_HEADER_CELL_IDENTIFIER)
+    @collection_view.registerClass(PushCell, forCellWithReuseIdentifier:PUSH_CELL_IDENTIFIER)
     @collection_view.registerClass(HeaderCell, forSupplementaryViewOfKind:UICollectionElementKindSectionHeader, withReuseIdentifier:HEADER_CELL_IDENTIFIER)
 
     background = "bg.png".uiimageview
@@ -135,11 +135,11 @@ class SettingsVC < UIViewController
 
       case indexPath.item
       when 0
-        cell = collectionView.dequeueReusableCellWithReuseIdentifier(NOTIFICATION_HEADER_CELL_IDENTIFIER, forIndexPath:indexPath)
+        cell = collectionView.dequeueReusableCellWithReuseIdentifier(PUSH_HEADER_CELL_IDENTIFIER, forIndexPath:indexPath)
         cell.label.text = header_text
         cell
       else
-        cell = collectionView.dequeueReusableCellWithReuseIdentifier(NOTIFICATION_CELL_IDENTIFIER, forIndexPath: indexPath)
+        cell = collectionView.dequeueReusableCellWithReuseIdentifier(PUSH_CELL_IDENTIFIER, forIndexPath: indexPath)
         cell.label.text = notification_text
         cell.selected = selected
         cell
