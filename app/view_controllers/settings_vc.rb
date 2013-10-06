@@ -170,7 +170,7 @@ class SettingsVC < UIViewController
       when SPOTS_NEARBY_SECTION
         :patch_spots_nearby_push
       when FOLLOWED_SECTION
-        :followed_push
+        :patch_followed_push
       end
 
       User.send(selector, val )
