@@ -26,7 +26,7 @@ class NotificationCell < FeedCell
 
     attributed_text = case @notification.notifiable_type
     when "Answer"
-      @notification.src_user.username.bold(12) + " found " + @notification.answer.spot.hint.bold(12)
+      @notification.src_user.username.bold(12) + " found " + @notification.notifiable.spot.hint.bold(12)
     when "Relationship"
       @notification.src_user.username.bold(12) + " followed you"
     end
@@ -37,7 +37,7 @@ class NotificationCell < FeedCell
   def self.size_for_notification(notification)
     attributed_text = case notification.notifiable_type
     when "Answer"
-      notification.src_user.username.bold(12) + " found " + notification.answer.spot.hint.bold(12)
+      notification.src_user.username.bold(12) + " found " + notification.notifiable.spot.hint.bold(12)
     when "Relationship"
       notification.src_user.username.bold(12) + " followed you"
     end

@@ -66,7 +66,7 @@ class FeedVC < UIViewController
         @more_to_load = notifications.count == LIMIT
         if offset > 0
           old_count = @notifications.count
-          @notifications += answers
+          @notifications += notifications
           new_count = @notifications.count
 
           index_paths = (old_count...new_count).map do |i|
@@ -139,7 +139,7 @@ class FeedVC < UIViewController
     notification = @notifications[indexPath.item]
     vc = case notification.notifiable_type
     when "Answer"
-      vc = SpotVC.alloc.initWithSpot notification.answer.spot
+      vc = SpotVC.alloc.initWithSpot notification.notifiable.spot
     when "Relationship"
       vc = ProfileVC.new notification.src_user
     end

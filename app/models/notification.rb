@@ -20,7 +20,7 @@ class Notification < Model
   set_relationship name: :src_user,
     class_name: :User
 
-  set_relationship name: :answer,
+  set_relationship name: :notifiable,
     class_name: :Answer
 
   def self.get_feed(limit=10, offset=0, &block)
@@ -38,15 +38,6 @@ class Notification < Model
         end
       end
       block.call(response, notifications) if block
-    end
-  end
-
-  def notifiable
-    case self.notifiable_type
-    when "Answer"
-      self.answer
-    when "Relationship"
-      self.relationship
     end
   end
 
