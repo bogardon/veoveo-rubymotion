@@ -8,6 +8,7 @@ class MapVC < UIViewController
     super
 
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:CurrentUserDidLoginNotification, object:nil)
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:UIApplicationWillEnterForegroundNotification, object:nil)
     NSNotificationCenter.defaultCenter.addObserver(self, selector: 'on_did_add_spot:', name:SpotDidAddNotification, object:nil)
     NSNotificationCenter.defaultCenter.addObserver(self, selector: 'on_did_delete_spot:', name:SpotDidDeleteNotification, object:nil)
 

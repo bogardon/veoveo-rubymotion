@@ -9,6 +9,8 @@ class FeedVC < UIViewController
     super
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:CurrentUserDidLoginNotification, object:nil)
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:CurrentUserDidUpdateFollowedUsers, object:nil)
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:SpotDidDeleteNotification, object:nil)
+    NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:UIApplicationWillEnterForegroundNotification, object:nil)
     @more_to_load = true
     @notifications = []
     reload
