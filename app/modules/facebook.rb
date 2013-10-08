@@ -78,5 +78,17 @@ module Facebook
       end
     end
 
+    def unlink(&block)
+      VeoVeoAPI.delete 'users/facebook' do |response, json|
+        if response.ok?
+          User.current.facebook_id = nil
+          User.current.facebook_access_token = nil
+          User.current.facebook_expires_at = nil
+          self.logout
+        end
+        block.call(response, json) if block
+      end
+    end
+
   end
 end

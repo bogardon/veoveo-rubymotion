@@ -1,6 +1,7 @@
 class SettingsVC < UIViewController
   include ViewControllerHelpers
 
+  FACEBOOK_CELL_IDENTIFIER = "FACEBOOK_CELL_IDENTIFIER"
   LOGOUT_CELL_IDENTIFIER = "LOGOUT_CELL_IDENTIFIER"
   SWITCH_CELL_IDENTIFIER = "SWITCH_CELL_IDENTIFIER"
   HEADER_CELL_IDENTIFIER = "HEADER_CELL_IDENTIFIER"
@@ -10,7 +11,8 @@ class SettingsVC < UIViewController
   SPOT_ANSWERED_SECTION = 0
   SPOTS_NEARBY_SECTION = 1
   FOLLOWED_SECTION = 2
-  LOGOUT_SECTION = 3
+  FACEBOOK_SECTION = 3
+  LOGOUT_SECTION = 4
 
   def loadView
     super
@@ -24,10 +26,12 @@ class SettingsVC < UIViewController
     @collection_view.alwaysBounceVertical = true
     @collection_view.allowsMultipleSelection = true
 
+    @collection_view.registerClass(SwitchCell, forCellWithReuseIdentifier:FACEBOOK_CELL_IDENTIFIER)
     @collection_view.registerClass(LogoutCell, forCellWithReuseIdentifier:LOGOUT_CELL_IDENTIFIER)
     @collection_view.registerClass(PushHeaderCell, forCellWithReuseIdentifier:PUSH_HEADER_CELL_IDENTIFIER)
     @collection_view.registerClass(PushCell, forCellWithReuseIdentifier:PUSH_CELL_IDENTIFIER)
     @collection_view.registerClass(HeaderCell, forSupplementaryViewOfKind:UICollectionElementKindSectionHeader, withReuseIdentifier:HEADER_CELL_IDENTIFIER)
+
 
     background = "bg.png".uiimageview
     background.contentMode = UIViewContentModeScaleAspectFill
@@ -80,8 +84,23 @@ class SettingsVC < UIViewController
     add_title_to_nav_bar "Settings"
   end
 
+  def on_facebook
+    self.show_hud
+    if Facebook.is_open?
+      Facebook.unlink do |response, json|
+        self.hide_hud response.ok?
+        @collection_view.reloadData
+      end
+    else
+      Facebook.connect true do |response, json|
+        self.hide_hud response.ok?
+        @collection_view.reloadData
+      end
+    end
+  end
+
   def numberOfSectionsInCollectionView(collectionView)
-    4
+    5
   end
 
   def collectionView(collectionView, numberOfItemsInSection:section)
@@ -92,6 +111,8 @@ class SettingsVC < UIViewController
       4
     when FOLLOWED_SECTION
       4
+    when FACEBOOK_SECTION
+      1
     when LOGOUT_SECTION
       1
     end
@@ -112,6 +133,8 @@ class SettingsVC < UIViewController
       indexPath.item == 0 ? [306,40] : [306, 50]
     when LOGOUT_SECTION
       [306,44]
+    else
+      [306, 40]
     end
   end
 
@@ -159,6 +182,16 @@ class SettingsVC < UIViewController
         end
         cell
       end
+    when FACEBOOK_SECTION
+      cell = collectionView.dequeueReusableCellWithReuseIdentifier(FACEBOOK_CELL_IDENTIFIER, forIndexPath:indexPath)
+      cell.label.text = "Facebook"
+      cell.switch.on = Facebook.is_open?
+
+      unless cell.switch.allTargets.count > 0
+        cell.switch.addTarget(self, action: :on_facebook, forControlEvents:UIControlEventValueChanged)
+      end
+
+      cell
     when LOGOUT_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(LOGOUT_CELL_IDENTIFIER, forIndexPath:indexPath)
       cell

@@ -9,7 +9,7 @@ class SwitchCell < FeedCell
 
     @label = UILabel.alloc.initWithFrame([[10,5],[200,30]])
     @label.backgroundColor = UIColor.clearColor
-    @label.font = UIFont.systemFontOfSize 13
+    @label.font = UIFont.systemFontOfSize 16
     @label.numberOfLines = 2
     self.contentView.addSubview(@label)
     self
