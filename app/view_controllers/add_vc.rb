@@ -84,7 +84,7 @@ class AddVC < UIViewController
     when PHOTO_CELL_SECTION
       [0,7,0,7]
     when ACTION_CELL_SECTION
-      [0,7,0,7]
+      [0,7,7,7]
     else
       [0,0,0,0]
     end
