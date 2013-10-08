@@ -51,6 +51,7 @@ class SignUpVC < UIViewController
     @email_field = FormTextField.alloc.initWithFrame([[15, 126], [276, 25]])
     @email_field.label.text = "EMAIL:"
     @email_field.delegate = self
+    @email_field.keyboardType = UIKeyboardTypeEmailAddress
     @email_field.returnKeyType = UIReturnKeyGo
     sign_up_container.addSubview(@email_field)
 
