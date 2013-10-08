@@ -127,7 +127,7 @@ class AddVC < UIViewController
       cell
     when PHOTO_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(PHOTO_CELL_IDENTIFIER, forIndexPath:indexPath)
-      cell.backgroundView = UIImageView.alloc.initWithImage(@photo)
+      cell.photo.image = @photo
       cell
     when ACTION_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(ACTION_CELL_IDENTIFIER, forIndexPath:indexPath)
