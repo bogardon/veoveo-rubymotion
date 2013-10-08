@@ -19,6 +19,6 @@ class FormTextField < UITextField
   end
 
   def leftViewRectForBounds(bounds)
-    [[0,0],[80,25]]
+    [[0,0],@label.frame.size]
   end
 end

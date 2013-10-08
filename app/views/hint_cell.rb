@@ -10,7 +10,8 @@ class HintCell < UICollectionViewCell
 
     @form = FormTextField.alloc.init
     @form.frame = [[9, 9], [self.contentView.frame.size.width - 18, 26]]
-    @form.label.text = "I FOUND:"
+    @form.label.text = "I DISCOVERED:"
+    @form.label.frame = [[0,0],[100,26]]
     self.contentView.addSubview(@form)
 
     horizontal = UIView.alloc.initWithFrame [[1, CGRectGetMaxY(@form.frame) + 5.5], [self.contentView.frame.size.width - 2, 0.5]]
