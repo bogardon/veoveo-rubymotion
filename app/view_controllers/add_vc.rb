@@ -12,6 +12,10 @@ class AddVC < UIViewController
 
   SPOT_ANNOTATION_IDENTIFIER = "SPOT_ANNOTATION_IDENTIFIER"
 
+  EDUCATION_CELL_SECTION = 3
+  EDUCATION_HEADER_CELL_IDENTIFIER = "EDUCATION_HEADER_CELL_IDENTIFIER"
+  EDUCATION_CELL_IDENTIFIER = "EDUCATION_CELL_IDENTIFIER"
+
   def init
     super
     @did_auto_center = false
@@ -22,7 +26,8 @@ class AddVC < UIViewController
     super
     flow = UICollectionViewFlowLayout.alloc.init
     flow.minimumInteritemSpacing = 0
-    @collection_view = UICollectionView.alloc.initWithFrame(self.view.bounds, collectionViewLayout:flow)
+    flow.minimumLineSpacing = 0
+    @collection_view = CollectionView.alloc.initWithFrame(self.view.bounds, collectionViewLayout:flow)
     @collection_view.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth
     @collection_view.delegate = self
     @collection_view.dataSource = self
@@ -30,6 +35,8 @@ class AddVC < UIViewController
     @collection_view.registerClass(HintCell, forCellWithReuseIdentifier:HINT_CELL_IDENTIFIER)
     @collection_view.registerClass(PhotoCell, forCellWithReuseIdentifier:PHOTO_CELL_IDENTIFIER)
     @collection_view.registerClass(ActionCell, forCellWithReuseIdentifier:ACTION_CELL_IDENTIFIER)
+    @collection_view.registerClass(PushHeaderCell, forCellWithReuseIdentifier:EDUCATION_HEADER_CELL_IDENTIFIER)
+    @collection_view.registerClass(EducationCell, forCellWithReuseIdentifier:EDUCATION_CELL_IDENTIFIER)
 
     background = "bg.png".uiimageview
     background.contentMode = UIViewContentModeScaleAspectFill
@@ -43,6 +50,19 @@ class AddVC < UIViewController
     add_logo_to_nav_bar
     add_right_nav_button "Add", self, :on_add
     add_left_nav_button "Cancel", self, :on_cancel
+
+    @education_titles = {
+      0 => "The best discoveries are:",
+      1 => "Fun & Interesting",
+      2 => "Stationary",
+      3 => "Outdoors"
+    }
+
+    @education_images = {
+      1 => "interesting.png",
+      2 => "stationary.png",
+      3 => "outdoors.png"
+    }
   end
 
   def on_add
@@ -74,7 +94,7 @@ class AddVC < UIViewController
   end
 
   def numberOfSectionsInCollectionView(collectionView)
-    3
+    4
   end
 
   def collectionView(collectionView, layout:collectionViewLayout, insetForSectionAtIndex:section)
@@ -85,8 +105,8 @@ class AddVC < UIViewController
       [0,7,0,7]
     when ACTION_CELL_SECTION
       [0,7,7,7]
-    else
-      [0,0,0,0]
+    when EDUCATION_CELL_SECTION
+      [0,7,7,7]
     end
   end
 
@@ -98,8 +118,8 @@ class AddVC < UIViewController
       @photo ? 1 : 0
     when ACTION_CELL_SECTION
       1
-    else
-      0
+    when EDUCATION_CELL_SECTION
+      4
     end
   end
 
@@ -111,8 +131,13 @@ class AddVC < UIViewController
       [306,306]
     when ACTION_CELL_SECTION
       [306,44]
-    else
-      [0,0]
+    when EDUCATION_CELL_SECTION
+      case indexPath.item
+      when 0
+        [306, 40]
+      else
+        [306, 50]
+      end
     end
   end
 
@@ -121,7 +146,6 @@ class AddVC < UIViewController
     when HINT_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(HINT_CELL_IDENTIFIER, forIndexPath:indexPath)
       @form = cell.form
-      @form.becomeFirstResponder
       cell.map_view.delegate = self
       cell.map_view.showsUserLocation = true
       cell
@@ -133,8 +157,18 @@ class AddVC < UIViewController
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(ACTION_CELL_IDENTIFIER, forIndexPath:indexPath)
       cell.label.text = @photo ? "Change Photo" : "Take a Photo"
       cell
-    else
-      nil
+    when EDUCATION_CELL_SECTION
+      cell = case indexPath.item
+      when 0
+        header = collectionView.dequeueReusableCellWithReuseIdentifier(EDUCATION_HEADER_CELL_IDENTIFIER, forIndexPath:indexPath)
+        header
+      else
+        edu = collectionView.dequeueReusableCellWithReuseIdentifier(EDUCATION_CELL_IDENTIFIER, forIndexPath:indexPath)
+        edu.image_view.image = @education_images[indexPath.item].uiimage
+        edu
+      end
+      cell.label.text = @education_titles[indexPath.item]
+      cell
     end
   end
 
