@@ -104,6 +104,7 @@ class ProfileVC < UIViewController
     @user_query = User.get_id self.user.id do |response, user|
       if response.ok?
         self.user = user
+        @collection_view.reloadData if @collection_view
       end
     end
   end
