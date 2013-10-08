@@ -34,6 +34,45 @@ class SettingsVC < UIViewController
 
     @collection_view.backgroundView = background
     self.view.addSubview(@collection_view)
+
+    @titles = {
+      SPOT_ANSWERED_SECTION => {
+        0 => "When someone finds my discovery:",
+        1 => "Anyone",
+        2 => "People I Follow",
+        3 => "No One"
+      },
+      SPOTS_NEARBY_SECTION => {
+        0 => "When I'm near a discovery by:",
+        1 => "Anyone",
+        2 => "People I Follow",
+        3 => "No One"
+      },
+      FOLLOWED_SECTION => {
+        0 => "When someone follows me:",
+        1 => "Anyone",
+        2 => "My Facebook Friends",
+        3 => "No One"
+      }
+    }
+
+    @get_selectors = {
+      SPOT_ANSWERED_SECTION => :spot_answered_push,
+      SPOTS_NEARBY_SECTION => :spots_nearby_push,
+      FOLLOWED_SECTION => :followed_push
+    }
+
+    @patch_selectors = {
+      SPOT_ANSWERED_SECTION => :patch_spot_answered_push,
+      SPOTS_NEARBY_SECTION => :patch_spots_nearby_push,
+      FOLLOWED_SECTION => :patch_followed_push
+    }
+
+    @push_values = {
+      1 => "anyone",
+      2 => "followed",
+      3 => "noone"
+    }
   end
 
   def viewDidLoad
@@ -100,48 +139,24 @@ class SettingsVC < UIViewController
     case indexPath.section
     when SPOT_ANSWERED_SECTION, SPOTS_NEARBY_SECTION, FOLLOWED_SECTION
 
-      header_text = case indexPath.section
-      when SPOT_ANSWERED_SECTION
-        "When someone finds my discovery:"
-      when SPOTS_NEARBY_SECTION
-        "When I'm near a discovery by:"
-      when FOLLOWED_SECTION
-        "When someone follows me:"
-      end
-
-      notification_text = case indexPath.item
-      when 1
-        "Anyone"
-      when 2
-        "People I Follow"
-      when 3
-        "No One"
-      end
-
-      map = {
-        SPOT_ANSWERED_SECTION => :spot_answered_push,
-        SPOTS_NEARBY_SECTION => :spots_nearby_push,
-        FOLLOWED_SECTION => :followed_push
-      }
-
-      selected = case indexPath.item
-      when 1
-        User.current.send(map[indexPath.section]) == "anyone"
-      when 2
-        User.current.send(map[indexPath.section]) == "followed"
-      when 3
-        User.current.send(map[indexPath.section]) == "noone"
-      end
+      label_text = @titles[indexPath.section][indexPath.item]
 
       case indexPath.item
       when 0
         cell = collectionView.dequeueReusableCellWithReuseIdentifier(PUSH_HEADER_CELL_IDENTIFIER, forIndexPath:indexPath)
-        cell.label.text = header_text
+        cell.label.text = label_text
         cell
       else
         cell = collectionView.dequeueReusableCellWithReuseIdentifier(PUSH_CELL_IDENTIFIER, forIndexPath: indexPath)
-        cell.label.text = notification_text
-        cell.selected = selected
+        cell.label.text = label_text
+        cell.selected = case indexPath.item
+        when 1
+          User.current.send(@get_selectors[indexPath.section]) == "anyone"
+        when 2
+          User.current.send(@get_selectors[indexPath.section]) == "followed"
+        when 3
+          User.current.send(@get_selectors[indexPath.section]) == "noone"
+        end
         cell
       end
     when LOGOUT_SECTION
@@ -154,32 +169,11 @@ class SettingsVC < UIViewController
     case indexPath.section
     when SPOT_ANSWERED_SECTION, SPOTS_NEARBY_SECTION, FOLLOWED_SECTION
       return if indexPath.item == 0
-
-      val = case indexPath.item
-      when 1
-        "anyone"
-      when 2
-        "followed"
-      when 3
-        "noone"
-      end
-
-      selector = case indexPath.section
-      when SPOT_ANSWERED_SECTION
-        :patch_spot_answered_push
-      when SPOTS_NEARBY_SECTION
-        :patch_spots_nearby_push
-      when FOLLOWED_SECTION
-        :patch_followed_push
-      end
-
-      User.send(selector, val )
-
+      User.send(@patch_selectors[indexPath.section], @push_values[indexPath.item])
       @collection_view.reloadData
     when LOGOUT_SECTION
       collectionView.deselectItemAtIndexPath(indexPath, animated:true)
       User.current = nil
     end
   end
-
 end
