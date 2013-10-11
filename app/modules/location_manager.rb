@@ -1,3 +1,4 @@
+NOTIFIED_SPOTS_BY_IDS_KEY = "NOTIFIED_SPOTS_BY_IDS_KEY"
 module LocationManager
   class << self
     def start
@@ -31,12 +32,20 @@ module LocationManager
         # skip if no spots found
         if response.ok? && spots.count > 0
           # do not notify twice
-          notified_spot_ids = App::Persistence['notified_spot_ids'] || []
+          notified_spots_by_ids = App::Persistence[NOTIFIED_SPOTS_BY_IDS_KEY] ? App::Persistence[NOTIFIED_SPOTS_BY_IDS_KEY].clone : {}
+
+          now = Time.now
+
           spots_to_notify = spots.reject do |s|
-            notified_spot_ids.include?(s.id)
+            notified_spots_by_ids.has_key?(s.id.to_s) && (notified_spots_by_ids[s.id.to_s] + 3.month > now)
           end
+
+          spots_to_notify.each do |s|
+            notified_spots_by_ids[s.id.to_s] = now
+          end
+
           # store notified spot ids
-          App::Persistence['notified_spot_ids'] = notified_spot_ids + spots_to_notify.map(&:id)
+          App::Persistence[NOTIFIED_SPOTS_BY_IDS_KEY] = notified_spots_by_ids
 
           # do not notify unless there's stuff?
           if spots_to_notify.count > 0
