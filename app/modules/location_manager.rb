@@ -64,6 +64,7 @@ module LocationManager
             end
 
             spots_notification = UILocalNotification.alloc.init
+            spots_notification.soundName = UILocalNotificationDefaultSoundName
             spots_notification.alertBody = "#{names_list} discovered something near you. Find it!"
             spots_notification.userInfo = {latitude: coordinate.latitude, longitude: coordinate.longitude}
             UIApplication.sharedApplication.scheduleLocalNotification(spots_notification)
