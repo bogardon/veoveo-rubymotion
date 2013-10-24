@@ -1,8 +1,8 @@
 PODS:
-  - Facebook-iOS-SDK (3.7.0)
+  - Facebook-iOS-SDK (3.9.0)
   - GGFullscreenImageViewController (1.0.0)
-  - MBProgressHUD (0.7)
-  - TestFlightSDK (2.0)
+  - MBProgressHUD (0.8)
+  - TestFlightSDK (2.1.1-beta)
   - TMCache (1.2.0)
 
 DEPENDENCIES:
@@ -13,10 +13,10 @@ DEPENDENCIES:
   - TMCache
 
 SPEC CHECKSUMS:
-  Facebook-iOS-SDK: 39b55f6c2a8901df8ebcfa23b90c66da1c475f82
+  Facebook-iOS-SDK: 5e1416dbdfc17b2620c2ca31c02e6feec042f2c1
   GGFullscreenImageViewController: 81ff02e95ea08d28326e937090fbf3e2b2778193
-  MBProgressHUD: 1fd8591a2216d5dec6de24e09187bb03bcbe9946
-  TestFlightSDK: 940906d4b2550cf397c6f2d2fcc4ebfdcd8ae858
+  MBProgressHUD: 2bbc6f470111daf7f3eaa4eb12b8cbf01c4c0622
+  TestFlightSDK: dea28c16f0bf65c49c4ed8939b2ae0b0ed9bf8b0
   TMCache: 4b05e1b124d9f7e8d449640e059cff4cda17ed27
 
 COCOAPODS: 0.23.0
