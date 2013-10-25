@@ -112,11 +112,11 @@ class MapVC < UIViewController
   end
 
   def mapView(mapView, regionWillChangeAnimated:animated)
-    @query.connection.cancel if @query
+    NSObject.cancelPreviousPerformRequestsWithTarget(self, selector: :reload, object:nil)
   end
 
   def mapView(mapView, regionDidChangeAnimated:animated)
-    reload
+    self.performSelector(:reload, withObject:nil, afterDelay:1)
   end
 
   def reload
