@@ -16,7 +16,7 @@ class MapSegmentedControl < UISegmentedControl
       UITextAttributeFont => UIFont.boldSystemFontOfSize(12),
       UITextAttributeTextColor => UIColor.whiteColor,
       UITextAttributeTextShadowColor => UIColor.clearColor,
-      UITextAttributeTextShadowOffset => NSValue.valueWithUIOffset(UIOffsetMake(0,0))
+      UITextAttributeTextShadowOffset => NSValue.valueWithUIOffset(UIOffsetMake(0,1))
     }
 
 

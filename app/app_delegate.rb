@@ -96,7 +96,8 @@ class AppDelegate
     UIBarButtonItem.appearance.setBackButtonBackgroundImage('backbutton.png'.uiimage.stretchable([16,14,16,4]), forState:UIControlStateNormal, barMetrics:UIBarMetricsDefault)
     UIBarButtonItem.appearance.setBackButtonBackgroundImage('backbutton_down.png'.uiimage.stretchable([16,14,16,4]), forState:UIControlStateHighlighted, barMetrics:UIBarMetricsDefault)
 
-    text_attributes = {UITextAttributeFont => UIFont.boldSystemFontOfSize(12)}
+    offset = NSValue.valueWithUIOffset(UIOffsetMake(0, 1))
+    text_attributes = {UITextAttributeFont => UIFont.boldSystemFontOfSize(12), UITextAttributeTextShadowOffset => offset}
     UIBarButtonItem.appearance.setTitleTextAttributes(text_attributes, forState:UIControlStateNormal)
     UIBarButtonItem.appearance.setTitleTextAttributes(text_attributes, forState:UIControlStateHighlighted)
 
