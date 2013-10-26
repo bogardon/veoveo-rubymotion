@@ -2,17 +2,18 @@
 $:.unshift(ENV["RUBYMOTION_LIB"] || "/Library/RubyMotion/lib")
 require 'motion/project/template/ios'
 require 'bundler'
-require 'bubble-wrap/location'
 Bundler.require
 
-
+VERSION="58"
 
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
 
-  app.xcode_dir = "/Applications/Xcode.app/Contents/Developer"
   app.sdk_version = "6.1"
-  app.deployment_target = '6.1'
+  app.deployment_target = "6.1"
+
+  # app.archs['iPhoneOS'] << 'arm64'
+  # app.archs['iPhoneSimulator'] << 'x86_64'
 
   # load config file and put it in the info plist
   config = YAML.load_file("config/#{app.build_mode}.yml")
@@ -25,15 +26,13 @@ Motion::Project::App.setup do |app|
   app.entitlements['get-task-allow'] = config['app']['get-task-allow']
   app.codesign_certificate = config['app']['codesign_certificate']
 
-  app.archs['iPhoneOS'] << 'arm64'
-  app.archs['iPhoneSimulator'] << 'x86_64'
-
-  app.version = "48"
+  app.version = VERSION
   app.short_version = "1.0.0"
 
   if ENV['RUBYMOTION_LIB']
     app.motiondir = '../RubyMotion'
   end
+
   app.interface_orientations = [:portrait]
 
   app.frameworks += %w[
@@ -87,4 +86,11 @@ task :testflight => [
   notes = "Latest Testflight Build"
   distribution_lists = "VeoVeo"
   sh "curl http://testflightapp.com/api/builds.json -F file=@#{ipa_path} -F dsym=@#{zipped_dsym_path} -F api_token=#{api_token} -F team_token=#{team_token} -F notes='#{notes}' -F distribution_lists=#{distribution_lists}"
+
+  hipchat_room = "VeoVeo"
+  hipchat_from = "TestFlight"
+  hipchat_message = "Uploaded build #{VERSION}!"
+  hipchat_api_token = "ff4e32ffecd9efef18d7fdeab44c11"
+
+  sh "curl -d \"room_id=#{hipchat_room}&from=#{hipchat_from}&message=#{hipchat_message}&color=green\"  https://api.hipchat.com/v1/rooms/message?auth_token=#{hipchat_api_token}&format=json"
 end
