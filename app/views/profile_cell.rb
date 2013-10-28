@@ -51,8 +51,7 @@ class ProfileCell < UICollectionViewCell
     @user_image_view.set_image_from_url @user.avatar_url_full
     @username_label.text = @user.username
 
-    title = @user.avatar_url_full && @user.avatar_url_full.scheme ? nil : "Tap here to change"
-
+    title = @user.is_current? && @user.avatar_url_full && !@user.avatar_url_full.scheme ? "Tap here to change" : nil
     @image_button.setTitle(title, forState:UIControlStateNormal)
   end
 end
