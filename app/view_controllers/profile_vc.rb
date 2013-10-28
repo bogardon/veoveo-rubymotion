@@ -258,14 +258,8 @@ class ProfileVC < UIViewController
     when PROFILE_SECTION
       nil
     when FEED_SECTION
-      unless @more_to_load
-        nil
-      else
-        # [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"CollectionHeaderView" forIndexPath:indexPath];
-        reload_answers(@answers.count)
-
-        collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionFooter, withReuseIdentifier:LOAD_MORE_CELL_IDENTIFIER, forIndexPath:indexPath)
-      end
+      reload_answers(@answers.count) if @more_to_load
+      collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionFooter, withReuseIdentifier:LOAD_MORE_CELL_IDENTIFIER, forIndexPath:indexPath)
     else
       nil
     end

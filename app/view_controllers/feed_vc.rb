@@ -120,15 +120,8 @@ class FeedVC < UIViewController
 #-(UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
 
   def collectionView(collectionView, viewForSupplementaryElementOfKind:kind, atIndexPath:indexPath)
-    unless @more_to_load
-      nil
-    else
-      # [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"CollectionHeaderView" forIndexPath:indexPath];
-
-      reload(@notifications.count)
-
-      collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionFooter, withReuseIdentifier:LOAD_MORE_CELL_IDENTIFIER, forIndexPath:indexPath)
-    end
+    reload(@notifications.count) if @more_to_load
+    collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionFooter, withReuseIdentifier:LOAD_MORE_CELL_IDENTIFIER, forIndexPath:indexPath)
   end
 
   def on_profile(sender)
