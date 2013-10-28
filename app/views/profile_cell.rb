@@ -15,6 +15,11 @@ class ProfileCell < UICollectionViewCell
     @image_button = UIButton.alloc.initWithFrame @user_image_view.frame
     self.contentView.addSubview(@image_button)
 
+    @image_button.setTitleColor(UIColor.blackColor, forState:UIControlStateNormal)
+    @image_button.titleLabel.font = UIFont.boldSystemFontOfSize(14)
+    @image_button.titleLabel.numberOfLines = 0
+    @image_button.titleEdgeInsets = [0,5,0,5]
+
     vertical = UIView.alloc.initWithFrame [[90,0],[1, self.contentView.frame.size.height]]
     vertical.backgroundColor = [160,160,160].uicolor
     self.contentView.addSubview(vertical)
@@ -45,5 +50,9 @@ class ProfileCell < UICollectionViewCell
 
     @user_image_view.set_image_from_url @user.avatar_url_full
     @username_label.text = @user.username
+
+    title = @user.avatar_url_full && @user.avatar_url_full.scheme ? nil : "Tap here to change"
+
+    @image_button.setTitle(title, forState:UIControlStateNormal)
   end
 end
