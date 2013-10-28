@@ -14,13 +14,13 @@ class AnswerImageView < ImageView
     @loading_shutter.start
 
     set_processed_image_from_url url do |image|
-      size = [148, 148]
+      size = [320,320]
       UIGraphicsBeginImageContextWithOptions(size, false, 0)
       context = UIGraphicsGetCurrentContext()
       UIColor.clearColor.setFill
       rect = [[0,0], size]
       CGContextFillRect(context, rect)
-      path = UIBezierPath.bezierPathWithRoundedRect(rect, byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight, cornerRadii:[3,3]).CGPath
+      path = UIBezierPath.bezierPathWithRoundedRect(rect, byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight, cornerRadii:[6,6]).CGPath
       CGContextAddPath(context, path)
       CGContextClosePath(context)
       CGContextClip(context)
