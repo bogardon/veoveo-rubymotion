@@ -12,17 +12,21 @@ class ImageView < UIImageView
     return unless url && url.scheme
 
     TMCache.sharedCache.objectForKey(url.to_s, block:(lambda do |cache, key, object|
+      if object
+        processed_image = block ? block.call(object) : object
 
-      Dispatch::Queue.main.async do
-        if object
-          self.image = object if @url.to_s == key
-        else
+        Dispatch::Queue.main.async do
+          self.image = processed_image if @url.to_s == key
+        end
+
+      else
+        Dispatch::Queue.main.async do
           BW::HTTP.get url.to_s do |response|
             if response.ok?
               Dispatch::Queue.concurrent(priority=:background).async do
                 image = UIImage.alloc.initWithData(response.body, scale:UIScreen.mainScreen.scale)
+                TMCache.sharedCache.setObject(image, forKey:key, nil)
                 processed_image = block ? block.call(image) : image
-                TMCache.sharedCache.setObject(processed_image, forKey:key)
                 Dispatch::Queue.main.async do
                   self.image = processed_image if @url.to_s == key
                 end
@@ -31,7 +35,6 @@ class ImageView < UIImageView
           end
         end
       end
-
     end))
 
     @url = url
