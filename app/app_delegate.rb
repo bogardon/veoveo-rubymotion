@@ -62,6 +62,7 @@ class AppDelegate
 
   def handle_push(userInfo, animated=false)
     return unless userInfo
+    @tab_bar.selectedIndex = TabBarVC::FEED_INDEX
     # {"aps"=>{"badge"=>1, "alert"=>"karina found das keyboard!"}, "spot_id"=>99}
     if spot_id = userInfo['spot_id']
       spot = Spot.merge_or_insert({"id" => spot_id})
