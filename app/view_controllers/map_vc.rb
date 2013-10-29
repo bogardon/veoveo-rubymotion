@@ -43,9 +43,6 @@ class MapVC < UIViewController
 
   def viewDidLoad
     super
-    @did_auto_center = false
-    center_on_user
-
     add_right_nav_button "Add", self, :on_add
 
     segmented_control = MapSegmentedControl.alloc.initWithItems(["Everyone", "Following"])
@@ -84,9 +81,11 @@ class MapVC < UIViewController
   end
 
   def mapView(mapView, didUpdateUserLocation:userLocation)
-    return unless userLocation.location && !@did_auto_center
-    @did_auto_center = true
-    center_on_user
+    return unless userLocation.location
+    if !@last_location || userLocation.location.distanceFromLocation(@last_location) > 200
+      center_on_user
+    end
+    @last_location = userLocation.location
   end
 
   SPOT_ANNOTATION_IDENTIFIER = "SPOT_ANNOTATION_IDENTIFIER"
