@@ -25,7 +25,7 @@ Motion::Project::App.setup do |app|
   app.codesign_certificate = config['app']['codesign_certificate']
 
   app.short_version = app.version = "1.0.0"
-  app.version = VERSION if VERSION
+  app.version = VERSION if defined?(VERSION)
 
   if ENV['RUBYMOTION_LIB']
     app.motiondir = '../RubyMotion'
@@ -91,8 +91,8 @@ end
 
 desc "Release Testflight Build"
 task :testflight => [
-  :secret_clean,
   :set_and_bump_version,
+  :secret_clean,
   :"archive:distribution"
 ] do
 
