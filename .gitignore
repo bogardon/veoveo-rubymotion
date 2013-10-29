@@ -9,3 +9,4 @@ vendor/Pods
 .dat*
 .idea
 provisioning_profiles
+nextBuildNumber

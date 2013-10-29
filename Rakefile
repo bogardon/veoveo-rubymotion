@@ -4,8 +4,6 @@ require 'motion/project/template/ios'
 require 'bundler'
 Bundler.require
 
-VERSION="58"
-
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
 
@@ -26,8 +24,8 @@ Motion::Project::App.setup do |app|
   app.entitlements['get-task-allow'] = config['app']['get-task-allow']
   app.codesign_certificate = config['app']['codesign_certificate']
 
-  app.version = VERSION
-  app.short_version = "1.0.0"
+  app.short_version = app.version = "1.0.0"
+  app.version = VERSION if VERSION
 
   if ENV['RUBYMOTION_LIB']
     app.motiondir = '../RubyMotion'
@@ -68,8 +66,33 @@ Motion::Project::App.setup do |app|
 
 end
 
+def notify_hipchat(message)
+  hipchat_room = "VeoVeo"
+  hipchat_from = "TestFlight"
+  hipchat_message = message
+  hipchat_api_token = "ff4e32ffecd9efef18d7fdeab44c11"
+
+  sh "curl -d \"room_id=#{hipchat_room}&from=#{hipchat_from}&message=#{hipchat_message}&color=green\"  https://api.hipchat.com/v1/rooms/message?auth_token=#{hipchat_api_token}&format=json"
+end
+
+task :set_and_bump_version do
+  next_build_path = "./nextBuildNumber"
+  VERSION = File.open(next_build_path).read.strip
+  File.open(next_build_path, "w+") do |f|
+    f.write "#{VERSION.to_i + 1}"
+  end
+
+  notify_hipchat("Preparing Build #{VERSION}!")
+end
+
+task :secret_clean do
+  sh "rake clean"
+end
+
 desc "Release Testflight Build"
 task :testflight => [
+  :secret_clean,
+  :set_and_bump_version,
   :"archive:distribution"
 ] do
 
@@ -87,10 +110,5 @@ task :testflight => [
   distribution_lists = "VeoVeo"
   sh "curl http://testflightapp.com/api/builds.json -F file=@#{ipa_path} -F dsym=@#{zipped_dsym_path} -F api_token=#{api_token} -F team_token=#{team_token} -F notes='#{notes}' -F distribution_lists=#{distribution_lists}"
 
-  hipchat_room = "VeoVeo"
-  hipchat_from = "TestFlight"
-  hipchat_message = "Uploaded build #{VERSION}!"
-  hipchat_api_token = "ff4e32ffecd9efef18d7fdeab44c11"
-
-  sh "curl -d \"room_id=#{hipchat_room}&from=#{hipchat_from}&message=#{hipchat_message}&color=green\"  https://api.hipchat.com/v1/rooms/message?auth_token=#{hipchat_api_token}&format=json"
+  notify_hipchat("Uploaded Build #{VERSION}!")
 end
