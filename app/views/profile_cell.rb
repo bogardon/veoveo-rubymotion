@@ -48,7 +48,7 @@ class ProfileCell < UICollectionViewCell
   def user=(user)
     @user = user
 
-    @user_image_view.set_image_from_url @user.avatar_url_full
+    @user_image_view.set_image_from_url @user.avatar_url_full, "avatar.png".uiimage
     @username_label.text = @user.username
 
     title = @user.is_current? && @user.avatar_url_full && !@user.avatar_url_full.scheme ? "Tap here to change" : nil
