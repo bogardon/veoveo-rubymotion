@@ -15,6 +15,9 @@ class Answer < Model
   set_attribute name: :created_at,
     type: :date
 
+  set_attribute name :user_id,
+    type: :integer
+
   set_relationship name: :spot,
     class_name: :Spot
 
