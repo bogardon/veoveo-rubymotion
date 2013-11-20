@@ -28,7 +28,7 @@ class UserFeedCell < FeedCell
 
   def answer=(answer)
     @answer = answer
-    @right_icon.hidden = @answer.spot.user_id != User.current.id
+    @right_icon.hidden = @answer.spot.user_id != answer.user_id
     attr_text = @answer.spot.hint.bold(12) + "\n" + @answer.humanized_date.nsattributedstring.color(UIColor.lightGrayColor)
 
     @label.attributedText = attr_text
