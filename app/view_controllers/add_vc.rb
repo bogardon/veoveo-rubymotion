@@ -59,7 +59,7 @@ class AddVC < UIViewController
     }
 
     @education_images = {
-      1 => "interesting.png",
+      1 => "spaceship.png",
       2 => "stationary.png",
       3 => "outdoors.png"
     }
