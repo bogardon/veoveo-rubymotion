@@ -13,13 +13,13 @@ class UserImageView < ImageView
         CGContextClip(context)
         image.drawInRect bounds
 
-        CGContextSetShadowWithColor(context, [0,0], 3, UIColor.colorWithWhite(0, alpha:0.5).CGColor)
-        path = UIBezierPath.bezierPathWithRoundedRect([[-1, -1], [image.size.width+2, image.size.height+2]], cornerRadius:radius).CGPath
-        CGContextAddPath(context, path)
-        CGContextSetStrokeColorWithColor(context, UIColor.redColor.CGColor);
-        CGContextStrokePath(context)
-        CGContextAddPath(context, path)
-        CGContextStrokePath(context)
+        # CGContextSetShadowWithColor(context, [0,0], 3, UIColor.colorWithWhite(0, alpha:0.5).CGColor)
+        # path = UIBezierPath.bezierPathWithRoundedRect([[-1, -1], [image.size.width+2, image.size.height+2]], cornerRadius:radius).CGPath
+        # CGContextAddPath(context, path)
+        # CGContextSetStrokeColorWithColor(context, UIColor.redColor.CGColor);
+        # CGContextStrokePath(context)
+        # CGContextAddPath(context, path)
+        # CGContextStrokePath(context)
         processed_image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         processed_image
