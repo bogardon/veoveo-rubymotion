@@ -1,5 +1,8 @@
 class Time
-  def self.iso8601_with_timezone(time)
-    cached_date_formatter("yyyy-MM-dd'T'HH:mm:ssZZZZZ").dateFromString(time)
+  def self.humanized_date_formatter
+    return @humanized_date_formatter if @humanized_date_formatter
+    @humanized_date_formatter = cached_date_formatter("MMMM dd, YYYY")
+    @humanized_date_formatter.timeZone = NSTimeZone.localTimeZone
+    @humanized_date_formatter
   end
 end
