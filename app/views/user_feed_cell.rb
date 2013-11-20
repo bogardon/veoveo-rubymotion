@@ -14,17 +14,21 @@ class UserFeedCell < FeedCell
     @label.backgroundColor = UIColor.clearColor
     self.contentView.addSubview(@label)
 
+    @right_icon = "1st_icon_gray.png".uiimageview
+    self.contentView.addSubview(@right_icon)
+
     self
   end
 
   def layoutSubviews
     super
     @icon.frame = [[15, ((self.contentView.frame.size.height-@icon.frame.size.height)/2).floor], @icon.frame.size]
+    @right_icon.frame = [[self.contentView.frame.size.width-15-@right_icon.frame.size.width, ((self.contentView.frame.size.height-@right_icon.frame.size.height)/2).floor], @right_icon.frame.size]
   end
 
   def answer=(answer)
     @answer = answer
-
+    @right_icon.hidden = @answer.spot.user_id != User.current.id
     attr_text = @answer.spot.hint.bold(12) + "\n" + @answer.humanized_date.nsattributedstring.color(UIColor.lightGrayColor)
 
     @label.attributedText = attr_text
