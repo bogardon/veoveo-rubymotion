@@ -64,7 +64,7 @@ class Answer < Model
   end
 
   def humanized_date
-    formatter = Time.cached_date_formatter("MMMM dd, YYYY")
+    formatter = Time.humanized_date_formatter
     date_str = formatter.stringFromDate(self.created_at)
     date_str
   end
