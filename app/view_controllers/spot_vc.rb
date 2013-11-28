@@ -74,7 +74,7 @@ class SpotVC < UIViewController
   def on_find_it
     return unless @map_view && @map_view.userLocation.location
     distance = @map_view.userLocation.location.distanceFromLocation(CLLocation.alloc.initWithLatitude(self.spot.latitude, longitude:self.spot.longitude))
-    if distance < 50
+    if distance < 100
       take_photo
     else
       alert = BW::UIAlertView.new(:title => "Too far away!", :message => "You must be within 50 meters to find this.", :buttons => "OK")
