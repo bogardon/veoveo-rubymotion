@@ -90,7 +90,7 @@ class SpotVC < UIViewController
         # upload this thing.
         self.show_hud
         Answer.submit(self.spot, edited_image) do |response, json|
-          self.hide_hud response.ok?
+          self.hide_hud response.ok?, "Unlocking..."
           if response.ok?
             answer = Answer.merge_or_insert(json)
             self.spot.answers.unshift(answer)
