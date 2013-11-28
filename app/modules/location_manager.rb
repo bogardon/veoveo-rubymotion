@@ -36,40 +36,23 @@ module LocationManager
 
           now = Time.now
 
-          spots_to_notify = spots.reject do |s|
+          # pick a random one to notify that hasn't been notified in 3 months.
+          spot_to_notify = spots.reject do |s|
             notified_spots_by_ids.has_key?(s.id.to_s) && (notified_spots_by_ids[s.id.to_s] + 3.month > now)
-          end
+          end.sample
 
-          spots_to_notify.each do |s|
-            notified_spots_by_ids[s.id.to_s] = now
-          end
-
-          # store notified spot ids
-          App::Persistence[NOTIFIED_SPOTS_BY_IDS_KEY] = notified_spots_by_ids
-
-          # do not notify unless there's stuff?
-          if spots_to_notify.count > 0
-            names = spots_to_notify.map do |s|
-              s.user.username
-            end.uniq
-
-            names_list = case names.count
-            when 1
-              names.first
-            when 2
-              names.first + ' and ' + names.last
-            else
-              # oxford comma
-              names[0...-1].join(', ') + " ,and #{names.last}"
-            end
+          if spot_to_notify
+            notified_spots_by_ids[spot_to_notify.id.to_s] = now
 
             spots_notification = UILocalNotification.alloc.init
             spots_notification.soundName = UILocalNotificationDefaultSoundName
-            spots_notification.alertBody = "#{names_list} discovered something near you. Find it!"
+            spots_notification.alertBody = "#{spot_to_notify.user.username} discovered #{spot_to_notify.hint} nearby. Find it!"
             spots_notification.userInfo = {latitude: coordinate.latitude, longitude: coordinate.longitude}
             UIApplication.sharedApplication.scheduleLocalNotification(spots_notification)
           end
 
+          # store notified spot ids
+          App::Persistence[NOTIFIED_SPOTS_BY_IDS_KEY] = notified_spots_by_ids
         end
 
         # end bg task
