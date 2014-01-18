@@ -77,7 +77,7 @@ class SpotVC < UIViewController
     if distance < 100
       take_photo
     else
-      alert = BW::UIAlertView.new(:title => "Too far away!", :message => "You must be within 50 meters to find this.", :buttons => "OK")
+      alert = BW::UIAlertView.new(:title => "Too far away!", :message => "You must be within 100 meters to find this.", :buttons => "OK")
       alert.show
     end
   end
