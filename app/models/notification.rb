@@ -14,6 +14,9 @@ class Notification < Model
   set_attribute name: :created_at,
     type: :date
 
+  set_attribute name: :unread,
+    type: :boolean
+
   set_relationship name: :dst_user,
     class_name: :User
 
