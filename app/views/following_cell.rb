@@ -18,14 +18,14 @@ class FollowingCell < FeedCell
     @button.setTitle("FOLLOWING", forState:UIControlStateSelected)
     @button.setTitle("FOLLOWING", forState:UIControlStateSelected|UIControlStateHighlighted)
     @button.setTitle("FOLLOW", forState:UIControlStateNormal)
-    @button.setTitleColor([51,51,51].uicolor, forState:UIControlStateNormal)
-    @button.setTitleColor(UIColor.whiteColor, forState:UIControlStateSelected)
-    @button.setTitleColor(UIColor.whiteColor, forState:UIControlStateSelected|UIControlStateHighlighted)
+    @button.setTitleColor([51,51,51].uicolor, forState:UIControlStateSelected)
+    @button.setTitleColor([51,51,51].uicolor, forState:UIControlStateSelected|UIControlStateHighlighted)
+    @button.setTitleColor(UIColor.whiteColor, forState:UIControlStateNormal)
     @button.titleLabel.font = UIFont.boldSystemFontOfSize 12
-    @button.setBackgroundImage("primary_button.png".uiimage.center_stretch, forState:UIControlStateSelected)
-    @button.setBackgroundImage("primarybutton_down.png".uiimage.center_stretch, forState:UIControlStateSelected|UIControlStateHighlighted)
-    @button.setBackgroundImage("navbutton.png".uiimage.center_stretch, forState:UIControlStateNormal)
-    @button.setBackgroundImage("navbutton_down.png".uiimage.center_stretch, forState:UIControlStateHighlighted)
+    @button.setBackgroundImage("primary_button.png".uiimage.center_stretch, forState:UIControlStateNormal)
+    @button.setBackgroundImage("primarybutton_down.png".uiimage.center_stretch, forState:UIControlStateHighlighted)
+    @button.setBackgroundImage("navbutton.png".uiimage.center_stretch, forState:UIControlStateSelected)
+    @button.setBackgroundImage("navbutton_down.png".uiimage.center_stretch, forState:UIControlStateSelected|UIControlStateHighlighted)
     self.contentView.addSubview(@button)
 
     self
