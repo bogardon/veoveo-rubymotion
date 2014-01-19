@@ -112,7 +112,7 @@ class AppDelegate
     @window.rootViewController = @tab_bar
     @window.makeKeyAndVisible
 
-    if User.current.nil?
+    unless User.current
       # show landing
       @tab_bar.show_landing(false)
     else
