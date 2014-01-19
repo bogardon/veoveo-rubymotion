@@ -5,6 +5,9 @@ class FeedVC < UIViewController
   LOAD_MORE_CELL_IDENTIFIER = "LOAD_MORE_CELL_IDENTIFIER"
   LIMIT = 10
 
+  attr_accessor :unread_count
+  attr_accessor :notifications
+
   def init
     super
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:CurrentUserDidLoginNotification, object:nil)
@@ -12,6 +15,7 @@ class FeedVC < UIViewController
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:SpotDidDeleteNotification, object:nil)
     NSNotificationCenter.defaultCenter.addObserver(self, selector: :reload, name:UIApplicationWillEnterForegroundNotification, object:nil)
     @more_to_load = true
+    @unread_count = 0
     @notifications = []
     reload
     self
@@ -55,8 +59,12 @@ class FeedVC < UIViewController
     @collection_view.addSubview(@refresh)
   end
 
+  def viewDidAppear(animated)
+    super
+    self.unread_count = 0
+  end
+
   def on_find_friends
-    self.navigationController.pushViewController(ConnectVC.alloc.init, animated:true)
     if Facebook.is_open?
       vc = FindFriendsVC.alloc.init
       vc.can_invite = true
@@ -98,6 +106,14 @@ class FeedVC < UIViewController
         else
           @notifications = notifications
           @collection_view.reloadData if @collection_view
+        end
+
+        self.unread_count = @notifications.reduce(0) do |a,n|
+          if n.unread
+            a + 1
+          else
+            a
+          end
         end
       end
       @refresh.endRefreshing if @refresh

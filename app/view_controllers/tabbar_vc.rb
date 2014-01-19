@@ -1,4 +1,5 @@
 class TabBarVC < UITabBarController
+  include BW::KVO
 
   FEED_INDEX=0
   MAP_INDEX=1
@@ -6,7 +7,14 @@ class TabBarVC < UITabBarController
 
   def init
     super
-    feed_nav_vc = UINavigationController.alloc.initWithRootViewController(FeedVC.alloc.init)
+    feed_vc = FeedVC.alloc.init
+
+    observe(feed_vc, :unread_count) do |old_value, new_value|
+      @notification_label.hidden = new_value == 0
+      @notification_label.text = new_value.to_s
+    end
+
+    feed_nav_vc = UINavigationController.alloc.initWithRootViewController(feed_vc)
     feed_nav_vc.tabBarItem.setFinishedSelectedImage("activity.png".uiimage, withFinishedUnselectedImage:"activity_icon_disabled.png".uiimage)
     feed_nav_vc.tabBarItem.imageInsets = [6,0,-6,0]
 
@@ -42,11 +50,10 @@ class TabBarVC < UITabBarController
 
   def viewDidLoad
     super
+
     self.tabBar.backgroundImage = "bottom_nav.png".uiimage
     self.tabBar.frame = [[0, self.tabBar.superview.frame.size.height - 40], [self.tabBar.frame.size.width, 40]]
     self.tabBar.superview.subviews[0].frame = [[0,0], [self.tabBar.superview.frame.size.width, self.tabBar.superview.frame.size.height - 40]]
-
-
 
     size = CGSizeMake(120,40)
     UIGraphicsBeginImageContextWithOptions(size, false, 0)
@@ -59,6 +66,19 @@ class TabBarVC < UITabBarController
 
     # setting nil actually uses some system default.
     self.tabBar.selectionIndicatorImage = selection_indicator_image
+
+    image = "notification_badge.png".uiimage.center_stretch
+
+    @notification_label = UILabel.alloc.initWithFrame [[60,self.view.frame.size.height - 35], image.size]
+    @notification_label.autoresizingMask = UIViewAutoresizingFlexibleTopMargin
+    @notification_label.textColor = UIColor.whiteColor
+    @notification_label.font = UIFont.boldSystemFontOfSize(8)
+    @notification_label.textAlignment = NSTextAlignmentCenter
+    @notification_label.backgroundColor = UIColor.colorWithPatternImage(image)
+    @notification_label.text = "0"
+    @notification_label.hidden = true
+
+    self.view.addSubview(@notification_label)
   end
 
   def show_landing(animated=true)
