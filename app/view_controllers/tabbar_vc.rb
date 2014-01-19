@@ -69,7 +69,7 @@ class TabBarVC < UITabBarController
 
     image = "notification_badge.png".uiimage.center_stretch
 
-    @notification_label = UILabel.alloc.initWithFrame [[60,self.view.frame.size.height - 35], image.size]
+    @notification_label = UILabel.alloc.initWithFrame [[70,self.view.frame.size.height - 35], image.size]
     @notification_label.autoresizingMask = UIViewAutoresizingFlexibleTopMargin
     @notification_label.textColor = UIColor.whiteColor
     @notification_label.font = UIFont.boldSystemFontOfSize(8)
