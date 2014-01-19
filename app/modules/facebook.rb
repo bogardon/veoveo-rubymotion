@@ -1,6 +1,12 @@
 module Facebook
   class << self
 
+    def invite(&block)
+      FBWebDialogs.presentRequestsDialogModallyWithSession(nil, message:"Join me on VeoVeo!", title:"Invite Friends", parameters:nil, handler: lambda do |result, resultURL,error|
+        block.call(result,resultURL,error) if block
+      end)
+    end
+
     def is_open?
       FBSession.activeSession.isOpen
     end

@@ -57,6 +57,26 @@ class FeedVC < UIViewController
 
   def on_find_friends
     self.navigationController.pushViewController(ConnectVC.alloc.init, animated:true)
+    if Facebook.is_open?
+      vc = FindFriendsVC.alloc.init
+      vc.can_invite = true
+      self.navigationController.pushViewController(vc, animated:true)
+    else
+      alert = BW::UIAlertView.new(:title => "Find Friends", :message => "You must connect your Facebook account to continue.", :buttons => ["Connect", "Cancel"], :on_click => (lambda do |alert|
+        if alert.clicked_button.index == 0
+          show_hud
+          Facebook.connect true do |response, json|
+            hide_hud response.ok?
+            if response.ok?
+              vc = FindFriendsVC.alloc.init
+              vc.can_invite = true
+              self.navigationController.pushViewController(vc, animated:true)
+            end
+          end
+        end
+      end))
+      alert.show
+    end
   end
 
   def reload(offset=0)
