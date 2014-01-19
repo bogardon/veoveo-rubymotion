@@ -44,6 +44,14 @@ class Notification < Model
     end
   end
 
+  def self.mark_all_as_read
+    options = {
+      :format => :json,
+      :payload => {}
+    }
+    VeoVeoAPI.patch 'notifications', options
+  end
+
   def humanized_date
     formatter = Time.humanized_date_formatter
     date_str = formatter.stringFromDate(self.created_at)

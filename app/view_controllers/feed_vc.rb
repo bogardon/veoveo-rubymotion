@@ -62,6 +62,7 @@ class FeedVC < UIViewController
   def viewDidAppear(animated)
     super
     self.unread_count = 0
+    Notification.mark_all_as_read
   end
 
   def on_find_friends
