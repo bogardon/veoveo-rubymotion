@@ -1,5 +1,7 @@
 class ImageView < UIImageView
 
+  attr_accessor :query
+
   def set_image_from_url(url, placeholder=nil)
     set_processed_image_from_url url, placeholder do |image|
       image
@@ -11,6 +13,8 @@ class ImageView < UIImageView
 
     return unless url && url.scheme
 
+    @query.connection.cancel if @query
+
     TMCache.sharedCache.objectForKey(url.to_s, block:(lambda do |cache, key, object|
       if object
         processed_image = block ? block.call(object) : object
@@ -21,7 +25,7 @@ class ImageView < UIImageView
 
       else
         Dispatch::Queue.main.async do
-          BW::HTTP.get url.to_s do |response|
+          @query = BW::HTTP.get url.to_s do |response|
             if response.ok?
               Dispatch::Queue.concurrent(priority=:background).async do
                 image = UIImage.alloc.initWithData(response.body, scale:UIScreen.mainScreen.scale)

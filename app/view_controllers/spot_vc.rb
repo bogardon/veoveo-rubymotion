@@ -6,6 +6,7 @@ class SpotVC < UIViewController
   ANSWER_CELL_IDENTIFIER = "ANSWER_CELL_IDENTIFIER"
   SOCIAL_CELL_IDENTIFIER = "SOCIAL_CELL_IDENTIFIER"
   LOADING_CELL_IDENTIFIER = "LOADING_CELL_IDENTIFIER"
+  USER_DID_ONBOARD_KEY = "USER_DID_ONBOARD_KEY"
 
   MAP_CELL_SECTION = 0
   ANSWER_CELL_SECTION = 1
@@ -54,6 +55,28 @@ class SpotVC < UIViewController
     @refresh = UIRefreshControl.alloc.init
     @refresh.addTarget(self, action: :reload, forControlEvents:UIControlEventValueChanged)
     @collection_view.addSubview(@refresh)
+  end
+
+  def viewDidAppear(animated)
+    super
+    unless NSUserDefaults.standardUserDefaults.boolForKey(USER_DID_ONBOARD_KEY)
+      # show onboarding screens
+      @onboard_window = OnboardWindow.alloc.init
+      @onboard_window.hidden = false
+      @onboard_window.alpha = 0
+      @onboard_window.spot_user = self.spot.user
+      @onboard_window.on_dismiss = lambda do
+        UIView.animateWithDuration(0.3, animations:(lambda do
+          @onboard_window.alpha = 0
+        end), completion: (lambda do |completed|
+          @onboard_window = nil
+        end))
+      end
+      UIView.animateWithDuration(0.3, animations:(lambda do
+        @onboard_window.alpha = 1
+      end)
+      )
+    end
   end
 
   def on_delete
