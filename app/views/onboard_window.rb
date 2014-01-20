@@ -46,7 +46,7 @@ class OnboardWindow < UIWindow
     @page_control.currentPage = 0
     @page_control.pageIndicatorTintColor = UIColor.colorWithRed(216.0/255.0, green:216.0/255.0, blue:216.0/255.0, alpha:1.0)
     @page_control.currentPageIndicatorTintColor = UIColor.colorWithRed(168.0/255.0, green:168.0/255.0, blue:168.0/255.0, alpha:1.0)
-
+    @page_control.setUserInteractionEnabled(false)
     @page_control.frame = [[0,200],[container.frame.size.width, 20]]
     container.addSubview(@page_control)
 
