@@ -23,6 +23,7 @@ class SpotVC < UIViewController
   end
 
   def dealloc
+    @onboard_window = nil
     @query.connection.cancel if @query
     super
   end
@@ -69,13 +70,14 @@ class SpotVC < UIViewController
         UIView.animateWithDuration(0.3, animations:(lambda do
           @onboard_window.alpha = 0
         end), completion: (lambda do |completed|
+          @onboard_window.hidden = true
           @onboard_window = nil
         end))
       end
       UIView.animateWithDuration(0.3, animations:(lambda do
         @onboard_window.alpha = 1
-      end)
-      )
+      end), completion: (lambda do |completed|
+      end))
     end
   end
 
