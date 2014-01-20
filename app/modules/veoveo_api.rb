@@ -31,6 +31,7 @@ module VeoVeoAPI
         json = BW::JSON.parse(body) if body && response.ok?
         # p json
         block.call(response, json) if block
+        block = nil
       end
       q
     end
