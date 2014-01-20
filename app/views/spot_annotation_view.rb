@@ -1,6 +1,6 @@
 class SpotAnnotationView < MKAnnotationView
   include BW::KVO
-  attr_accessor :spot
+
   def initWithAnnotation(annotation, reuseIdentifier:reuseIdentifier)
     super
     self.centerOffset = [0, -18]
@@ -27,18 +27,18 @@ class SpotAnnotationView < MKAnnotationView
 
   def dealloc
     if self.annotation
-      unobserve(spot, :unlocked)
+      unobserve(self.annotation, :unlocked)
     end
     super
   end
 
   def setAnnotation(annotation)
     if self.annotation
-      unobserve(spot, :unlocked)
+      unobserve(self.annotation, :unlocked)
     end
     super
     if self.annotation
-      observe(spot, :unlocked) do |old_value, new_value|
+      observe(self.annotation, :unlocked) do |old_value, new_value|
         update_image
       end
     end
