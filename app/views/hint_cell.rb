@@ -19,7 +19,6 @@ class HintCell < UICollectionViewCell
     self.contentView.addSubview(horizontal)
 
     @map_view = MKMapView.alloc.initWithFrame [[1, CGRectGetMaxY(horizontal.frame)], [self.contentView.frame.size.width - 2, 130]]
-    @map_view.setScrollEnabled(false)
     @map_view.setZoomEnabled(false)
     self.contentView.addSubview(@map_view)
 

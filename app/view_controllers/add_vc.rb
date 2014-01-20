@@ -66,11 +66,13 @@ class AddVC < UIViewController
   end
 
   def on_add
-    return unless @photo && @form && @form.text && @form.text.length > 0 && @spot
+    return unless @photo && @form && @form.text && @form.text.length > 0 && @pin && @map_view.userLocation.location
     @form.resignFirstResponder
+
+    coordinate = @map_view.convertPoint(CGPointMake(@pin.center.x,@pin.center.y + 18), toCoordinateFromView:@pin.superview)
     self.show_hud
 
-    Spot.add_new(@form.text, @spot.latitude, @spot.longitude, @photo) do |response, spot|
+    Spot.add_new(@form.text, coordinate.latitude, coordinate.longitude, @photo) do |response, spot|
       self.hide_hud response.ok?
       if response.ok?
         self.dismissViewControllerAnimated(true, completion:nil)
@@ -147,7 +149,10 @@ class AddVC < UIViewController
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(HINT_CELL_IDENTIFIER, forIndexPath:indexPath)
       @form = cell.form
       cell.map_view.delegate = self
-      cell.map_view.showsUserLocation = true
+      unless @map_view
+        cell.map_view.showsUserLocation = true
+      end
+      @map_view = cell.map_view
       cell
     when PHOTO_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(PHOTO_CELL_IDENTIFIER, forIndexPath:indexPath)
@@ -184,30 +189,16 @@ class AddVC < UIViewController
     @form.resignFirstResponder
   end
 
-  def mapView(mapView, viewForAnnotation:annotation)
-    return nil unless annotation.is_a?(Spot)
-    cached = mapView.dequeueReusableAnnotationViewWithIdentifier(SPOT_ANNOTATION_IDENTIFIER)
-    view = cached || MKAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier:SPOT_ANNOTATION_IDENTIFIER)
-    view.image = "found_pin_selected.png".uiimage
-    view.centerOffset = [0, -18]
-    view.draggable = true
-    view.setSelected(true, animated:false)
-    view.canShowCallout = false
-    view
-  end
-
   def mapView(mapView, didUpdateUserLocation:userLocation)
     return unless userLocation.location && userLocation.location.coordinate && !@did_auto_center
     @did_auto_center = true
     coordinate = userLocation.location.coordinate
     region = MKCoordinateRegionMakeWithDistance(coordinate, 100, 100)
     mapView.setRegion(region)
-    json = {'id' => -1, "unlocked" => true, "latitude" => coordinate.latitude, "longitude" => coordinate.longitude}
-    @spot = Spot.new json
-    mapView.addAnnotation(@spot)
-  end
-
-  def mapView(mapView, annotationView:annotationView, didChangeDragState:newState, fromOldState:oldState)
+    @pin = "found_pin_selected.png".uiimageview
+    @pin.center = [(mapView.frame.size.width/2).floor,(mapView.frame.size.height/2-18).floor]
+    mapView.addSubview(@pin)
+    mapView.showsUserLocation = false
   end
 
 end
