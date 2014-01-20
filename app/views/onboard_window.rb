@@ -55,7 +55,7 @@ class OnboardWindow < UIWindow
     @button.setBackgroundImage("primarybutton_down.png".uiimage.stretchable([22,22,21,21]), forState:UIControlStateHighlighted)
     @button.setTitleColor(UIColor.whiteColor, forState:UIControlStateNormal)
     @button.titleLabel.font = UIFont.boldSystemFontOfSize(20)
-    @button.setTitle("Got It!", forState:UIControlStateNormal)
+    @button.setTitle("Next", forState:UIControlStateNormal)
     container.addSubview(@button)
 
     @button.addTarget(self, action: :on_button, forControlEvents:UIControlEventTouchUpInside)
@@ -79,7 +79,18 @@ class OnboardWindow < UIWindow
   end
 
   def scrollViewDidScroll(scroll_view)
-    @page_control.currentPage = (scroll_view.contentOffset.x/scroll_view.frame.size.width).floor
+    @page_control.currentPage = (scroll_view.contentOffset.x/scroll_view.frame.size.width).round
+    title = case @page_control.currentPage
+    when 0
+      "Next"
+    when 1
+      "Next"
+    when 2
+      "Got It!"
+    else
+      ""
+    end
+    @button.setTitle(title, forState:UIControlStateNormal)
   end
 
   def collectionView(collectionView, cellForItemAtIndexPath:indexPath)
