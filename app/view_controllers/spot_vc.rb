@@ -67,6 +67,7 @@ class SpotVC < UIViewController
       @onboard_window.alpha = 0
       @onboard_window.spot_user = self.spot.user
       @onboard_window.on_dismiss = lambda do
+        NSUserDefaults.standardUserDefaults.setBool(true, forKey:USER_DID_ONBOARD_KEY)
         UIView.animateWithDuration(0.3, animations:(lambda do
           @onboard_window.alpha = 0
         end), completion: (lambda do |completed|
