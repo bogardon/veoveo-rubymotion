@@ -47,7 +47,7 @@ Motion::Project::App.setup do |app|
   end
 
   # icons
-  app.icons = ["App_Icon.png", "App_Icon@2x.png"]
+  app.icons = ["App_Icon.png", "App_Icon@2x.png", "icon120.png"]
   app.prerendered_icon = true
 
   # status bar
