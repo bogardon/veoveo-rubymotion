@@ -59,7 +59,7 @@ class SpotVC < UIViewController
 
   def viewDidAppear(animated)
     super
-    unless self.spot.unlocked || NSUserDefaults.standardUserDefaults.boolForKey(USER_DID_ONBOARD_KEY)
+    if self.spot.unlocked == false && !NSUserDefaults.standardUserDefaults.boolForKey(USER_DID_ONBOARD_KEY)
       # show onboarding screens
       @onboard_window = OnboardWindow.alloc.init
       @onboard_window.hidden = false
