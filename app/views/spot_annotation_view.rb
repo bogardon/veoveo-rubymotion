@@ -92,7 +92,27 @@ class SpotAnnotationView < MKAnnotationView
   def setSelected(selected, animated:animated)
     super
     update_image
+
     @callout_view.center = [(self.frame.size.width/2).floor, -30]
+    superview = self.superview.superview.superview.superview
+    frame = self.convertRect(@callout_view.frame, toView:superview)
+    unless CGRectContainsRect(superview.bounds, frame)
+      x_origin_delta = if frame.origin.x < 0
+        -frame.origin.x+5
+      elsif frame.origin.y > 320 - @callout_view.frame.size.width
+        320 - frame.origin.x - frame.size.width - 5
+      else
+        0
+      end
+
+      y_origin_delta = if frame.origin.y < 0
+        -frame.origin.y + 5
+      else
+        0
+      end
+      @callout_view.frame = [[@callout_view.frame.origin.x + x_origin_delta, @callout_view.frame.origin.y + y_origin_delta], @callout_view.frame.size]
+
+    end
     @callout_view.hidden = !selected
   end
 
