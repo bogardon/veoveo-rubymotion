@@ -95,7 +95,7 @@ class MapVC < UIViewController
     annotation_view = mapView.dequeueReusableAnnotationViewWithIdentifier(SPOT_ANNOTATION_IDENTIFIER) || SpotAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier:SPOT_ANNOTATION_IDENTIFIER)
     annotation_view.annotation = annotation
     annotation_view.update_image
-    index = mapView.annotations.indexOfObject(annotation)
+    index = annotation.id
     annotation_view.callout.tag = index
     annotation_view.left.tag = index
     annotation_view.right.tag = index
@@ -116,13 +116,19 @@ class MapVC < UIViewController
   end
 
   def on_avatar(sender)
-    spot = @map_view.annotations[sender.tag]
+    spot = @map_view.annotations.find do |a|
+      a.id == sender.tag
+    end
+    return unless spot
     profile_vc = ProfileVC.new spot.user
     self.navigationController.pushViewController(profile_vc, animated:true)
   end
 
   def on_spot(sender)
-    spot = @map_view.annotations[sender.tag]
+    spot = @map_view.annotations.find do |a|
+      a.id == sender.tag
+    end
+    return unless spot
     spot_vc = SpotVC.alloc.initWithSpot spot
     self.navigationController.pushViewController(spot_vc, animated:true)
   end
