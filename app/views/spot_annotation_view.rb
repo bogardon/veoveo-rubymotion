@@ -99,7 +99,7 @@ class SpotAnnotationView < MKAnnotationView
     unless CGRectContainsRect(superview.bounds, frame)
       x_origin_delta = if frame.origin.x < 0
         -frame.origin.x+5
-      elsif frame.origin.y > 320 - @callout_view.frame.size.width
+      elsif frame.origin.x > 320 - @callout_view.frame.size.width
         320 - frame.origin.x - frame.size.width - 5
       else
         0
