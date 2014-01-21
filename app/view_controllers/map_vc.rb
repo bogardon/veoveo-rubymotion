@@ -117,7 +117,7 @@ class MapVC < UIViewController
 
   def on_avatar(sender)
     spot = @map_view.annotations.find do |a|
-      a.id == sender.tag
+      a.is_a?(Spot) && a.id == sender.tag
     end
     return unless spot
     profile_vc = ProfileVC.new spot.user
@@ -126,7 +126,7 @@ class MapVC < UIViewController
 
   def on_spot(sender)
     spot = @map_view.annotations.find do |a|
-      a.id == sender.tag
+      a.is_a?(Spot) && a.id == sender.tag
     end
     return unless spot
     spot_vc = SpotVC.alloc.initWithSpot spot
