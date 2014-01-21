@@ -269,7 +269,6 @@ class SpotVC < UIViewController
     cached = mapView.dequeueReusableAnnotationViewWithIdentifier(SPOT_ANNOTATION_IDENTIFIER)
     view = cached || SpotAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier:SPOT_ANNOTATION_IDENTIFIER)
     view.canShowCallout = false
-    view.setSelected(true, animated:false)
     view
   end
 

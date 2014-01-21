@@ -95,20 +95,16 @@ class MapVC < UIViewController
     annotation_view = mapView.dequeueReusableAnnotationViewWithIdentifier(SPOT_ANNOTATION_IDENTIFIER) || SpotAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier:SPOT_ANNOTATION_IDENTIFIER)
     annotation_view.annotation = annotation
     annotation_view.update_image
-    annotation_view
-  end
+    index = mapView.annotations.indexOfObject(annotation)
+    annotation_view.callout.tag = index
+    annotation_view.left.tag = index
+    annotation_view.right.tag = index
 
-  def mapView(mapView, annotationView:view, calloutAccessoryControlTapped:control)
-    spot = view.annotation
-    case control
-    when view.leftCalloutAccessoryView
-      profile_vc = ProfileVC.new spot.user
-      self.navigationController.pushViewController(profile_vc, animated:true)
-    when view.rightCalloutAccessoryView
-      spot_vc = SpotVC.alloc.initWithSpot spot
-      self.navigationController.pushViewController(spot_vc, animated:true)
-    else
-    end
+    annotation_view.left.addTarget(self, action: :'on_avatar:', forControlEvents:UIControlEventTouchUpInside) unless annotation_view.left.allTargets.count > 0
+    annotation_view.callout.addTarget(self, action: :'on_spot:', forControlEvents:UIControlEventTouchUpInside) unless annotation_view.callout.allTargets.count > 0
+    annotation_view.right.addTarget(self, action: :'on_spot:', forControlEvents:UIControlEventTouchUpInside) unless annotation_view.right.allTargets.count > 0
+
+    annotation_view
   end
 
   def mapView(mapView, regionWillChangeAnimated:animated)
@@ -117,6 +113,18 @@ class MapVC < UIViewController
 
   def mapView(mapView, regionDidChangeAnimated:animated)
     self.performSelector(:reload, withObject:nil, afterDelay:1)
+  end
+
+  def on_avatar(sender)
+    spot = @map_view.annotations[sender.tag]
+    profile_vc = ProfileVC.new spot.user
+    self.navigationController.pushViewController(profile_vc, animated:true)
+  end
+
+  def on_spot(sender)
+    spot = @map_view.annotations[sender.tag]
+    spot_vc = SpotVC.alloc.initWithSpot spot
+    self.navigationController.pushViewController(spot_vc, animated:true)
   end
 
   def reload
