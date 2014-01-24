@@ -106,7 +106,8 @@ task :testflight => [
 
   api_token = "c4e22ac831b1b976994bb7594d40902b_MTAxMjgy"
   team_token = "59240848237026c0556eca2582cf8110_MjQ1NDQ2MjAxMy0wNy0wNyAxOToyNDozNC42NDgwNjU"
-  notes = "Latest Testflight Build"
+
+  notes = File.open("./.git/COMMIT_EDITMSG").read
   distribution_lists = "VeoVeo"
   sh "curl http://testflightapp.com/api/builds.json -F file=@#{ipa_path} -F dsym=@#{zipped_dsym_path} -F api_token=#{api_token} -F team_token=#{team_token} -F notes='#{notes}' -F distribution_lists=#{distribution_lists}"
 
