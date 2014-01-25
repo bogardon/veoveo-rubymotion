@@ -94,7 +94,12 @@ class SpotAnnotationView < MKAnnotationView
     update_image
 
     @callout_view.center = [(self.frame.size.width/2).floor, -30]
-    superview = self.superview.superview.superview.superview
+
+    superview = self
+    4.times do
+      return unless superview.superview
+      superview = superview.superview
+    end
     frame = self.convertRect(@callout_view.frame, toView:superview)
     unless CGRectContainsRect(superview.bounds, frame)
       x_origin_delta = if frame.origin.x < 0
