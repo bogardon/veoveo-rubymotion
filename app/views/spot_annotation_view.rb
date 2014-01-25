@@ -38,7 +38,7 @@ class SpotAnnotationView < MKAnnotationView
     @label.autoresizingMask = UIViewAutoresizingFlexibleWidth
     @label.backgroundColor = UIColor.clearColor
     @label.textColor = UIColor.whiteColor
-    #@label.numberOfLines = 2
+    @label.numberOfLines = 2
     @label.font = UIFont.boldSystemFontOfSize(14)
 
 
@@ -122,7 +122,7 @@ class SpotAnnotationView < MKAnnotationView
     #size = spot.hint.sizeWithFont(@label.font, constrainedToSize:[CGFLOAT_MAX,@label.size.height])
 
     @label.text = spot.hint
-    size = @label.sizeThatFits([CGFLOAT_MAX,@label.size.height])
+    size = @label.sizeThatFits([226,@label.size.height])
     @callout_view.frame = [@callout_view.frame.origin,[size.width.ceil + 5 + 32 + 5 + 5 + 32 + 5, @callout_view.frame.size.height]]
 
     state = spot.unlocked ? "found_pin" : "unfound_pin"
