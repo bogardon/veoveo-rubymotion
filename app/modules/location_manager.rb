@@ -4,6 +4,7 @@ module LocationManager
     def start
       return unless User.current && User.current.spots_nearby_push_enabled
       BW::Location.get_significant do |result|
+        return unless result[:to]
         coordinate = result[:to].coordinate
         app_state = UIApplication.sharedApplication.applicationState
 
