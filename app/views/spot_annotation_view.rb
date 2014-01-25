@@ -38,7 +38,7 @@ class SpotAnnotationView < MKAnnotationView
     @label.autoresizingMask = UIViewAutoresizingFlexibleWidth
     @label.backgroundColor = UIColor.clearColor
     @label.textColor = UIColor.whiteColor
-    @label.numberOfLines = 2
+    @label.numberOfLines = 1
     @label.font = UIFont.boldSystemFontOfSize(14)
 
 
@@ -123,7 +123,7 @@ class SpotAnnotationView < MKAnnotationView
 
     @label.text = spot.hint
     size = @label.sizeThatFits([226,@label.size.height])
-    @callout_view.frame = [@callout_view.frame.origin,[size.width.ceil + 5 + 32 + 5 + 5 + 32 + 5, @callout_view.frame.size.height]]
+    @callout_view.frame = [@callout_view.frame.origin,[[size.width.ceil,226].min + 5 + 32 + 5 + 5 + 32 + 5, @callout_view.frame.size.height]]
 
     state = spot.unlocked ? "found_pin" : "unfound_pin"
     selected = self.isSelected ? "_selected.png" : ".png"
