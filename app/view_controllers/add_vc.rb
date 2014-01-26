@@ -66,7 +66,7 @@ class AddVC < UIViewController
   end
 
   def on_add
-    return unless @photo && @form && @form.text && @form.text.length > 0 && @pin && @map_view.userLocation.location
+    return unless @photo && @hint_cell && @form.text && @form.text.length > 0 && @pin && @map_view.userLocation.location
     @form.resignFirstResponder
 
     coordinate = @map_view.convertPoint(CGPointMake(@pin.center.x,@pin.center.y + 18), toCoordinateFromView:@pin.superview)
@@ -146,14 +146,14 @@ class AddVC < UIViewController
   def collectionView(collectionView, cellForItemAtIndexPath:indexPath)
     case indexPath.section
     when HINT_CELL_SECTION
-      cell = collectionView.dequeueReusableCellWithReuseIdentifier(HINT_CELL_IDENTIFIER, forIndexPath:indexPath)
-      @form = cell.form
-      cell.map_view.delegate = self
-      unless @map_view
-        cell.map_view.showsUserLocation = true
-      end
-      @map_view = cell.map_view
-      cell
+      return @hint_cell if @hint_cell
+
+      @hint_cell = collectionView.dequeueReusableCellWithReuseIdentifier(HINT_CELL_IDENTIFIER, forIndexPath:indexPath)
+      @form = @hint_cell.form
+      @map_view = @hint_cell.map_view
+      @map_view.delegate = self
+      @map_view.showsUserLocation = true
+      @hint_cell
     when PHOTO_CELL_SECTION
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(PHOTO_CELL_IDENTIFIER, forIndexPath:indexPath)
       cell.photo.image = @photo
