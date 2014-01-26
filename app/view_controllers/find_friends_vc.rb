@@ -3,6 +3,8 @@ class FindFriendsVC < UIViewController
 
   FOLLOWING_IDENTIFIER = "FOLLOWING_IDENTIFIER"
   ACTION_IDENTIFIER = "ACTION_IDENTIFIER"
+  LOAD_MORE_CELL_IDENTIFIER = "LOAD_MORE_CELL_IDENTIFIER"
+  EMPTY_STATE_CELL_IDENTIFIER = "EMPTY_STATE_CELL_IDENTIFIER"
 
   REGISTERED_SECTION = 0
   INVITE_SECTION = 1
@@ -12,6 +14,7 @@ class FindFriendsVC < UIViewController
   def init
     super
     @can_invite = false
+    @more_to_load = true
     reload
     self
   end
@@ -34,6 +37,9 @@ class FindFriendsVC < UIViewController
 
     @collection_view.registerClass(FollowingCell, forCellWithReuseIdentifier:FOLLOWING_IDENTIFIER)
     @collection_view.registerClass(LogoutCell, forCellWithReuseIdentifier:ACTION_IDENTIFIER)
+    @collection_view.registerClass(LoadMoreCell, forSupplementaryViewOfKind:UICollectionElementKindSectionFooter, withReuseIdentifier:LOAD_MORE_CELL_IDENTIFIER)
+    @collection_view.registerClass(EmptyCell, forSupplementaryViewOfKind:UICollectionElementKindSectionHeader, withReuseIdentifier:EMPTY_STATE_CELL_IDENTIFIER)
+
 
     background = "bg.png".uiimageview
     background.contentMode = UIViewContentModeScaleAspectFill
@@ -54,6 +60,7 @@ class FindFriendsVC < UIViewController
   def reload
     @query.connection.cancel if @query
     @query = User.find_facebook_friends do |response, users|
+      @more_to_load = false
       @users = users
       @collection_view.reloadData if @collection_view
       @refresh.endRefreshing if @refresh
@@ -92,7 +99,11 @@ class FindFriendsVC < UIViewController
   end
 
   def collectionView(collectionView, layout:collectionViewLayout, insetForSectionAtIndex:section)
-    [7,7,0,7]
+    if section == REGISTERED_SECTION
+      [7,7,7,7]
+    else
+      [0,7,0,7]
+    end
   end
 
   def collectionView(collectionView, cellForItemAtIndexPath:indexPath)
@@ -108,6 +119,31 @@ class FindFriendsVC < UIViewController
       cell = collectionView.dequeueReusableCellWithReuseIdentifier(ACTION_IDENTIFIER, forIndexPath:indexPath)
       cell.label.text = "Invite Others"
       cell
+    end
+  end
+
+  def collectionView(collectionView, layout:collectionViewLayout, referenceSizeForFooterInSection:section)
+    @more_to_load ? [320,30] : [0, 0]
+  end
+
+  def collectionView(collectionView, layout:collectionViewLayout, referenceSizeForHeaderInSection:section)
+    section == REGISTERED_SECTION && @users && @users.count == 0 ? [320, 40] : [0, 0]
+  end
+
+#-(UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+
+  def collectionView(collectionView, viewForSupplementaryElementOfKind:kind, atIndexPath:indexPath)
+    if indexPath.section == REGISTERED_SECTION
+      case kind
+      when UICollectionElementKindSectionFooter
+        collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionFooter, withReuseIdentifier:LOAD_MORE_CELL_IDENTIFIER, forIndexPath:indexPath)
+      when UICollectionElementKindSectionHeader
+        collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionHeader, withReuseIdentifier:EMPTY_STATE_CELL_IDENTIFIER, forIndexPath:indexPath)
+      else
+        nil
+      end
+    else
+      nil
     end
   end
 
